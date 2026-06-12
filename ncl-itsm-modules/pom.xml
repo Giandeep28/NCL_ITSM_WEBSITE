@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <groupId>in.gov.ncl</groupId>
+        <artifactId>ncl-itsm-parent</artifactId>
+        <version>1.0.0-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>ncl-itsm-modules</artifactId>
+    <packaging>pom</packaging>
+    <name>NCL ITSM Feature Modules</name>
+    <description>Aggregator for bounded contexts feature modules</description>
+
+    <modules>
+        <module>user-management</module>
+        <module>authentication</module>
+        <module>asset-hardware</module>
+        <module>asset-software</module>
+        <module>ticket-management</module>
+        <module>notification</module>
+        <module>workflow-engine</module>
+        <module>document-service</module>
+        <module>reporting</module>
+        <module>audit</module>
+        <module>configuration</module>
+    </modules>
+
+    <dependencies>
+        <!-- Feature modules all share JPA, Core, and Spring dependencies -->
+        <dependency>
+            <groupId>in.gov.ncl</groupId>
+            <artifactId>ncl-itsm-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <optional>true</optional>
+        </dependency>
+    </dependencies>
+</project>
