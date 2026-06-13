@@ -1,0 +1,4 @@
+in\gov\ncl\itsm\workflow\application\TicketWorkflowServiceImpl.class
+in\gov\ncl\itsm\workflow\application\WorkflowScheduler.class
+in\gov\ncl\itsm\workflow\infrastructure\TicketCreatedEventListener.class
+in\gov\ncl\itsm\workflow\application\TicketWorkflowService.class

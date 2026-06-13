@@ -1,0 +1,6 @@
+in\gov\ncl\itsm\config\domain\Configuration$ConfigurationBuilder.class
+in\gov\ncl\itsm\config\domain\Configuration.class
+in\gov\ncl\itsm\config\application\ConfigurationServiceImpl.class
+in\gov\ncl\itsm\config\api\ConfigurationController.class
+in\gov\ncl\itsm\config\application\ConfigurationService.class
+in\gov\ncl\itsm\config\infrastructure\ConfigurationRepository.class

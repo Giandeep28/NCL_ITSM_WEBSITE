@@ -1,0 +1,10 @@
+D:\GIANDEEP MAIN\NCL_ITSM_SOFTWARE_WEBSITE\ncl-itsm-modules\ticket-management\src\main\java\in\gov\ncl\itsm\ticket\application\TicketService.java
+D:\GIANDEEP MAIN\NCL_ITSM_SOFTWARE_WEBSITE\ncl-itsm-modules\ticket-management\src\main\java\in\gov\ncl\itsm\ticket\domain\TicketHistory.java
+D:\GIANDEEP MAIN\NCL_ITSM_SOFTWARE_WEBSITE\ncl-itsm-modules\ticket-management\src\main\java\in\gov\ncl\itsm\ticket\api\TicketController.java
+D:\GIANDEEP MAIN\NCL_ITSM_SOFTWARE_WEBSITE\ncl-itsm-modules\ticket-management\src\main\java\in\gov\ncl\itsm\ticket\domain\Ticket.java
+D:\GIANDEEP MAIN\NCL_ITSM_SOFTWARE_WEBSITE\ncl-itsm-modules\ticket-management\src\main\java\in\gov\ncl\itsm\ticket\api\dto\TicketCreateRequest.java
+D:\GIANDEEP MAIN\NCL_ITSM_SOFTWARE_WEBSITE\ncl-itsm-modules\ticket-management\src\main\java\in\gov\ncl\itsm\ticket\infrastructure\TicketHistoryRepository.java
+D:\GIANDEEP MAIN\NCL_ITSM_SOFTWARE_WEBSITE\ncl-itsm-modules\ticket-management\src\main\java\in\gov\ncl\itsm\ticket\application\TicketServiceImpl.java
+D:\GIANDEEP MAIN\NCL_ITSM_SOFTWARE_WEBSITE\ncl-itsm-modules\ticket-management\src\main\java\in\gov\ncl\itsm\ticket\api\dto\TicketResponse.java
+D:\GIANDEEP MAIN\NCL_ITSM_SOFTWARE_WEBSITE\ncl-itsm-modules\ticket-management\src\main\java\in\gov\ncl\itsm\ticket\infrastructure\TicketRepository.java
+D:\GIANDEEP MAIN\NCL_ITSM_SOFTWARE_WEBSITE\ncl-itsm-modules\ticket-management\src\main\java\in\gov\ncl\itsm\ticket\domain\TicketCreatedEvent.java

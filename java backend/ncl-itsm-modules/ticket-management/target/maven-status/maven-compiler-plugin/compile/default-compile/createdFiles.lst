@@ -1,0 +1,15 @@
+in\gov\ncl\itsm\ticket\api\dto\TicketResponse$HistoryResponse$HistoryResponseBuilder.class
+in\gov\ncl\itsm\ticket\api\dto\TicketResponse.class
+in\gov\ncl\itsm\ticket\domain\TicketHistory.class
+in\gov\ncl\itsm\ticket\api\dto\TicketResponse$TicketResponseBuilder.class
+in\gov\ncl\itsm\ticket\domain\Ticket.class
+in\gov\ncl\itsm\ticket\infrastructure\TicketRepository.class
+in\gov\ncl\itsm\ticket\api\TicketController.class
+in\gov\ncl\itsm\ticket\api\dto\TicketResponse$HistoryResponse.class
+in\gov\ncl\itsm\ticket\application\TicketService.class
+in\gov\ncl\itsm\ticket\api\dto\TicketCreateRequest.class
+in\gov\ncl\itsm\ticket\infrastructure\TicketHistoryRepository.class
+in\gov\ncl\itsm\ticket\domain\TicketCreatedEvent.class
+in\gov\ncl\itsm\ticket\application\TicketServiceImpl.class
+in\gov\ncl\itsm\ticket\domain\Ticket$TicketBuilder.class
+in\gov\ncl\itsm\ticket\domain\TicketHistory$TicketHistoryBuilder.class

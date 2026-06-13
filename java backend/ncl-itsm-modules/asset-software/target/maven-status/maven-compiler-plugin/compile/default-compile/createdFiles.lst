@@ -1,0 +1,8 @@
+in\gov\ncl\itsm\asset\software\domain\SoftwareLicense$SoftwareLicenseBuilder.class
+in\gov\ncl\itsm\asset\software\infrastructure\SoftwareLicenseRepository.class
+in\gov\ncl\itsm\asset\software\domain\SoftwareLicense.class
+in\gov\ncl\itsm\asset\software\application\LicenseExpiryScheduler.class
+in\gov\ncl\itsm\asset\software\api\SoftwareLicenseController.class
+in\gov\ncl\itsm\asset\software\infrastructure\SoftwareDeploymentRepository.class
+in\gov\ncl\itsm\asset\software\domain\SoftwareDeployment$SoftwareDeploymentBuilder.class
+in\gov\ncl\itsm\asset\software\domain\SoftwareDeployment.class

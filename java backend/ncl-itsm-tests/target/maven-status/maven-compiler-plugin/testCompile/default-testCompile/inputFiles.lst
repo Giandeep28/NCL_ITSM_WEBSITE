@@ -1,0 +1,11 @@
+D:\GIANDEEP MAIN\NCL_ITSM_SOFTWARE_WEBSITE\ncl-itsm-tests\src\test\java\in\gov\ncl\itsm\NCLItsmApplicationTests.java
+D:\GIANDEEP MAIN\NCL_ITSM_SOFTWARE_WEBSITE\ncl-itsm-tests\src\test\java\in\gov\ncl\itsm\ticket\mutation\TicketMutationKillTest.java
+D:\GIANDEEP MAIN\NCL_ITSM_SOFTWARE_WEBSITE\ncl-itsm-tests\src\test\java\in\gov\ncl\itsm\e2e\SeleniumE2eTest.java
+D:\GIANDEEP MAIN\NCL_ITSM_SOFTWARE_WEBSITE\ncl-itsm-tests\src\test\java\in\gov\ncl\itsm\asset\hardware\unit\HardwareAssetUnitTest.java
+D:\GIANDEEP MAIN\NCL_ITSM_SOFTWARE_WEBSITE\ncl-itsm-tests\src\test\java\in\gov\ncl\itsm\asset\software\unit\SoftwareLicenseUnitTest.java
+D:\GIANDEEP MAIN\NCL_ITSM_SOFTWARE_WEBSITE\ncl-itsm-tests\src\test\java\in\gov\ncl\itsm\user\api\UserControllerTest.java
+D:\GIANDEEP MAIN\NCL_ITSM_SOFTWARE_WEBSITE\ncl-itsm-tests\src\test\java\in\gov\ncl\itsm\ticket\decision\SlaDecisionTableTest.java
+D:\GIANDEEP MAIN\NCL_ITSM_SOFTWARE_WEBSITE\ncl-itsm-tests\src\test\java\in\gov\ncl\itsm\performance\PerformanceLoadTest.java
+D:\GIANDEEP MAIN\NCL_ITSM_SOFTWARE_WEBSITE\ncl-itsm-tests\src\test\java\in\gov\ncl\itsm\defect\DefectRcaProcessTest.java
+D:\GIANDEEP MAIN\NCL_ITSM_SOFTWARE_WEBSITE\ncl-itsm-tests\src\test\java\in\gov\ncl\itsm\metrics\SoftwareMetricsTest.java
+D:\GIANDEEP MAIN\NCL_ITSM_SOFTWARE_WEBSITE\ncl-itsm-tests\src\test\java\in\gov\ncl\itsm\ticket\bva\TicketCreateRequestBvaTest.java

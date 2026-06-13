@@ -1,0 +1,10 @@
+in\gov\ncl\itsm\user\domain\Role$RoleBuilder.class
+in\gov\ncl\itsm\user\application\UserService.class
+in\gov\ncl\itsm\user\domain\Permission$PermissionBuilder.class
+in\gov\ncl\itsm\user\domain\User.class
+in\gov\ncl\itsm\user\api\UserController.class
+in\gov\ncl\itsm\user\application\UserServiceImpl.class
+in\gov\ncl\itsm\user\domain\User$UserBuilder.class
+in\gov\ncl\itsm\user\domain\Permission.class
+in\gov\ncl\itsm\user\domain\Role.class
+in\gov\ncl\itsm\user\infrastructure\UserRepository.class

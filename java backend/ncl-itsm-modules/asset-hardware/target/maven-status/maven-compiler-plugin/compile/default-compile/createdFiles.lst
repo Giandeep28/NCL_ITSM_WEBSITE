@@ -1,0 +1,7 @@
+in\gov\ncl\itsm\asset\hardware\domain\ConsumableStock$ConsumableStockBuilder.class
+in\gov\ncl\itsm\asset\hardware\api\HardwareAssetController.class
+in\gov\ncl\itsm\asset\hardware\infrastructure\HardwareAssetRepository.class
+in\gov\ncl\itsm\asset\hardware\infrastructure\ConsumableStockRepository.class
+in\gov\ncl\itsm\asset\hardware\domain\HardwareAsset.class
+in\gov\ncl\itsm\asset\hardware\domain\ConsumableStock.class
+in\gov\ncl\itsm\asset\hardware\domain\HardwareAsset$HardwareAssetBuilder.class
