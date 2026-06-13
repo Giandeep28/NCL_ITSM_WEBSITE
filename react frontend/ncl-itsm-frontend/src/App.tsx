@@ -5,6 +5,8 @@ import { Dashboard } from './features/tickets/pages/Dashboard';
 import { NewRequest } from './features/tickets/pages/NewRequest';
 import { RequestDetail } from './features/tickets/pages/RequestDetail';
 import { Login } from './features/auth/Login';
+import { Register } from './features/auth/Register';
+import { ForgotPassword } from './features/auth/ForgotPassword';
 import { ProtectedRoute } from './features/auth/ProtectedRoute';
 import { AssetRegistry } from './features/hardware-assets/pages/AssetRegistry';
 import { RequestsQueue } from './features/tickets/pages/RequestsQueue';
@@ -39,6 +41,8 @@ function App() {
       <Routes>
         {/* Public Routes */}
         <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
 
         {/* Protected App Routes */}
         <Route

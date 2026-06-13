@@ -5,6 +5,12 @@ import java.util.Optional;
 
 public interface UserService {
     Optional<User> findByEisNumber(String eisNumber);
+    Optional<User> findByUsername(String username);
+    Optional<User> findByUsernameOrEisNumber(String username, String eisNumber);
+    Optional<User> findByEmail(String email);
+    boolean existsByUsername(String username);
+    boolean existsByEmail(String email);
+    boolean existsByEisNumber(String eisNumber);
     User saveUser(User user);
     void handleFailedLogin(String eisNumber);
     void resetFailedLogin(String eisNumber);

@@ -34,6 +34,9 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers(
                     "/api/v1/auth/login",
+                    "/api/v1/auth/register",
+                    "/api/v1/auth/forgot-password",
+                    "/api/v1/auth/reset-password",
                     "/api/v1/auth/otp/verify",
                     "/api/v1/auth/refresh",
                     "/api/docs/**",
@@ -46,6 +49,11 @@ public class SecurityConfig {
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
+    }
+
+    @Bean
+    public org.springframework.security.crypto.password.PasswordEncoder passwordEncoder() {
+        return new org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder();
     }
 
     @Bean

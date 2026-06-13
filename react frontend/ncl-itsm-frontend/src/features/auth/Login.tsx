@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useAuthStore, type AuthUser } from '../../store/authStore';
 import { apiClient } from '../../services/apiClient';
 
@@ -7,7 +7,7 @@ export const Login: React.FC = () => {
   const navigate = useNavigate();
   const { setAuth, isAuthenticated } = useAuthStore();
 
-  const [eisNumber, setEisNumber] = useState('');
+  const [usernameOrEis, setUsernameOrEis] = useState('');
   const [password, setPassword] = useState('');
   const [otpMode, setOtpMode] = useState(false);
   const [otpCode, setOtpCode] = useState('');
@@ -49,8 +49,13 @@ export const Login: React.FC = () => {
       return;
     }
 
-    if (!/^\d{8}$/.test(eisNumber)) {
-      setErrorMsg('EIS Number must be exactly 8 digits.');
+    if (!usernameOrEis) {
+      setErrorMsg('Username or Employee ID is required.');
+      return;
+    }
+
+    if (/^\d+$/.test(usernameOrEis) && usernameOrEis.length !== 8) {
+      setErrorMsg('Employee ID must be exactly 8 digits.');
       return;
     }
 
@@ -62,8 +67,8 @@ export const Login: React.FC = () => {
     setIsLoading(true);
     try {
       // 1. Try backend authentication first
-      const response = await apiClient.post('/auth/login', { eisNumber, password });
-      const { accessToken, refreshToken, role, fullName, departmentId } = response.data;
+      const response = await apiClient.post('/auth/login', { usernameOrEmployeeId: usernameOrEis, password });
+      const { accessToken, refreshToken, role, fullName, eisNumber, departmentId } = response.data;
       
       const user: AuthUser = { eisNumber, fullName, role, departmentId };
       
@@ -80,24 +85,27 @@ export const Login: React.FC = () => {
       // 2. Fallback Mock Bypass (For offline presentation/sandbox)
       if (err.code === 'ERR_NETWORK' || err.response?.status === 404) {
         // Mock success for evaluation convenience
-          if (password === 'password') {
+        if (password === 'password') {
           // Resolve mock identity from known sandbox accounts
           let mockFullName = 'J. Henderson';
           let mockRole: AuthUser['role'] = 'Employee';
           let mockDept = 'Power Generation';
+          let finalEis = /^\d{8}$/.test(usernameOrEis) ? usernameOrEis : '12345678';
 
-          if (eisNumber === '88291000') {
+          if (usernameOrEis === '88291000' || usernameOrEis === 'marcus') {
             mockFullName = 'Marcus Thorne';
             mockRole = 'Support Engineer';
             mockDept = 'Power Systems';
-          } else if (eisNumber === '90000001') {
+            finalEis = '88291000';
+          } else if (usernameOrEis === '90000001' || usernameOrEis === 'admin') {
             mockFullName = 'Admin User';
             mockRole = 'IT Administrator';
             mockDept = 'IT Administration';
+            finalEis = '90000001';
           }
 
           const mockUser: AuthUser = {
-            eisNumber,
+            eisNumber: finalEis,
             fullName: mockFullName,
             role: mockRole,
             departmentId: mockDept,
@@ -179,13 +187,12 @@ export const Login: React.FC = () => {
           /* ========================================================================= */
           <form onSubmit={handleLoginSubmit} className="space-y-4">
             <div className="space-y-1">
-              <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">EIS Number (8 Digits)</label>
+              <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Username or Employee ID</label>
               <input
                 type="text"
-                placeholder="e.g. 12345678"
-                value={eisNumber}
-                onChange={e => setEisNumber(e.target.value.replace(/\D/g, ''))}
-                maxLength={8}
+                placeholder="Enter Username or EIS Number"
+                value={usernameOrEis}
+                onChange={e => setUsernameOrEis(e.target.value)}
                 disabled={isLoading || lockoutTime > 0}
                 className="w-full px-4 py-3 bg-[#0F172A] border border-slate-700/80 text-white rounded-lg text-xs font-semibold focus:outline-none focus:border-indigo-500 transition-colors placeholder:text-slate-600"
               />
@@ -201,6 +208,15 @@ export const Login: React.FC = () => {
                 disabled={isLoading || lockoutTime > 0}
                 className="w-full px-4 py-3 bg-[#0F172A] border border-slate-700/80 text-white rounded-lg text-xs font-semibold focus:outline-none focus:border-indigo-500 transition-colors placeholder:text-slate-600"
               />
+            </div>
+
+            <div className="flex items-center justify-between text-[11px] font-bold py-1">
+              <Link to="/forgot-password" className="text-indigo-400 hover:text-indigo-300">
+                Forgot Password?
+              </Link>
+              <Link to="/register" className="text-indigo-400 hover:text-indigo-300">
+                Register Account
+              </Link>
             </div>
 
             {lockoutTime > 0 && (

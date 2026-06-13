@@ -28,6 +28,15 @@ public class User {
     @Column(unique = true, nullable = false, length = 150)
     private String email;
 
+    @Column(name = "username", unique = true, length = 100)
+    private String username;
+
+    @Column(name = "password", length = 256)
+    private String password;
+
+    @Column(name = "mobile", length = 20)
+    private String mobile;
+
     @Column(name = "mobile_enc", length = 256)
     private String mobileEnc;
 
@@ -64,7 +73,7 @@ public class User {
     @Builder.Default
     private LocalDateTime createdAt = LocalDateTime.now();
 
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(
         name = "user_roles",
         joinColumns = @JoinColumn(name = "user_id"),

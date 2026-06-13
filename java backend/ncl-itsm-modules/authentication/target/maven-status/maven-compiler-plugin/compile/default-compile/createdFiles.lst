@@ -1,7 +1,10 @@
 in\gov\ncl\itsm\auth\api\dto\AuthResponse.class
+in\gov\ncl\itsm\auth\api\dto\ForgotPasswordRequest.class
 in\gov\ncl\itsm\auth\infrastructure\JwtTokenProvider.class
 in\gov\ncl\itsm\auth\api\dto\AuthResponse$AuthResponseBuilder.class
 in\gov\ncl\itsm\auth\infrastructure\SecurityConfig.class
 in\gov\ncl\itsm\auth\api\AuthController.class
 in\gov\ncl\itsm\auth\api\dto\LoginRequest.class
+in\gov\ncl\itsm\auth\api\dto\RegisterRequest.class
+in\gov\ncl\itsm\auth\api\dto\ResetPasswordRequest.class
 in\gov\ncl\itsm\auth\infrastructure\JwtAuthenticationFilter.class

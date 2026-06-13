@@ -11,9 +11,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class LoginRequest {
 
-    @NotBlank(message = "EIS Number is required")
-    @Size(min = 8, max = 8, message = "EIS Number must be exactly 8 digits")
-    private String eisNumber;
+    @NotBlank(message = "Username or Employee ID is required")
+    private String usernameOrEmployeeId;
 
     @NotBlank(message = "Password is required")
     private String password;

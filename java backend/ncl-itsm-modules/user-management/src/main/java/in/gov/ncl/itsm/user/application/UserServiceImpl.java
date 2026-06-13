@@ -16,20 +16,76 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private static final int MAX_FAILED_ATTEMPTS = 5;
-    private static final int LOCK_DURATION_MINUTES = 15;
 
-    @Override
-    @Transactional(readOnly = true)
-    public Optional<User> findByEisNumber(String eisNumber) {
-        return userRepository.findByEisNumber(eisNumber);
+    private void checkAndAutoUnlock(User user) {
+        if (user.getLockedAt() != null) {
+            if (LocalDateTime.now().isAfter(user.getLockedAt().plusHours(24))) {
+                user.setFailedLoginCount(0);
+                user.setLockedAt(null);
+                user.setIsActive(true);
+                userRepository.save(user);
+            }
+        }
     }
 
     @Override
+    @Transactional
+    public Optional<User> findByEisNumber(String eisNumber) {
+        Optional<User> userOpt = userRepository.findByEisNumber(eisNumber);
+        userOpt.ifPresent(this::checkAndAutoUnlock);
+        return userOpt;
+    }
+
+    @Override
+    @Transactional
+    public Optional<User> findByUsername(String username) {
+        Optional<User> userOpt = userRepository.findByUsername(username);
+        userOpt.ifPresent(this::checkAndAutoUnlock);
+        return userOpt;
+    }
+
+    @Override
+    @Transactional
+    public Optional<User> findByUsernameOrEisNumber(String username, String eisNumber) {
+        Optional<User> userOpt = userRepository.findByUsernameOrEisNumber(username, eisNumber);
+        userOpt.ifPresent(this::checkAndAutoUnlock);
+        return userOpt;
+    }
+
+    @Override
+    @Transactional
+    public Optional<User> findByEmail(String email) {
+        Optional<User> userOpt = userRepository.findByEmail(email);
+        userOpt.ifPresent(this::checkAndAutoUnlock);
+        return userOpt;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public boolean existsByUsername(String username) {
+        return userRepository.findByUsername(username).isPresent();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public boolean existsByEmail(String email) {
+        return userRepository.findByEmail(email).isPresent();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public boolean existsByEisNumber(String eisNumber) {
+        return userRepository.findByEisNumber(eisNumber).isPresent();
+    }
+
+    @Override
+    @Transactional
     public User saveUser(User user) {
         return userRepository.save(user);
     }
 
     @Override
+    @Transactional
     public void handleFailedLogin(String eisNumber) {
         userRepository.findByEisNumber(eisNumber).ifPresent(user -> {
             int newCount = user.getFailedLoginCount() + 1;
@@ -43,6 +99,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public void resetFailedLogin(String eisNumber) {
         userRepository.findByEisNumber(eisNumber).ifPresent(user -> {
             user.setFailedLoginCount(0);
@@ -53,6 +110,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public void lockUser(String eisNumber) {
         userRepository.findByEisNumber(eisNumber).ifPresent(user -> {
             user.setLockedAt(LocalDateTime.now());
@@ -62,6 +120,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public void unlockUser(String eisNumber) {
         userRepository.findByEisNumber(eisNumber).ifPresent(user -> {
             user.setFailedLoginCount(0);

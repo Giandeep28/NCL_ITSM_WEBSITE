@@ -1,0 +1,6 @@
+-------------------------------------------------------------------------------
+Test set: in.gov.ncl.itsm.e2e.SeleniumE2eTest
+-------------------------------------------------------------------------------
+Tests run: 2, Failures: 0, Errors: 0, Skipped: 2, Time elapsed: 0.001 s -- in in.gov.ncl.itsm.e2e.SeleniumE2eTest
+in.gov.ncl.itsm.e2e.SeleniumE2eTest skipped
+in.gov.ncl.itsm.e2e.SeleniumE2eTest skipped
