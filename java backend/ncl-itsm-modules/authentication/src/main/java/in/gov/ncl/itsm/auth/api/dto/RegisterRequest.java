@@ -24,8 +24,7 @@ public class RegisterRequest {
     private String username;
 
     @NotBlank(message = "Employee ID is required")
-    @Size(min = 8, max = 8, message = "Employee ID (EIS Number) must be exactly 8 digits")
-    @Pattern(regexp = "^\\d{8}$", message = "Employee ID must be numeric")
+    @Pattern(regexp = "^[A-Za-z0-9]{4,20}$", message = "Employee ID must be 4–20 alphanumeric characters")
     private String eisNumber;
 
     @NotBlank(message = "Password is required")

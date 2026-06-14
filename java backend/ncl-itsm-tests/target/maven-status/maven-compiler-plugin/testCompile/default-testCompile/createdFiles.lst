@@ -1,3 +1,4 @@
+in\gov\ncl\itsm\auth\api\AuthControllerIntegrationTest.class
 in\gov\ncl\itsm\ticket\decision\SlaDecisionTableTest.class
 in\gov\ncl\itsm\ticket\bva\TicketCreateRequestBvaTest.class
 in\gov\ncl\itsm\asset\hardware\unit\HardwareAssetUnitTest.class

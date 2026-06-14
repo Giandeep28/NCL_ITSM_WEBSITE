@@ -176,7 +176,7 @@ class SoftwareLicenseUnitTest {
         SoftwareLicense license = buildLicense(100, 0);
         license.setExpiryDate(LocalDate.now().plusDays(daysFromNow));
 
-        long daysRemaining = LocalDate.now().until(license.getExpiryDate()).getDays();
+        long daysRemaining = java.time.temporal.ChronoUnit.DAYS.between(LocalDate.now(), license.getExpiryDate());
         assertThat(daysRemaining).isEqualTo(daysFromNow);
         assertThat(daysRemaining >= 0).isTrue();
     }

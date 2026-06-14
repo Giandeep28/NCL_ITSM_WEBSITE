@@ -12,6 +12,7 @@ public interface UserService {
     boolean existsByEmail(String email);
     boolean existsByEisNumber(String eisNumber);
     User saveUser(User user);
+    User saveUserWithRole(User user, String roleName, String tenantId);
     void handleFailedLogin(String eisNumber);
     void resetFailedLogin(String eisNumber);
     void lockUser(String eisNumber);

@@ -1,6 +1,8 @@
 package in.gov.ncl.itsm.user.application;
 
+import in.gov.ncl.itsm.user.domain.Role;
 import in.gov.ncl.itsm.user.domain.User;
+import in.gov.ncl.itsm.user.infrastructure.RoleRepository;
 import in.gov.ncl.itsm.user.infrastructure.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -15,6 +17,7 @@ import java.util.Optional;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
     private static final int MAX_FAILED_ATTEMPTS = 5;
 
     private void checkAndAutoUnlock(User user) {
@@ -82,6 +85,27 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public User saveUser(User user) {
         return userRepository.save(user);
+    }
+
+    @Override
+    @Transactional
+    public User saveUserWithRole(User user, String roleName, String tenantId) {
+        // First save the user without roles to get a managed entity with an ID
+        user.setRoles(null);
+        User savedUser = userRepository.save(user);
+
+        // Find or create the role within the same transaction context (role will be managed)
+        Role role = roleRepository.findByNameAndTenantId(roleName, tenantId)
+                .orElseGet(() -> roleRepository.save(
+                        Role.builder()
+                                .name(roleName)
+                                .tenantId(tenantId)
+                                .scope("GLOBAL")
+                                .build()));
+
+        // Assign the managed role to the managed user and save again
+        savedUser.setRoles(new java.util.HashSet<>(java.util.Collections.singletonList(role)));
+        return userRepository.save(savedUser);
     }
 
     @Override

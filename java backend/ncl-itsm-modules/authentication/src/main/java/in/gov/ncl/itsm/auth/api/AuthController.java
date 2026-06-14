@@ -7,7 +7,6 @@ import in.gov.ncl.itsm.user.domain.Role;
 import in.gov.ncl.itsm.user.domain.User;
 import in.gov.ncl.itsm.user.domain.PasswordResetToken;
 import in.gov.ncl.itsm.user.infrastructure.PasswordResetTokenRepository;
-import in.gov.ncl.itsm.user.infrastructure.RoleRepository;
 import in.gov.ncl.itsm.audit.application.AuditLogService;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -33,7 +32,6 @@ public class AuthController {
     private final UserService userService;
     private final JwtTokenProvider jwtTokenProvider;
     private final PasswordEncoder passwordEncoder;
-    private final RoleRepository roleRepository;
     private final PasswordResetTokenRepository passwordResetTokenRepository;
     private final AuditLogService auditLogService;
 
@@ -53,12 +51,6 @@ public class AuthController {
         }
 
         String hashedPassword = passwordEncoder.encode(request.getPassword());
-        Role defaultRole = roleRepository.findByNameAndTenantId("Employee", "NCL_HQ")
-                .orElseGet(() -> roleRepository.save(Role.builder()
-                        .name("Employee")
-                        .tenantId("NCL_HQ")
-                        .scope("GLOBAL")
-                        .build()));
 
         User newUser = User.builder()
                 .eisNumber(request.getEisNumber())
@@ -72,13 +64,12 @@ public class AuthController {
                 .tenantId("NCL_HQ")
                 .orgId("HQ_OPS")
                 .locationId("Main Building")
-                .roles(new java.util.HashSet<>(java.util.Collections.singletonList(defaultRole)))
                 .build();
 
-        User savedUser = userService.saveUser(newUser);
+        User savedUser = userService.saveUserWithRole(newUser, "Employee", "NCL_HQ");
 
         // Audit log registration event
-        auditLogService.logEvent(savedUser.getId(), "USER_REGISTERED", "User", savedUser.getId(), 
+        auditLogService.logEvent(savedUser.getId(), "USER_REGISTERED", "User", savedUser.getId(),
                 null, null, httpRequest.getRemoteAddr(), savedUser.getTenantId());
 
         return ResponseEntity.ok(Map.of("message", "Registration successful. You can now log in."));
@@ -313,5 +304,15 @@ public class AuthController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid or expired refresh token");
         }
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User context not found");
+    }
+
+    @ExceptionHandler(BadCredentialsException.class)
+    public ResponseEntity<?> handleBadCredentials(BadCredentialsException ex) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("message", ex.getMessage()));
+    }
+
+    @ExceptionHandler(LockedException.class)
+    public ResponseEntity<?> handleLocked(LockedException ex) {
+        return ResponseEntity.status(HttpStatus.LOCKED).body(Map.of("message", ex.getMessage()));
     }
 }
