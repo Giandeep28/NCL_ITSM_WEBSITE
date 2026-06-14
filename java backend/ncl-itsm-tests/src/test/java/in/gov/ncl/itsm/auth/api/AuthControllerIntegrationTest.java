@@ -1,6 +1,6 @@
 package in.gov.ncl.itsm.auth.api;
 
-import in.gov.ncl.itsm.NCLItsmApplication;
+import in.gov.ncl.itsm.TestApplication;
 import in.gov.ncl.itsm.auth.api.dto.LoginRequest;
 import in.gov.ncl.itsm.auth.api.dto.RegisterRequest;
 import in.gov.ncl.itsm.auth.api.dto.ForgotPasswordRequest;
@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@SpringBootTest(classes = NCLItsmApplication.class)
+@SpringBootTest(classes = TestApplication.class)
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
 @Transactional

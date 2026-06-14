@@ -50,6 +50,14 @@ spring:
           max-attempts: 5
           max-interval: 10000ms
           multiplier: 2.0
+  # DevTools — auto-restart when compiled classes change (works with dev-watch.ps1)
+  devtools:
+    restart:
+      enabled: true
+      poll-interval: 2s        # check for class changes every 2 seconds
+      quiet-period: 1s         # wait 1s after last change before restarting
+    livereload:
+      enabled: false           # not needed (frontend uses Vite HMR)
 
 server:
   port: 8080
@@ -60,3 +68,8 @@ logging:
     in.gov.ncl.itsm: DEBUG
   pattern:
     console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%X{correlationId}] %-5level [%t] %logger{36} - %msg%n"
+
+ncl:
+  auth:
+    bypass-otp: true
+

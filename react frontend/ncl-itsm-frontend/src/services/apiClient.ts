@@ -28,7 +28,7 @@ apiClient.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
 
-    if (error.response?.status === 401 && !originalRequest._retry) {
+    if (error.response?.status === 401 && !originalRequest._retry && !originalRequest.url?.includes('/auth/login')) {
       originalRequest._retry = true;
       const refreshToken = useAuthStore.getState().refreshToken;
 
@@ -59,6 +59,7 @@ apiClient.interceptors.response.use(
       } else {
         useAuthStore.getState().logout();
         window.location.href = '/login';
+        return Promise.reject(error);
       }
     }
     return Promise.reject(error);

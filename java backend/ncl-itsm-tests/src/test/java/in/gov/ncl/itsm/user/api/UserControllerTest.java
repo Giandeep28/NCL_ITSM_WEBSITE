@@ -1,6 +1,6 @@
 package in.gov.ncl.itsm.user.api;
 
-import in.gov.ncl.itsm.NCLItsmApplication;
+import in.gov.ncl.itsm.TestApplication;
 import in.gov.ncl.itsm.user.application.UserService;
 import in.gov.ncl.itsm.user.domain.Role;
 import in.gov.ncl.itsm.user.domain.User;
@@ -44,7 +44,7 @@ import static org.hamcrest.Matchers.*;
  *   - Security testing (role-based access control verification)
  *   - Regression testing (critical user management paths that must stay green)
  */
-@SpringBootTest(classes = NCLItsmApplication.class)
+@SpringBootTest(classes = TestApplication.class)
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
 @DisplayName("Integration Tests (Black-Box) — UserController API")

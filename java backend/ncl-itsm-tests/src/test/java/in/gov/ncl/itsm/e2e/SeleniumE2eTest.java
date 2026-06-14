@@ -58,48 +58,85 @@ class SeleniumE2eTest {
         }
     }
 
-    @Test
-    @DisplayName("[E2E] Support Engineer Login Journey")
-    void testEngineerLoginJourney() {
+    private void performLogin(String username, String password) {
         // 1. Navigate to the login page
         driver.get("http://localhost:5173/login");
 
-        // 2. Wait for login form to load
-        WebElement usernameInput = wait.until(ExpectedConditions.visibilityOfElementLocated(By.name("eisNumber")));
-        WebElement passwordInput = driver.findElement(By.name("password"));
-        WebElement loginButton = driver.findElement(By.xpath("//button[contains(text(), 'Login')]"));
+        // 2. Wait for login form to load and input credentials
+        WebElement usernameInput = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("eisNumber")));
+        WebElement passwordInput = driver.findElement(By.id("password"));
+        WebElement loginButton = driver.findElement(By.id("loginSubmitBtn"));
 
-        // 3. Fill in credentials
-        usernameInput.sendKeys("88291000"); // Engineer EIS
-        passwordInput.sendKeys("password"); // Mock password
+        usernameInput.clear();
+        usernameInput.sendKeys(username);
+        passwordInput.clear();
+        passwordInput.sendKeys(password);
+
+        System.out.println("INPUT EIS: " + usernameInput.getAttribute("value"));
+        System.out.println("INPUT PASS: " + passwordInput.getAttribute("value"));
+
         loginButton.click();
+
+        // 3. Wait for OTP screen to load and submit OTP
+        try {
+            WebElement otpInput = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("otpCode")));
+            WebElement otpSubmitBtn = driver.findElement(By.id("otpSubmitBtn"));
+
+            otpInput.sendKeys("123456");
+            otpSubmitBtn.click();
+        } catch (Exception e) {
+            System.out.println("====== E2E DIAGNOSTIC ERROR ======");
+            System.out.println("CURRENT URL: " + driver.getCurrentUrl());
+            try {
+                org.openqa.selenium.logging.LogEntries logEntries = driver.manage().logs().get(org.openqa.selenium.logging.LogType.BROWSER);
+                System.out.println("--- BROWSER CONSOLE LOGS ---");
+                for (org.openqa.selenium.logging.LogEntry entry : logEntries) {
+                    System.out.println(entry.getLevel() + ": " + entry.getMessage());
+                }
+            } catch (Exception le) {
+                System.out.println("Could not retrieve browser logs: " + le.getMessage());
+            }
+            System.out.println("PAGE SOURCE:\n" + driver.getPageSource());
+            System.out.println("==================================");
+            throw e;
+        }
 
         // 4. Verify successful redirect to Dashboard
         wait.until(ExpectedConditions.urlContains("/dashboard"));
         assertThat(driver.getCurrentUrl()).contains("/dashboard");
+    }
 
-        // 5. Verify the Sidebar contains 'Engineer Workspace'
-        WebElement engineerMenu = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//span[contains(text(), 'Engineer Workspace')]")));
+    @Test
+    @DisplayName("[E2E] Support Engineer Login Journey")
+    void testEngineerLoginJourney() {
+        performLogin("88291000", "password"); // Engineer EIS
+
+        // Verify the Sidebar contains 'Engineer Workspace' button
+        WebElement engineerMenu = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//button[contains(., 'Engineer Workspace')]")));
         assertThat(engineerMenu.isDisplayed()).isTrue();
     }
 
     @Test
     @DisplayName("[E2E] Knowledge Base Article Search")
     void testKnowledgeBaseSearch() {
-        // 1. Setup session (assume logged in)
-        driver.get("http://localhost:5173/knowledge-base");
+        // 1. Setup session by logging in
+        performLogin("88291000", "password");
 
-        // 2. Wait for KB page to load
+        // 2. Navigate to knowledge-base using sidebar button to preserve in-memory auth state
+        WebElement kbMenu = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//button[contains(., 'Knowledge Base')]")));
+        kbMenu.click();
+
+        // 3. Wait for KB page to load
         WebElement searchBox = wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("input[placeholder*='Search']")));
 
-        // 3. Search for a specific term
+        // 4. Search for a specific term
         searchBox.sendKeys("Turbine");
 
-        // 4. Verify article shows up
+        // 5. Verify article shows up
         WebElement articleTitle = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//h3[contains(text(), 'Turbine Vibration Calibration')]")));
         assertThat(articleTitle.isDisplayed()).isTrue();
         
-        // 5. Click the article and verify reader pane updates
+        // 6. Click the article and verify reader pane updates
         articleTitle.click();
         WebElement readerHeader = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//h2[contains(text(), 'Turbine Vibration Calibration Protocol')]")));
         assertThat(readerHeader.isDisplayed()).isTrue();

@@ -18,6 +18,7 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.LockedException;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
@@ -34,6 +35,9 @@ public class AuthController {
     private final PasswordEncoder passwordEncoder;
     private final PasswordResetTokenRepository passwordResetTokenRepository;
     private final AuditLogService auditLogService;
+
+    @Value("${ncl.auth.bypass-otp:false}")
+    private boolean bypassOtp;
 
     @PostMapping("/register")
     public ResponseEntity<?> register(@Valid @RequestBody RegisterRequest request, HttpServletRequest httpRequest) {
@@ -220,25 +224,47 @@ public class AuthController {
     public ResponseEntity<?> resetPassword(@Valid @RequestBody ResetPasswordRequest request, HttpServletRequest httpRequest) {
         String otp = request.getOtp();
         String identity = request.getIdentity();
+        User user;
+        PasswordResetToken tokenToDelete = null;
 
-        Optional<PasswordResetToken> tokenOpt = passwordResetTokenRepository.findByToken(otp);
-        if (tokenOpt.isEmpty()) {
-            return ResponseEntity.badRequest().body(Map.of("message", "Invalid or incorrect OTP."));
-        }
+        if (bypassOtp) {
+            // Find user directly by identity without requiring token validation
+            Optional<User> userOpt = userService.findByEisNumber(identity);
+            if (userOpt.isEmpty()) {
+                userOpt = userService.findByUsername(identity);
+            }
+            if (userOpt.isEmpty()) {
+                userOpt = userService.findByEmail(identity);
+            }
+            if (userOpt.isEmpty()) {
+                return ResponseEntity.badRequest().body(Map.of("message", "User with provided Email, Username or Employee ID does not exist."));
+            }
+            user = userOpt.get();
+            
+            // Clean up any token associated with this user if it exists
+            passwordResetTokenRepository.findByUser(user).ifPresent(passwordResetTokenRepository::delete);
+        } else {
+            Optional<PasswordResetToken> tokenOpt = passwordResetTokenRepository.findByToken(otp);
+            if (tokenOpt.isEmpty()) {
+                return ResponseEntity.badRequest().body(Map.of("message", "Invalid or incorrect OTP."));
+            }
 
-        PasswordResetToken token = tokenOpt.get();
-        if (token.getExpiryDate().isBefore(LocalDateTime.now())) {
-            passwordResetTokenRepository.delete(token);
-            return ResponseEntity.badRequest().body(Map.of("message", "OTP has expired. Please request a new one."));
-        }
+            PasswordResetToken token = tokenOpt.get();
+            if (token.getExpiryDate().isBefore(LocalDateTime.now())) {
+                passwordResetTokenRepository.delete(token);
+                return ResponseEntity.badRequest().body(Map.of("message", "OTP has expired. Please request a new one."));
+            }
 
-        User user = token.getUser();
+            user = token.getUser();
 
-        // Verify identity matches the token owner
-        if (!user.getEmail().equalsIgnoreCase(identity) &&
-            !user.getEisNumber().equals(identity) &&
-            !user.getUsername().equalsIgnoreCase(identity)) {
-            return ResponseEntity.badRequest().body(Map.of("message", "Verification failed. Identity mismatch."));
+            // Verify identity matches the token owner
+            if (!user.getEmail().equalsIgnoreCase(identity) &&
+                !user.getEisNumber().equals(identity) &&
+                !user.getUsername().equalsIgnoreCase(identity)) {
+                return ResponseEntity.badRequest().body(Map.of("message", "Verification failed. Identity mismatch."));
+            }
+            
+            tokenToDelete = token;
         }
 
         if (!request.getNewPassword().equals(request.getConfirmPassword())) {
@@ -254,7 +280,9 @@ public class AuthController {
         user.setIsActive(true);
 
         userService.saveUser(user);
-        passwordResetTokenRepository.delete(token);
+        if (tokenToDelete != null) {
+            passwordResetTokenRepository.delete(tokenToDelete);
+        }
 
         // Audit log password reset completion
         auditLogService.logEvent(user.getId(), "PASSWORD_RESET_COMPLETED", "User", user.getId(), 

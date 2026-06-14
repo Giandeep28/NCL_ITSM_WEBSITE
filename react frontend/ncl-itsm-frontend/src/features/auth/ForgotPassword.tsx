@@ -2,10 +2,14 @@ import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { apiClient } from '../../services/apiClient';
 
+// Set to true to temporarily disable/bypass OTP verification in the Forgot Password workflow.
+// Can be toggled back to false to easily re-enable standard OTP verification in the future.
+const BYPASS_OTP = true;
+
 export const ForgotPassword: React.FC = () => {
   const navigate = useNavigate();
   const [identity, setIdentity] = useState('');
-  const [otp, setOtp] = useState('');
+  const [otp, setOtp] = useState(BYPASS_OTP ? '123456' : '');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
 
@@ -38,7 +42,12 @@ export const ForgotPassword: React.FC = () => {
       setIsLoading(false);
     } catch (err: any) {
       setIsLoading(false);
-      const msg = err.response?.data?.message || 'Failed to send OTP. User not found or system error.';
+      const status = err.response?.status;
+      const data = err.response?.data;
+      const msg =
+        data?.message ||
+        data?.error ||
+        (status ? `Server error (${status}). Please try again or contact support.` : 'Network error. Please check your connection and try again.');
       setErrorMsg(msg);
     }
   };
@@ -80,7 +89,12 @@ export const ForgotPassword: React.FC = () => {
       }, 2000);
     } catch (err: any) {
       setIsLoading(false);
-      const msg = err.response?.data?.message || 'Failed to reset password. Please check your OTP and try again.';
+      const status = err.response?.status;
+      const data = err.response?.data;
+      const msg =
+        data?.message ||
+        data?.error ||
+        (status ? `Server error (${status}). Please try again or contact support.` : 'Network error. Please check your connection and try again.');
       setErrorMsg(msg);
     }
   };
@@ -150,24 +164,26 @@ export const ForgotPassword: React.FC = () => {
           /* STEP 2: ENTER OTP & NEW PASSWORD                                         */
           /* ========================================================================= */
           <form onSubmit={handleResetPassword} className="space-y-4">
-            {simulationOtp && (
+            {!BYPASS_OTP && simulationOtp && (
               <div className="bg-indigo-600/10 border border-indigo-500/20 text-indigo-400 px-4 py-3 rounded-lg text-xs font-bold text-center leading-relaxed">
                 🔑 Simulation Mode OTP: <span className="text-white font-mono bg-indigo-900/50 px-2 py-0.5 rounded text-sm">{simulationOtp}</span>
               </div>
             )}
 
-            <div className="space-y-1">
-              <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Verification OTP (6 Digits)</label>
-              <input
-                type="text"
-                placeholder="Enter OTP code"
-                value={otp}
-                onChange={e => setOtp(e.target.value.replace(/\D/g, ''))}
-                maxLength={6}
-                disabled={isLoading}
-                className="w-full px-4 py-3 bg-[#0F172A] border border-slate-700/80 text-white rounded-lg text-xs font-semibold focus:outline-none focus:border-indigo-500 transition-colors placeholder:text-slate-600 text-center tracking-widest font-mono"
-              />
-            </div>
+            {!BYPASS_OTP && (
+              <div className="space-y-1">
+                <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Verification OTP (6 Digits)</label>
+                <input
+                  type="text"
+                  placeholder="Enter OTP code"
+                  value={otp}
+                  onChange={e => setOtp(e.target.value.replace(/\D/g, ''))}
+                  maxLength={6}
+                  disabled={isLoading}
+                  className="w-full px-4 py-3 bg-[#0F172A] border border-slate-700/80 text-white rounded-lg text-xs font-semibold focus:outline-none focus:border-indigo-500 transition-colors placeholder:text-slate-600 text-center tracking-widest font-mono"
+                />
+              </div>
+            )}
 
             <div className="space-y-1">
               <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">New Password</label>

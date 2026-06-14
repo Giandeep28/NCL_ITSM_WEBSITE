@@ -72,7 +72,12 @@ export const Register: React.FC = () => {
       }, 2000);
     } catch (err: any) {
       setIsLoading(false);
-      const msg = err.response?.data?.message || 'Registration failed. Please check inputs and try again.';
+      const status = err.response?.status;
+      const data = err.response?.data;
+      const msg =
+        data?.message ||
+        data?.error ||
+        (status ? `Server error (${status}). Please try again or contact support.` : 'Network error. Please check your connection and try again.');
       setErrorMsg(msg);
     }
   };
