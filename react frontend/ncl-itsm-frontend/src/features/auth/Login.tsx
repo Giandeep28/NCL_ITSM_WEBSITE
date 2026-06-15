@@ -3,7 +3,6 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useAuthStore, type AuthUser } from '../../store/authStore';
 import { apiClient } from '../../services/apiClient';
 
-// Set to false to ensure User Login requires simulated OTP verification (kept intact)
 const BYPASS_OTP = false;
 
 export const Login: React.FC = () => {

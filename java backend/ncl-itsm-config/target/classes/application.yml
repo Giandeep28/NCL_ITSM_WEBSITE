@@ -71,5 +71,5 @@ logging:
 
 ncl:
   auth:
-    bypass-otp: true
+    bypass-otp: false
 

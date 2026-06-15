@@ -2,9 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { apiClient } from '../../services/apiClient';
 
-// Set to true to temporarily disable/bypass OTP verification in the Forgot Password workflow.
-// Can be toggled back to false to easily re-enable standard OTP verification in the future.
-const BYPASS_OTP = true;
+const BYPASS_OTP = false;
 
 export const ForgotPassword: React.FC = () => {
   const navigate = useNavigate();

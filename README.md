@@ -81,15 +81,18 @@ Once both servers are successfully running, you can access them at:
 
 ## ⚙️ Configuration & OTP Bypass Settings
 
-During the development and testing phase, OTP verification is conditionally bypassed to ease user navigation:
+To simplify development, QA, and testing, you can toggle OTP verification off or on:
 
-* **Forgot Password workflow:** Bypassed in dev mode. Users can recovery passwords using their Employee ID or Registered Email directly.
-* **User Login workflow:** Active by default. Requires entering the simulated OTP code from the prompt (e.g. `123456`).
-* **Test Suites:** OTP checking is strictly enforced for integration test execution to verify system safety.
+* **When OTP Verification is ENABLED (Current Default):**
+  - **User Login:** Requires entering any dummy OTP code (or leaving it blank) and clicking **Verify OTP**.
+  - **Forgot Password:** Shows a simulation OTP banner containing a 6-digit code. Enter that code along with your new password to reset it.
+* **When OTP Verification is DISABLED (Bypass Mode):**
+  - **User Login:** Bypasses the OTP input screen entirely, logging you in instantly.
+  - **Forgot Password:** Hides the OTP input and banner entirely, letting you reset your password using only your new password.
 
-To update or toggle these flags:
-* **Backend:** Edit [application.yml](file:///d:/GIANDEEP%20MAIN/NCL_ITSM_SOFTWARE_WEBSITE/java%20backend/ncl-itsm-config/src/main/resources/application.yml) and change `ncl.auth.bypass-otp` to `false`.
-* **Frontend:** Open [ForgotPassword.tsx](file:///d:/GIANDEEP%20MAIN/NCL_ITSM_SOFTWARE_WEBSITE/react%20frontend/ncl-itsm-frontend/src/features/auth/ForgotPassword.tsx) and set `const BYPASS_OTP = false;`.
+### How to Toggle OTP Verification:
+1. **Backend:** In [application.yml](file:///d:/GIANDEEP%20MAIN/NCL_ITSM_SOFTWARE_WEBSITE/java%20backend/ncl-itsm-config/src/main/resources/application.yml), change `ncl.auth.bypass-otp` to `true` (to bypass) or `false` (to enforce).
+2. **Frontend:** In [Login.tsx](file:///d:/GIANDEEP%20MAIN/NCL_ITSM_SOFTWARE_WEBSITE/react%20frontend/ncl-itsm-frontend/src/features/auth/Login.tsx) and [ForgotPassword.tsx](file:///d:/GIANDEEP%20MAIN/NCL_ITSM_SOFTWARE_WEBSITE/react%20frontend/ncl-itsm-frontend/src/features/auth/ForgotPassword.tsx), set `const BYPASS_OTP` to `true` (to bypass) or `false` (to enforce).
 
 ---
 
@@ -112,9 +115,13 @@ npm run build
 
 ---
 
-## 👥 Sandbox Accounts (For Local Evaluation)
+## 👥 Sandbox Accounts & Database Seeding
 
-Use the following offline credentials to evaluate different role-based views in the system:
-* **IT Administrator:** Employee ID `90000001` (Password: `password`)
-* **Support Engineer:** Employee ID `88291000` (Password: `password`)
-* **Standard Employee:** Employee ID `12345678` (Password: `password`)
+The application runs with an **in-memory H2 database** in development mode. To prevent database wipes on server restart from deleting all default sandbox users, we have implemented an automatic database seeder:
+
+* **Automatic Seeding:** Every time the backend restarts, the default sandbox users below are automatically registered and seeded into the database.
+* **Credentials (Password is `password` for all):**
+  - **IT Administrator:** Employee ID `90000001` (Full Name: *David Sterling*)
+  - **Support Engineer:** Employee ID `88291000` (Full Name: *Marcus Thorne*)
+  - **Standard Employee:** Employee ID `12345678` (Full Name: *J. Henderson*)
+
