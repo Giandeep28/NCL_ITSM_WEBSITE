@@ -181,13 +181,13 @@ export const NewRequest: React.FC = () => {
           <h3 className="text-sm font-extrabold text-gray-800 border-b border-gray-100 pb-2.5 m-0">Request Details</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-1">
-              <label className="text-[11px] font-bold text-gray-500 uppercase tracking-wider">Raised Department *</label>
+              <label className="text-[11px] font-bold text-gray-500 uppercase tracking-wider">Department *</label>
               <select
                 value={essForm.issuedByDepartment}
                 onChange={e => setEssForm(prev => ({ ...prev, issuedByDepartment: e.target.value, issuedDepartment: '' }))}
                 className="w-full px-3.5 py-2 bg-gray-50 border border-gray-200 text-gray-700 rounded-lg text-xs font-semibold focus:outline-none focus:bg-white focus:border-indigo-500 transition-colors"
               >
-                <option value="">Select Raised Department</option>
+                <option value="">Select Department</option>
                 {ISSUED_BY_DEPARTMENTS.length === 0 ? (
                   <option value="" disabled>No data available</option>
                 ) : (
