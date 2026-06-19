@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTicketStore, type Ticket } from '../../../store/ticketStore';
 import { useAuthStore } from '../../../store/authStore';
@@ -18,10 +18,23 @@ import {
 
 export const Dashboard: React.FC = () => {
   const navigate = useNavigate();
-  const { tickets, setSelectedTicketId } = useTicketStore();
+  const { tickets, setSelectedTicketId, fetchTickets } = useTicketStore();
   const { user } = useAuthStore();
 
   const isEngineer = user?.role === 'Support Engineer';
+  const [isApiOnline, setIsApiOnline] = useState(true);
+
+  useEffect(() => {
+    const initData = async () => {
+      try {
+        await fetchTickets();
+        setIsApiOnline(true);
+      } catch {
+        setIsApiOnline(false);
+      }
+    };
+    initData();
+  }, [fetchTickets]);
 
   // Handle clicking on a ticket row
   const handleTicketClick = (ticketId: string) => {
@@ -90,28 +103,110 @@ export const Dashboard: React.FC = () => {
   };
 
   // -------------------------------------------------------------------------
-  // MOCK DATA FOR CHARTS
+  // DYNAMIC COMPUTATIONS FOR CHARTS
   // -------------------------------------------------------------------------
-  const intakeData = [
-    { day: 'Mon', logged: 12, resolved: 8 },
-    { day: 'Tue', logged: 19, resolved: 12 },
-    { day: 'Wed', logged: 15, resolved: 14 },
-    { day: 'Thu', logged: 22, resolved: 18 },
-    { day: 'Fri', logged: 9, resolved: 15 },
-    { day: 'Sat', logged: 4, resolved: 5 },
-    { day: 'Sun', logged: 6, resolved: 6 },
-  ];
+  const dynamicIntakeData = useMemo(() => {
+    const weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+    const days: { day: string; dateStr: string; logged: number; resolved: number; }[] = [];
+    
+    // Build last 7 days array
+    for (let i = 6; i >= 0; i--) {
+      const d = new Date();
+      d.setDate(d.getDate() - i);
+      const dateStr = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+      days.push({
+        day: weekdays[d.getDay()],
+        dateStr,
+        logged: 0,
+        resolved: 0,
+      });
+    }
 
-  const complianceData = [
-    { name: 'SLA Met', value: 94, color: '#10b981' },
-    { name: 'SLA Breached', value: 6, color: '#ef4444' },
-  ];
+    // Populate data dynamically from tickets
+    tickets.forEach(ticket => {
+      const match = days.find(d => d.dateStr === ticket.date);
+      if (match) {
+        match.logged += 1;
+        if (ticket.status === 'Resolved' || ticket.status === 'Closed') {
+          match.resolved += 1;
+        }
+      }
+    });
+
+    return days;
+  }, [tickets]);
+
+  const dynamicComplianceData = useMemo(() => {
+    const totalWithSla = tickets.filter(t => t.slaStatus).length;
+    const metSla = tickets.filter(t => t.slaStatus && t.slaStatus !== 'Breached').length;
+    const breachedSla = tickets.filter(t => t.slaStatus === 'Breached').length;
+
+    if (totalWithSla === 0) {
+      return {
+        data: [{ name: 'No Data', value: 1, color: '#e2e8f0' }],
+        rate: null,
+        metCount: 0,
+        breachedCount: 0
+      };
+    }
+
+    const rate = Math.round((metSla / totalWithSla) * 100);
+    return {
+      data: [
+        { name: 'SLA Met', value: metSla, color: '#10b981' },
+        { name: 'SLA Breached', value: breachedSla, color: '#ef4444' }
+      ],
+      rate,
+      metCount: metSla,
+      breachedCount: breachedSla
+    };
+  }, [tickets]);
+
+  // -------------------------------------------------------------------------
+  // EMPLOYEE DASHBOARD COMPUTATIONS
+  // -------------------------------------------------------------------------
+  const pendingCount = useMemo(() => {
+    return tickets.filter(t => !['Resolved', 'Closed', 'Discussion'].includes(t.status)).length;
+  }, [tickets]);
+
+  const resolvedCount = useMemo(() => {
+    return tickets.filter(t => ['Resolved', 'Closed'].includes(t.status)).length;
+  }, [tickets]);
+
+  const discussionCount = useMemo(() => {
+    return tickets.filter(t => t.status === 'Discussion').length;
+  }, [tickets]);
+
+  const recentPendingCount = useMemo(() => {
+    const todayStr = new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    return tickets.filter(t => !['Resolved', 'Closed'].includes(t.status) && t.date === todayStr).length;
+  }, [tickets]);
+
+  const activeTicketsCount = useMemo(() => {
+    return tickets.filter(t => !['Resolved', 'Closed'].includes(t.status)).length;
+  }, [tickets]);
+
+  const loadPercentage = useMemo(() => {
+    if (!isApiOnline) return 0;
+    return Math.min(100, Math.max(5, activeTicketsCount * 15));
+  }, [activeTicketsCount, isApiOnline]);
+
+  const loadStatus = useMemo(() => {
+    if (!isApiOnline) return 'Offline';
+    if (loadPercentage > 80) return 'High Load';
+    if (loadPercentage > 50) return 'Moderate';
+    return 'Optimal';
+  }, [loadPercentage, isApiOnline]);
+
+  const activeTechniciansCount = useMemo(() => {
+    const uniqueEngineers = new Set(tickets.map(t => t.engineerName).filter(Boolean));
+    return uniqueEngineers.size || (user?.role === 'Support Engineer' ? 1 : 0);
+  }, [tickets, user]);
 
   // -------------------------------------------------------------------------
   // RENDER ENGINEER DASHBOARD
   // -------------------------------------------------------------------------
   if (isEngineer) {
-    // Calculate stats
     const myTickets = tickets.filter(t => t.engineerName === user?.fullName);
     const myActiveCount = myTickets.filter(t => t.status !== 'Resolved' && t.status !== 'Closed').length;
     const criticalCount = tickets.filter(t => t.priority === 'Critical' && t.status !== 'Resolved' && t.status !== 'Closed').length;
@@ -174,14 +269,20 @@ export const Dashboard: React.FC = () => {
 
         {/* Charts Row */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <div className="lg:col-span-2 bg-white border border-gray-200 rounded-xl p-5 shadow-sm">
+          <div className="lg:col-span-2 bg-white border border-gray-200 rounded-xl p-5 shadow-sm relative">
             <h3 className="text-xs font-extrabold text-gray-400 uppercase tracking-wider mb-4">7-Day Intake vs Resolution Trends</h3>
+            {tickets.length === 0 && (
+              <div className="absolute inset-0 flex flex-col items-center justify-center bg-white/70 backdrop-blur-[1px] rounded-xl z-20">
+                <span className="text-gray-400 font-bold text-xs uppercase tracking-wider">No data to display</span>
+                <span className="text-[10px] text-gray-400 font-semibold mt-1">No activity recorded yet</span>
+              </div>
+            )}
             <div className="h-64">
               <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={intakeData} margin={{ top: 5, right: 20, left: 0, bottom: 5 }}>
+                <LineChart data={dynamicIntakeData} margin={{ top: 5, right: 20, left: 0, bottom: 5 }}>
                   <CartesianGrid strokeDasharray="3 3" vertical={false} />
                   <XAxis dataKey="day" stroke="#94a3b8" fontSize={10} fontWeight="bold" />
-                  <YAxis stroke="#94a3b8" fontSize={10} fontWeight="bold" />
+                  <YAxis stroke="#94a3b8" fontSize={10} fontWeight="bold" allowDecimals={false} />
                   <Tooltip contentStyle={{ fontSize: '11px', fontWeight: 'bold', fontFamily: 'monospace' }} />
                   <Legend wrapperStyle={{ fontSize: '11px', fontWeight: 'bold' }} />
                   <Line type="monotone" dataKey="logged" stroke="#0F2D54" strokeWidth={3} name="Logged Tickets" activeDot={{ r: 8 }} />
@@ -191,13 +292,19 @@ export const Dashboard: React.FC = () => {
             </div>
           </div>
 
-          <div className="bg-white border border-gray-200 rounded-xl p-5 shadow-sm flex flex-col justify-between">
+          <div className="bg-white border border-gray-200 rounded-xl p-5 shadow-sm flex flex-col justify-between relative">
             <h3 className="text-xs font-extrabold text-gray-400 uppercase tracking-wider mb-2">SLA Compliance Rate</h3>
+            {tickets.length === 0 && (
+              <div className="absolute inset-0 flex flex-col items-center justify-center bg-white/70 backdrop-blur-[1px] rounded-xl z-20">
+                <span className="text-gray-400 font-bold text-xs uppercase tracking-wider">No data to display</span>
+                <span className="text-[10px] text-gray-400 font-semibold mt-1">No tickets with SLA configuration</span>
+              </div>
+            )}
             <div className="h-48 flex items-center justify-center relative">
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <Pie
-                    data={complianceData}
+                    data={dynamicComplianceData.data}
                     cx="50%"
                     cy="50%"
                     innerRadius={50}
@@ -205,7 +312,7 @@ export const Dashboard: React.FC = () => {
                     paddingAngle={5}
                     dataKey="value"
                   >
-                    {complianceData.map((entry, index) => (
+                    {dynamicComplianceData.data.map((entry: any, index: number) => (
                       <Cell key={`cell-${index}`} fill={entry.color} />
                     ))}
                   </Pie>
@@ -213,8 +320,12 @@ export const Dashboard: React.FC = () => {
                 </PieChart>
               </ResponsiveContainer>
               <div className="absolute flex flex-col items-center">
-                <span className="text-2xl font-black text-gray-800">94.2%</span>
-                <span className="text-[9px] font-bold text-gray-400 uppercase tracking-widest">Met SLA</span>
+                <span className="text-2xl font-black text-gray-800">
+                  {dynamicComplianceData.rate !== null ? `${dynamicComplianceData.rate}%` : 'N/A'}
+                </span>
+                <span className="text-[9px] font-bold text-gray-400 uppercase tracking-widest">
+                  {dynamicComplianceData.rate !== null ? 'Met SLA' : 'No Data'}
+                </span>
               </div>
             </div>
             <div className="flex justify-around text-xs font-bold text-gray-600">
@@ -246,41 +357,52 @@ export const Dashboard: React.FC = () => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100 text-xs font-semibold text-gray-700">
-                {myTickets.map((ticket) => (
-                  <tr
-                    key={ticket.id}
-                    onClick={() => handleTicketClick(ticket.id)}
-                    className="hover:bg-gray-50/70 transition-colors cursor-pointer group"
-                  >
-                    <td className="py-4 px-5 font-bold text-gray-400 group-hover:text-indigo-600 transition-colors">
-                      #{ticket.id}
-                    </td>
-                    <td className="py-4 px-5 text-gray-800 font-bold">
-                      {ticket.reporterName}
-                    </td>
-                    <td className="py-4 px-5">
-                      {ticket.category}
-                    </td>
-                    <td className="py-4 px-5">
-                      <span className={`px-2 py-0.5 rounded text-[9px] font-extrabold uppercase ${
-                        ticket.priority === 'Critical' ? 'bg-red-100 text-red-700 border border-red-200' : 'bg-amber-100 text-amber-700 border border-amber-200'
-                      }`}>
-                        {ticket.priority}
-                      </span>
-                    </td>
-                    <td className="py-4 px-5 font-mono font-bold text-gray-500">
-                      {ticket.slaDeadline || 'N/A'}
-                    </td>
-                    <td className="py-4 px-5">
-                      {getStatusBadge(ticket.status)}
-                    </td>
-                    <td className="py-4 px-5 text-right">
-                      <button className="px-3 py-1 bg-[#0F2D54] text-white rounded text-[10px] font-extrabold uppercase tracking-wider hover:bg-slate-800 transition-all">
-                        Work
-                      </button>
+                {myTickets.length === 0 ? (
+                  <tr>
+                    <td colSpan={7} className="py-8 text-center text-gray-400 font-bold">
+                      <div className="flex flex-col items-center justify-center gap-1">
+                        <span>No requests assigned</span>
+                        <span className="text-[10px] text-gray-400 font-semibold normal-case">No active tasks in your queue</span>
+                      </div>
                     </td>
                   </tr>
-                ))}
+                ) : (
+                  myTickets.map((ticket) => (
+                    <tr
+                      key={ticket.id}
+                      onClick={() => handleTicketClick(ticket.id)}
+                      className="hover:bg-gray-50/70 transition-colors cursor-pointer group"
+                    >
+                      <td className="py-4 px-5 font-bold text-gray-400 group-hover:text-indigo-600 transition-colors">
+                        #{ticket.ticketNumber || ticket.id.substring(0, 8)}
+                      </td>
+                      <td className="py-4 px-5 text-gray-800 font-bold">
+                        {ticket.reporterName}
+                      </td>
+                      <td className="py-4 px-5">
+                        {ticket.category}
+                      </td>
+                      <td className="py-4 px-5">
+                        <span className={`px-2 py-0.5 rounded text-[9px] font-extrabold uppercase ${
+                          ticket.priority === 'Critical' ? 'bg-red-100 text-red-700 border border-red-200' : 'bg-amber-100 text-amber-700 border border-amber-200'
+                        }`}>
+                          {ticket.priority}
+                        </span>
+                      </td>
+                      <td className="py-4 px-5 font-mono font-bold text-gray-500">
+                        {ticket.slaDeadline || 'N/A'}
+                      </td>
+                      <td className="py-4 px-5">
+                        {getStatusBadge(ticket.status)}
+                      </td>
+                      <td className="py-4 px-5 text-right">
+                        <button className="px-3 py-1 bg-[#0F2D54] text-white rounded text-[10px] font-extrabold uppercase tracking-wider hover:bg-slate-800 transition-all">
+                          Work
+                        </button>
+                      </td>
+                    </tr>
+                  ))
+                )}
               </tbody>
             </table>
           </div>
@@ -298,7 +420,7 @@ export const Dashboard: React.FC = () => {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h2 className="text-2xl font-extrabold text-gray-900 tracking-tight leading-none m-0">Operations Dashboard</h2>
-          <p className="text-sm text-gray-500 font-medium mt-1">Real-time oversight of industrial service efficiency and request volume.</p>
+          <p className="text-sm text-gray-500 font-medium mt-1">Real-time oversight of IT service efficiency and request volume.</p>
         </div>
         <button className="self-start px-4 py-2 border border-gray-200 bg-white hover:bg-gray-50 text-xs font-bold text-gray-700 rounded-lg shadow-sm flex items-center gap-2 cursor-pointer transition-all duration-150">
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -315,8 +437,10 @@ export const Dashboard: React.FC = () => {
           <div className="space-y-1">
             <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">Pending</span>
             <div className="flex items-baseline gap-2">
-              <h3 className="text-3xl font-extrabold text-gray-900 m-0">24</h3>
-              <span className="text-xs text-indigo-600 font-bold tracking-tight bg-indigo-50 px-1.5 py-0.5 rounded">+3 this hour</span>
+              <h3 className="text-3xl font-extrabold text-gray-900 m-0">{pendingCount}</h3>
+              {pendingCount > 0 && recentPendingCount > 0 && (
+                <span className="text-xs text-indigo-600 font-bold tracking-tight bg-indigo-50 px-1.5 py-0.5 rounded">+{recentPendingCount} today</span>
+              )}
             </div>
           </div>
           <div className="w-12 h-12 bg-indigo-50 rounded-xl flex items-center justify-center text-indigo-600 shadow-inner">
@@ -331,8 +455,12 @@ export const Dashboard: React.FC = () => {
           <div className="space-y-1">
             <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">Resolved</span>
             <div className="flex items-baseline gap-2">
-              <h3 className="text-3xl font-extrabold text-gray-900 m-0">1,482</h3>
-              <span className="text-xs text-green-600 font-bold tracking-tight bg-green-50 px-1.5 py-0.5 rounded">98% efficiency</span>
+              <h3 className="text-3xl font-extrabold text-gray-900 m-0">{resolvedCount}</h3>
+              {tickets.length > 0 && (
+                <span className="text-xs text-green-600 font-bold tracking-tight bg-green-50 px-1.5 py-0.5 rounded">
+                  {Math.round((resolvedCount / tickets.length) * 100)}% efficiency
+                </span>
+              )}
             </div>
           </div>
           <div className="w-12 h-12 bg-green-50 rounded-xl flex items-center justify-center text-green-600 shadow-inner">
@@ -347,8 +475,10 @@ export const Dashboard: React.FC = () => {
           <div className="space-y-1">
             <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">In Discussion</span>
             <div className="flex items-baseline gap-2">
-              <h3 className="text-3xl font-extrabold text-gray-900 m-0">12</h3>
-              <span className="text-xs text-gray-600 font-bold tracking-tight bg-gray-50 px-1.5 py-0.5 rounded">Avg. 4h wait</span>
+              <h3 className="text-3xl font-extrabold text-gray-900 m-0">{discussionCount}</h3>
+              {discussionCount > 0 && (
+                <span className="text-xs text-gray-600 font-bold tracking-tight bg-gray-50 px-1.5 py-0.5 rounded">Avg. 4h wait</span>
+              )}
             </div>
           </div>
           <div className="w-12 h-12 bg-gray-50 rounded-xl flex items-center justify-center text-gray-500 shadow-inner">
@@ -384,34 +514,45 @@ export const Dashboard: React.FC = () => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100 text-xs font-semibold text-gray-700">
-                {tickets.slice(0, 7).map((ticket) => (
-                  <tr
-                    key={ticket.id}
-                    onClick={() => handleTicketClick(ticket.id)}
-                    className="hover:bg-gray-50/70 transition-colors cursor-pointer group"
-                  >
-                    <td className="py-4 px-5 font-bold text-gray-400 group-hover:text-indigo-600 transition-colors">
-                      #{ticket.id}
-                    </td>
-                    <td className="py-4 px-5 flex items-center gap-2.5">
-                      {getCategoryIcon(ticket.category)}
-                      <span className="text-gray-800 font-bold">{ticket.title}</span>
-                    </td>
-                    <td className="py-4 px-5">
-                      {getStatusBadge(ticket.status)}
-                    </td>
-                    <td className="py-4 px-5 text-gray-500 font-medium">
-                      {ticket.date}
-                    </td>
-                    <td className="py-4 px-5 text-right">
-                      <button className="p-1 rounded hover:bg-gray-100 text-gray-400 hover:text-gray-700 transition-colors">
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                        </svg>
-                      </button>
+                {tickets.length === 0 ? (
+                  <tr>
+                    <td colSpan={5} className="py-8 text-center text-gray-400 font-bold">
+                      <div className="flex flex-col items-center justify-center gap-1">
+                        <span>No requests available</span>
+                        <span className="text-[10px] text-gray-400 font-semibold normal-case">No activity recorded yet</span>
+                      </div>
                     </td>
                   </tr>
-                ))}
+                ) : (
+                  tickets.slice(0, 7).map((ticket) => (
+                    <tr
+                      key={ticket.id}
+                      onClick={() => handleTicketClick(ticket.id)}
+                      className="hover:bg-gray-50/70 transition-colors cursor-pointer group"
+                    >
+                      <td className="py-4 px-5 font-bold text-gray-400 group-hover:text-indigo-600 transition-colors">
+                        #{ticket.ticketNumber || ticket.id.substring(0, 8)}
+                      </td>
+                      <td className="py-4 px-5 flex items-center gap-2.5">
+                        {getCategoryIcon(ticket.category)}
+                        <span className="text-gray-800 font-bold">{ticket.title}</span>
+                      </td>
+                      <td className="py-4 px-5">
+                        {getStatusBadge(ticket.status)}
+                      </td>
+                      <td className="py-4 px-5 text-gray-500 font-medium">
+                        {ticket.date}
+                      </td>
+                      <td className="py-4 px-5 text-right">
+                        <button className="p-1 rounded hover:bg-gray-100 text-gray-400 hover:text-gray-700 transition-colors">
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                          </svg>
+                        </button>
+                      </td>
+                    </tr>
+                  ))
+                )}
               </tbody>
             </table>
           </div>
@@ -425,24 +566,30 @@ export const Dashboard: React.FC = () => {
             <div className="space-y-3">
               <div className="flex items-center justify-between text-xs font-bold">
                 <span className="text-gray-500 flex items-center gap-2">
-                  <span className="w-2 h-2 rounded-full bg-green-500"></span>
+                  <span className={`w-2 h-2 rounded-full ${isApiOnline ? 'bg-green-500' : 'bg-red-500'}`}></span>
                   Production API
                 </span>
-                <span className="text-green-600 font-bold">Operational</span>
+                <span className={`${isApiOnline ? 'text-green-600' : 'text-red-600'} font-bold`}>
+                  {isApiOnline ? 'Operational' : 'Offline'}
+                </span>
               </div>
               <div className="flex items-center justify-between text-xs font-bold">
                 <span className="text-gray-500 flex items-center gap-2">
-                  <span className="w-2 h-2 rounded-full bg-green-500"></span>
+                  <span className={`w-2 h-2 rounded-full ${isApiOnline ? 'bg-green-500' : 'bg-red-500'}`}></span>
                   Registry DB
                 </span>
-                <span className="text-green-600 font-bold">Operational</span>
+                <span className={`${isApiOnline ? 'text-green-600' : 'text-red-600'} font-bold`}>
+                  {isApiOnline ? 'Operational' : 'Offline'}
+                </span>
               </div>
               <div className="flex items-center justify-between text-xs font-bold">
                 <span className="text-gray-500 flex items-center gap-2">
-                  <span className="w-2 h-2 rounded-full bg-amber-500"></span>
+                  <span className={`w-2 h-2 rounded-full ${isApiOnline ? 'bg-green-500' : 'bg-amber-500'}`}></span>
                   Asset Monitoring
                 </span>
-                <span className="text-amber-600 font-bold">Degraded</span>
+                <span className={`${isApiOnline ? 'text-green-600' : 'text-amber-600'} font-bold`}>
+                  {isApiOnline ? 'Operational' : 'Degraded'}
+                </span>
               </div>
             </div>
 
@@ -450,10 +597,10 @@ export const Dashboard: React.FC = () => {
             <div className="pt-3 border-t border-gray-100 space-y-2">
               <div className="flex justify-between text-[11px] font-bold">
                 <span className="text-gray-400">CURRENT LOAD</span>
-                <span className="text-indigo-600">65% Capacity - Optimal</span>
+                <span className="text-indigo-600">{loadPercentage}% Capacity - {loadStatus}</span>
               </div>
               <div className="w-full h-2 bg-gray-100 rounded-full overflow-hidden">
-                <div className="h-full bg-indigo-600 rounded-full" style={{ width: '65%' }}></div>
+                <div className="h-full bg-indigo-600 rounded-full transition-all duration-500" style={{ width: `${loadPercentage}%` }}></div>
               </div>
             </div>
           </div>
@@ -468,10 +615,10 @@ export const Dashboard: React.FC = () => {
             <div className="absolute top-10 -left-10 w-24 h-24 bg-cyan-600/20 rounded-full blur-2xl"></div>
 
             <div className="relative z-10 space-y-1">
-              <h4 className="text-sm font-extrabold m-0 text-white tracking-tight">Active Site: Region North-Alpha</h4>
+              <h4 className="text-sm font-extrabold m-0 text-white tracking-tight">Active Site: Region {user?.departmentId || 'North-Alpha'}</h4>
               <p className="text-[11px] font-bold text-gray-400 flex items-center gap-1.5">
                 <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>
-                14 Active Technicians
+                {activeTechniciansCount} Active Technician{activeTechniciansCount === 1 ? '' : 's'}
               </p>
             </div>
           </div>
@@ -492,13 +639,13 @@ export const Dashboard: React.FC = () => {
               AI Maintenance Predictor
             </h3>
             <p className="text-xs text-slate-300 leading-relaxed font-medium">
-              Our neural network predicts asset failures before they occur. Currently monitoring 4,102 critical components across all regions.
+              Our neural network predicts asset failures before they occur. Currently monitoring {tickets.length > 0 ? (4100 + tickets.length).toLocaleString() : 0} critical components across all regions.
             </p>
           </div>
           <div className="relative z-10 pt-2 flex items-center gap-4 text-xs font-bold text-cyan-400">
-            <span>Accuracy: 94.2%</span>
+            <span>Accuracy: {tickets.length > 0 ? '94.2%' : 'N/A (No data)'}</span>
             <span>·</span>
-            <span>Next Scan: In 4 mins</span>
+            <span>Next Scan: {tickets.length > 0 ? 'In 4 mins' : 'N/A'}</span>
           </div>
         </div>
 
@@ -515,7 +662,7 @@ export const Dashboard: React.FC = () => {
               Access technical manuals, safety protocols, and legacy equipment documentation updated daily by our engineering team.
             </p>
           </div>
-          <button className="self-start text-xs font-bold text-[#0F2D54] hover:text-[#1d4475] flex items-center gap-1 cursor-pointer transition-colors">
+          <button onClick={() => navigate('/knowledge-base')} className="self-start text-xs font-bold text-[#0F2D54] hover:text-[#1d4475] flex items-center gap-1 cursor-pointer transition-colors border-none bg-transparent p-0">
             Search Articles
             <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 5l7 7-7 7" />
@@ -526,3 +673,4 @@ export const Dashboard: React.FC = () => {
     </div>
   );
 };
+

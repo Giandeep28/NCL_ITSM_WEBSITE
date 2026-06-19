@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { apiClient } from '../services/apiClient';
 
 export interface Comment {
   id: string;
@@ -11,7 +12,8 @@ export interface Comment {
 }
 
 export interface Ticket {
-  id: string; // e.g. "SR-9402"
+  id: string; // e.g. UUID from backend or "SR-9402"
+  ticketNumber?: string; // e.g. "INC-2026-12345"
   title: string;
   category: string;
   subCategory?: string;
@@ -39,153 +41,188 @@ export interface Ticket {
 interface TicketState {
   tickets: Ticket[];
   selectedTicketId: string | null;
-  addTicket: (ticket: Omit<Ticket, 'id' | 'comments'> & { comments?: Comment[] }) => void;
-  updateTicketStatus: (id: string, status: Ticket['status']) => void;
+  fetchTickets: () => Promise<void>;
+  fetchTicketById: (id: string) => Promise<Ticket | null>;
+  addTicket: (ticket: Omit<Ticket, 'id' | 'comments'> & { comments?: Comment[] }) => Promise<void>;
+  updateTicketStatus: (id: string, status: Ticket['status']) => Promise<void>;
   addComment: (ticketId: string, comment: Omit<Comment, 'id' | 'timestamp'>) => void;
   setSelectedTicketId: (id: string | null) => void;
 }
 
-const initialTickets: Ticket[] = [
-  {
-    id: 'SR-88291',
-    title: 'Turbine Assembly Vibration Calibration',
-    category: 'Turbine Maintenance',
-    subCategory: 'Mechanical Calibration',
-    status: 'In Progress',
-    priority: 'Critical',
-    date: 'Oct 12, 2024',
-    time: '09:14 AM',
-    description: 'The Main Turbine Unit #4 is reporting abnormal vibration levels (4.2mm/s) exceeding the safety threshold. This appears to be localized to the secondary coupling assembly. Immediate diagnostic and re-calibration are required to prevent emergency shutdown.',
-    serialNumber: 'TX-99012-B',
-    location: 'Bay 7, Sector Delta',
-    department: 'Power Systems',
-    issuedByDept: 'Power Generation',
-    reporterName: 'J. Henderson',
-    reporterId: 'EMP-4091',
-    reporterPost: 'Operations Lead',
-    engineerName: 'Marcus Thorne',
-    engineerRole: 'Electrical Specialist',
-    engineerAvatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=100&q=80',
-    slaDeadline: 'Oct 14, 08:00 AM',
-    slaStatus: 'At Risk',
-    attachments: ['vibration_log.png', 'thermal_scan.jpg'],
-    comments: [
-      {
-        id: '1',
-        author: 'Marcus Thorne',
-        role: 'Field Technician',
-        content: "I've arrived at Bay 7. Preliminary inspection shows significant wear on the coupler gaskets. Requesting expedited parts from inventory.",
-        timestamp: '10:45 AM'
-      },
-      {
-        id: '2',
-        author: 'System',
-        role: 'System Logger',
-        content: 'Status changed to In Progress',
-        timestamp: '10:46 AM',
-        isSystem: true
-      },
-      {
-        id: '3',
-        author: 'Elena Rodriguez',
-        role: 'Support Manager',
-        content: 'Parts request approved. Warehouse has dispatched Coupler Kit B-90. Expected arrival: 1 hour.',
-        timestamp: '11:12 AM'
-      }
-    ]
-  },
-  {
-    id: 'SR-9402',
-    title: 'Turbine Maintenance Unit 2',
-    category: 'Turbine Maintenance',
-    status: 'In Progress',
-    priority: 'Medium',
-    date: 'Oct 24, 2024',
-    description: 'Routine maintenance and inspection of Turbine Unit 2. Checking rotor clearance and lubricating bearings.',
-    department: 'Power Systems',
-    reporterName: 'S. Patel',
-    reporterId: 'EMP-1102',
-    reporterPost: 'Plant Operator',
-    comments: []
-  },
-  {
-    id: 'SR-9401',
-    title: 'Grid Calibration Substation C',
-    category: 'Grid Calibration',
-    status: 'Discussion',
-    priority: 'Low',
-    date: 'Oct 24, 2024',
-    description: 'Phase mismatch reported on Substation C feeder. Needs review from grid engineers before execution.',
-    department: 'Electrical Operations',
-    reporterName: 'R. Kumar',
-    reporterId: 'EMP-3049',
-    reporterPost: 'Substation Engineer',
-    comments: []
-  },
-  {
-    id: 'SR-9398',
-    title: 'Sensor Replacement Boiler 4',
-    category: 'Sensor Replacement',
-    status: 'Resolved',
-    priority: 'Medium',
-    date: 'Oct 23, 2024',
-    description: 'Boiler 4 temperature thermocouple sensor was faulty, causing false high temperature warnings. Replaced with new unit.',
-    department: 'Instrumentation',
-    reporterName: 'A. Sharma',
-    reporterId: 'EMP-8291',
-    reporterPost: 'Technician',
-    comments: []
-  },
-  {
-    id: 'SR-9395',
-    title: 'PLC Update Main Assembly Line',
-    category: 'PLC Update',
-    status: 'Urgent',
-    priority: 'Critical',
-    date: 'Oct 23, 2024',
-    description: 'PLC firmware update required to support new conveyor control logic. Needs to be done during scheduled downtime.',
-    department: 'Automation Systems',
-    reporterName: 'D. Vance',
-    reporterId: 'EMP-1284',
-    reporterPost: 'Automation Lead',
-    comments: []
-  }
-];
+// Helpers for API mapping
+const mapStatus = (status: string): Ticket['status'] => {
+  if (status === 'Created') return 'Requested';
+  const validStatuses = ['Requested', 'Assigned', 'In Progress', 'QA Check', 'Resolved', 'Closed', 'Discussion', 'Urgent'];
+  return validStatuses.includes(status) ? (status as Ticket['status']) : 'Requested';
+};
 
-export const useTicketStore = create<TicketState>((set) => ({
+const formatDate = (dateStr: string) => {
+  try {
+    const d = new Date(dateStr);
+    return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+  } catch {
+    return 'N/A';
+  }
+};
+
+const formatTime = (dateStr: string) => {
+  try {
+    const d = new Date(dateStr);
+    return d.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+  } catch {
+    return 'N/A';
+  }
+};
+
+const formatSlaDeadline = (dateStr: string | undefined) => {
+  if (!dateStr) return 'N/A';
+  try {
+    const d = new Date(dateStr);
+    return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) + ', ' + d.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+  } catch {
+    return 'N/A';
+  }
+};
+
+const getSlaStatus = (slaDueAt: string | undefined, status: string): Ticket['slaStatus'] => {
+  if (!slaDueAt) return 'Optimal';
+  if (['Resolved', 'Closed'].includes(status)) return 'Optimal';
+  try {
+    const due = new Date(slaDueAt).getTime();
+    const now = Date.now();
+    if (now > due) return 'Breached';
+    if (due - now < 2 * 60 * 60 * 1000) return 'At Risk'; // within 2 hours
+    return 'Optimal';
+  } catch {
+    return 'Optimal';
+  }
+};
+
+const mapBackendTicket = (t: any): Ticket => {
+  return {
+    id: t.id,
+    ticketNumber: t.ticketNumber,
+    title: t.summary || 'Untitled Service Request',
+    category: t.category || 'General',
+    subCategory: t.subCategory || '',
+    status: mapStatus(t.status),
+    priority: (t.priority === 'High' ? 'Critical' : t.priority) as Ticket['priority'] || 'Medium',
+    date: formatDate(t.createdAt),
+    time: formatTime(t.createdAt),
+    description: t.description || 'No description provided.',
+    serialNumber: t.serialNumber || '',
+    location: t.location || '',
+    department: 'General',
+    reporterName: t.reporterName || 'Employee',
+    reporterId: t.reporterId || '',
+    engineerName: t.engineerName || undefined,
+    slaDeadline: formatSlaDeadline(t.slaDueAt),
+    slaStatus: getSlaStatus(t.slaDueAt, t.status),
+    comments: t.history ? t.history.map((h: any) => ({
+      id: h.id,
+      author: h.actorName || 'System',
+      role: h.actorName === 'System' ? 'System Logger' : 'Support Specialist',
+      content: h.comment || `Status changed from ${h.oldStatus || 'None'} to ${h.newStatus}`,
+      timestamp: h.changedAt ? new Date(h.changedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'N/A',
+      isSystem: !h.comment || h.comment.startsWith('Status') || h.oldStatus !== h.newStatus
+    })) : []
+  };
+};
+
+const initialTickets: Ticket[] = [];
+
+export const useTicketStore = create<TicketState>((set, get) => ({
   tickets: initialTickets,
-  selectedTicketId: 'SR-88291', // default selected ticket for detail view demo
-  addTicket: (newTicket) => set((state) => {
-    const ticketId = `SR-${Math.floor(10000 + Math.random() * 90000)}`;
-    const createdTicket: Ticket = {
-      ...newTicket,
-      id: ticketId,
-      comments: newTicket.comments || []
-    };
-    return {
-      tickets: [createdTicket, ...state.tickets]
-    };
-  }),
-  updateTicketStatus: (id, status) => set((state) => ({
-    tickets: state.tickets.map((ticket) => {
-      if (ticket.id === id) {
-        const systemComment: Comment = {
-          id: String(Date.now()),
-          author: 'System',
-          role: 'System Logger',
-          content: `Status changed to ${status}`,
-          timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-          isSystem: true
-        };
+  selectedTicketId: null,
+
+  fetchTickets: async () => {
+    try {
+      const response = await apiClient.get('/tickets');
+      const mapped = (response.data as any[]).map(mapBackendTicket);
+      set({ tickets: mapped });
+    } catch (e) {
+      console.error('Failed to fetch tickets from backend, using local store state', e);
+    }
+  },
+
+  fetchTicketById: async (id: string) => {
+    try {
+      const response = await apiClient.get(`/tickets/${id}`);
+      const mapped = mapBackendTicket(response.data);
+      // Update in tickets array or append if it doesn't exist
+      set((state) => {
+        const exists = state.tickets.some((t) => t.id === id);
         return {
-          ...ticket,
-          status,
-          comments: [...ticket.comments, systemComment]
+          tickets: exists
+            ? state.tickets.map((t) => (t.id === id ? mapped : t))
+            : [...state.tickets, mapped]
         };
-      }
-      return ticket;
-    })
-  })),
+      });
+      return mapped;
+    } catch (e) {
+      console.error(`Failed to fetch ticket ${id} from backend`, e);
+      return get().tickets.find((t) => t.id === id) || null;
+    }
+  },
+
+  addTicket: async (newTicket) => {
+    try {
+      const payload = {
+        category: newTicket.category,
+        subCategory: newTicket.subCategory || 'General',
+        impactLevel: newTicket.priority || 'Medium',
+        summary: newTicket.title,
+        description: newTicket.description,
+        serialNumber: newTicket.serialNumber || '',
+        location: newTicket.location || ''
+      };
+      await apiClient.post('/tickets', payload);
+      await get().fetchTickets();
+    } catch (e) {
+      console.error('Failed to create ticket on backend, adding locally', e);
+      const ticketId = `SR-${Math.floor(10000 + Math.random() * 90000)}`;
+      const createdTicket: Ticket = {
+        ...newTicket,
+        id: ticketId,
+        comments: newTicket.comments || []
+      };
+      set((state) => ({
+        tickets: [createdTicket, ...state.tickets]
+      }));
+    }
+  },
+
+  updateTicketStatus: async (id, status) => {
+    try {
+      await apiClient.patch(`/tickets/${id}/status`, null, {
+        params: { status, comment: `Status updated to ${status} via portal.` }
+      });
+      await get().fetchTickets();
+    } catch (e) {
+      console.error('Failed to update status on backend, updating locally', e);
+      set((state) => ({
+        tickets: state.tickets.map((ticket) => {
+          if (ticket.id === id) {
+            const systemComment: Comment = {
+              id: String(Date.now()),
+              author: 'System',
+              role: 'System Logger',
+              content: `Status changed to ${status}`,
+              timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+              isSystem: true
+            };
+            return {
+              ...ticket,
+              status,
+              comments: [...ticket.comments, systemComment]
+            };
+          }
+          return ticket;
+        })
+      }));
+    }
+  },
+
   addComment: (ticketId, commentPayload) => set((state) => ({
     tickets: state.tickets.map((ticket) => {
       if (ticket.id === ticketId) {
@@ -202,5 +239,6 @@ export const useTicketStore = create<TicketState>((set) => ({
       return ticket;
     })
   })),
+
   setSelectedTicketId: (id) => set({ selectedTicketId: id })
 }));

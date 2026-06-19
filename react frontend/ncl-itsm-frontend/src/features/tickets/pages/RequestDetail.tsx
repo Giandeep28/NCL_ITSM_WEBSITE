@@ -1,15 +1,35 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useTicketStore, type Ticket } from '../../../store/ticketStore';
 
 export const RequestDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { tickets, updateTicketStatus, addComment, setSelectedTicketId } = useTicketStore();
+  const { tickets, updateTicketStatus, addComment, setSelectedTicketId, fetchTicketById } = useTicketStore();
 
-  const ticket = tickets.find(t => t.id === id) || tickets[0]; // Fallback to first ticket
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (id) {
+      setLoading(true);
+      fetchTicketById(id).finally(() => setLoading(false));
+    } else {
+      setLoading(false);
+    }
+  }, [id, fetchTicketById]);
+
+  const ticket = tickets.find(t => t.id === id) || (id ? undefined : tickets[0]);
 
   const [newCommentText, setNewCommentText] = useState('');
+
+  if (loading) {
+    return (
+      <div className="bg-white border border-gray-200 rounded-xl p-8 text-center select-none flex flex-col items-center justify-center gap-3">
+        <span className="w-8 h-8 rounded-full border-4 border-indigo-600 border-t-transparent animate-spin"></span>
+        <span className="text-xs font-bold text-gray-500 uppercase tracking-wider">Loading request details...</span>
+      </div>
+    );
+  }
 
   if (!ticket) {
     return (

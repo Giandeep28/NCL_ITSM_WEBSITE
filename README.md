@@ -125,3 +125,37 @@ The application runs with an **in-memory H2 database** in development mode. To p
   - **Support Engineer:** Employee ID `88291000` (Full Name: *Marcus Thorne*)
   - **Standard Employee:** Employee ID `12345678` (Full Name: *J. Henderson*)
 
+---
+
+## 📊 Dashboard Data Management
+
+The dashboard is designed to be fully **dynamic and database-driven**. It does NOT use any mock, demo, or hardcoded sample data.
+
+### Development/Empty-State Behavior
+
+When the system has no tickets (e.g. on a fresh database or after a server restart with H2 in-memory), the dashboard displays a **clean, empty state**:
+
+| Dashboard Component | Empty-State Behavior |
+|---|---|
+| **KPI Cards** (Pending, Resolved, In Discussion) | Display `0` with no comparison badges |
+| **Recent Requests Table** | Shows "No requests available — No activity recorded yet" |
+| **Engineer Work Queue** | Shows "No requests assigned — No active tasks in your queue" |
+| **7-Day Intake vs Resolution Chart** | Renders flat lines at `0` with an overlay: "No data to display" |
+| **SLA Compliance Pie Chart** | Renders a grey placeholder segment with center text `N/A — No Data` |
+| **AI Maintenance Predictor** | Shows accuracy and scan as `N/A (No data)` |
+| **System Status Widget** | Dynamically shows `Operational` (green) or `Offline` (red) based on live API connectivity |
+| **Current Load Bar** | Starts at 5% baseline and scales with active ticket count |
+| **Active Site / Technicians** | Counts unique assigned engineers from tickets (0 if none) |
+
+### How Data Populates
+
+1. **On Dashboard Load:** The frontend calls `GET /tickets` to fetch all ticket records from the backend database.
+2. **Creating a New Ticket:** Uses `POST /tickets` to persist to the database, then automatically re-fetches the full ticket list to update all dashboard components.
+3. **Updating Ticket Status:** Uses `PATCH /tickets/{id}/status` to update the backend, then re-syncs.
+4. **Offline Fallback:** If the backend API is unreachable, the frontend gracefully falls back to local in-memory state so the UI doesn't crash.
+
+### To see the dashboard populated with data:
+1. Log in with any sandbox account.
+2. Navigate to **New Request** and submit a service request.
+3. Return to the **Dashboard** — all KPI cards, tables, charts, and widgets will reflect the new data in real time.
+

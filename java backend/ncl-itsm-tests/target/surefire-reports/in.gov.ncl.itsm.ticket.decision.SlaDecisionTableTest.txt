@@ -1,28 +1,28 @@
 -------------------------------------------------------------------------------
 Test set: in.gov.ncl.itsm.ticket.decision.SlaDecisionTableTest
 -------------------------------------------------------------------------------
-Tests run: 24, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.058 s -- in in.gov.ncl.itsm.ticket.decision.SlaDecisionTableTest
-in.gov.ncl.itsm.ticket.decision.SlaDecisionTableTest.causeEffect_criticalAlwaysGives4h(String, String, int)[1] -- Time elapsed: 0.003 s
-in.gov.ncl.itsm.ticket.decision.SlaDecisionTableTest.causeEffect_criticalAlwaysGives4h(String, String, int)[2] -- Time elapsed: 0.015 s
-in.gov.ncl.itsm.ticket.decision.SlaDecisionTableTest.causeEffect_criticalAlwaysGives4h(String, String, int)[3] -- Time elapsed: 0 s
+Tests run: 24, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.106 s -- in in.gov.ncl.itsm.ticket.decision.SlaDecisionTableTest
+in.gov.ncl.itsm.ticket.decision.SlaDecisionTableTest.causeEffect_criticalAlwaysGives4h(String, String, int)[1] -- Time elapsed: 0.005 s
+in.gov.ncl.itsm.ticket.decision.SlaDecisionTableTest.causeEffect_criticalAlwaysGives4h(String, String, int)[2] -- Time elapsed: 0.002 s
+in.gov.ncl.itsm.ticket.decision.SlaDecisionTableTest.causeEffect_criticalAlwaysGives4h(String, String, int)[3] -- Time elapsed: 0.002 s
 in.gov.ncl.itsm.ticket.decision.SlaDecisionTableTest.unknownImpact_returnsMinus1(String, String)[1] -- Time elapsed: 0.001 s
 in.gov.ncl.itsm.ticket.decision.SlaDecisionTableTest.unknownImpact_returnsMinus1(String, String)[2] -- Time elapsed: 0.001 s
-in.gov.ncl.itsm.ticket.decision.SlaDecisionTableTest.unknownImpact_returnsMinus1(String, String)[3] -- Time elapsed: 0.001 s
-in.gov.ncl.itsm.ticket.decision.SlaDecisionTableTest.unknownImpact_returnsMinus1(String, String)[4] -- Time elapsed: 0.005 s
-in.gov.ncl.itsm.ticket.decision.SlaDecisionTableTest.causeEffect_lowAlwaysGives72h(String, String, int)[1] -- Time elapsed: 0.001 s
-in.gov.ncl.itsm.ticket.decision.SlaDecisionTableTest.causeEffect_lowAlwaysGives72h(String, String, int)[2] -- Time elapsed: 0 s
+in.gov.ncl.itsm.ticket.decision.SlaDecisionTableTest.unknownImpact_returnsMinus1(String, String)[3] -- Time elapsed: 0.002 s
+in.gov.ncl.itsm.ticket.decision.SlaDecisionTableTest.unknownImpact_returnsMinus1(String, String)[4] -- Time elapsed: 0 s
+in.gov.ncl.itsm.ticket.decision.SlaDecisionTableTest.causeEffect_lowAlwaysGives72h(String, String, int)[1] -- Time elapsed: 0.002 s
+in.gov.ncl.itsm.ticket.decision.SlaDecisionTableTest.causeEffect_lowAlwaysGives72h(String, String, int)[2] -- Time elapsed: 0.001 s
 in.gov.ncl.itsm.ticket.decision.SlaDecisionTableTest.causeEffect_lowAlwaysGives72h(String, String, int)[3] -- Time elapsed: 0 s
 in.gov.ncl.itsm.ticket.decision.SlaDecisionTableTest.slaHours_fromDecisionTable(String, String, int)[1] -- Time elapsed: 0.001 s
-in.gov.ncl.itsm.ticket.decision.SlaDecisionTableTest.slaHours_fromDecisionTable(String, String, int)[2] -- Time elapsed: 0 s
+in.gov.ncl.itsm.ticket.decision.SlaDecisionTableTest.slaHours_fromDecisionTable(String, String, int)[2] -- Time elapsed: 0.001 s
 in.gov.ncl.itsm.ticket.decision.SlaDecisionTableTest.slaHours_fromDecisionTable(String, String, int)[3] -- Time elapsed: 0 s
-in.gov.ncl.itsm.ticket.decision.SlaDecisionTableTest.slaHours_fromDecisionTable(String, String, int)[4] -- Time elapsed: 0 s
-in.gov.ncl.itsm.ticket.decision.SlaDecisionTableTest.slaHours_fromDecisionTable(String, String, int)[5] -- Time elapsed: 0 s
-in.gov.ncl.itsm.ticket.decision.SlaDecisionTableTest.slaHours_fromDecisionTable(String, String, int)[6] -- Time elapsed: 0 s
+in.gov.ncl.itsm.ticket.decision.SlaDecisionTableTest.slaHours_fromDecisionTable(String, String, int)[4] -- Time elapsed: 0.001 s
+in.gov.ncl.itsm.ticket.decision.SlaDecisionTableTest.slaHours_fromDecisionTable(String, String, int)[5] -- Time elapsed: 0.001 s
+in.gov.ncl.itsm.ticket.decision.SlaDecisionTableTest.slaHours_fromDecisionTable(String, String, int)[6] -- Time elapsed: 0.001 s
 in.gov.ncl.itsm.ticket.decision.SlaDecisionTableTest.slaHours_fromDecisionTable(String, String, int)[7] -- Time elapsed: 0 s
-in.gov.ncl.itsm.ticket.decision.SlaDecisionTableTest.slaHours_fromDecisionTable(String, String, int)[8] -- Time elapsed: 0.002 s
-in.gov.ncl.itsm.ticket.decision.SlaDecisionTableTest.slaHours_fromDecisionTable(String, String, int)[9] -- Time elapsed: 0 s
-in.gov.ncl.itsm.ticket.decision.SlaDecisionTableTest.slaHours_fromDecisionTable(String, String, int)[10] -- Time elapsed: 0.001 s
-in.gov.ncl.itsm.ticket.decision.SlaDecisionTableTest.slaHours_fromDecisionTable(String, String, int)[11] -- Time elapsed: 0 s
-in.gov.ncl.itsm.ticket.decision.SlaDecisionTableTest.slaHours_fromDecisionTable(String, String, int)[12] -- Time elapsed: 0 s
-in.gov.ncl.itsm.ticket.decision.SlaDecisionTableTest.slaHours_fromDecisionTable(String, String, int)[13] -- Time elapsed: 0 s
+in.gov.ncl.itsm.ticket.decision.SlaDecisionTableTest.slaHours_fromDecisionTable(String, String, int)[8] -- Time elapsed: 0.001 s
+in.gov.ncl.itsm.ticket.decision.SlaDecisionTableTest.slaHours_fromDecisionTable(String, String, int)[9] -- Time elapsed: 0.035 s
+in.gov.ncl.itsm.ticket.decision.SlaDecisionTableTest.slaHours_fromDecisionTable(String, String, int)[10] -- Time elapsed: 0.002 s
+in.gov.ncl.itsm.ticket.decision.SlaDecisionTableTest.slaHours_fromDecisionTable(String, String, int)[11] -- Time elapsed: 0.001 s
+in.gov.ncl.itsm.ticket.decision.SlaDecisionTableTest.slaHours_fromDecisionTable(String, String, int)[12] -- Time elapsed: 0.001 s
+in.gov.ncl.itsm.ticket.decision.SlaDecisionTableTest.slaHours_fromDecisionTable(String, String, int)[13] -- Time elapsed: 0.001 s
 in.gov.ncl.itsm.ticket.decision.SlaDecisionTableTest.slaHours_fromDecisionTable(String, String, int)[14] -- Time elapsed: 0.001 s

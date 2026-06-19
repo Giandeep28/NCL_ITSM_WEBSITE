@@ -1,16 +1,16 @@
 -------------------------------------------------------------------------------
 Test set: in.gov.ncl.itsm.user.api.UserControllerIntegrationTest
 -------------------------------------------------------------------------------
-Tests run: 12, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 2.530 s -- in in.gov.ncl.itsm.user.api.UserControllerIntegrationTest
-in.gov.ncl.itsm.user.api.UserControllerIntegrationTest.getUsers_emptySystem_returns200EmptyList -- Time elapsed: 0.058 s
-in.gov.ncl.itsm.user.api.UserControllerIntegrationTest.getUsers_asEngineer_returns403 -- Time elapsed: 0.034 s
-in.gov.ncl.itsm.user.api.UserControllerIntegrationTest.toggleUser_userNotFound_returns404 -- Time elapsed: 0.016 s
-in.gov.ncl.itsm.user.api.UserControllerIntegrationTest.toggleUser_asAdmin_activeUser_returns200 -- Time elapsed: 0.031 s
-in.gov.ncl.itsm.user.api.UserControllerIntegrationTest.getUsers_responseShape_hasRequiredFields -- Time elapsed: 0.009 s
-in.gov.ncl.itsm.user.api.UserControllerIntegrationTest.getUsers_noAuth_returns401 -- Time elapsed: 0.007 s
-in.gov.ncl.itsm.user.api.UserControllerIntegrationTest.getUsers_asEmployee_returns403 -- Time elapsed: 0.007 s
-in.gov.ncl.itsm.user.api.UserControllerIntegrationTest.getUsers_asAdmin_returns200WithList -- Time elapsed: 0.011 s
-in.gov.ncl.itsm.user.api.UserControllerIntegrationTest.getUsers_nonAdminRoles_allReturn403(String)[1] -- Time elapsed: 0.011 s
-in.gov.ncl.itsm.user.api.UserControllerIntegrationTest.getUsers_nonAdminRoles_allReturn403(String)[2] -- Time elapsed: 0.006 s
-in.gov.ncl.itsm.user.api.UserControllerIntegrationTest.getUsers_nonAdminRoles_allReturn403(String)[3] -- Time elapsed: 0.005 s
-in.gov.ncl.itsm.user.api.UserControllerIntegrationTest.getUsers_nonAdminRoles_allReturn403(String)[4] -- Time elapsed: 0.005 s
+Tests run: 12, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 7.275 s -- in in.gov.ncl.itsm.user.api.UserControllerIntegrationTest
+in.gov.ncl.itsm.user.api.UserControllerIntegrationTest.getUsers_emptySystem_returns200EmptyList -- Time elapsed: 0.138 s
+in.gov.ncl.itsm.user.api.UserControllerIntegrationTest.getUsers_asEngineer_returns403 -- Time elapsed: 0.020 s
+in.gov.ncl.itsm.user.api.UserControllerIntegrationTest.toggleUser_userNotFound_returns404 -- Time elapsed: 0.273 s
+in.gov.ncl.itsm.user.api.UserControllerIntegrationTest.toggleUser_asAdmin_activeUser_returns200 -- Time elapsed: 0.152 s
+in.gov.ncl.itsm.user.api.UserControllerIntegrationTest.getUsers_responseShape_hasRequiredFields -- Time elapsed: 0.033 s
+in.gov.ncl.itsm.user.api.UserControllerIntegrationTest.getUsers_noAuth_returns401 -- Time elapsed: 0.015 s
+in.gov.ncl.itsm.user.api.UserControllerIntegrationTest.getUsers_asEmployee_returns403 -- Time elapsed: 0.103 s
+in.gov.ncl.itsm.user.api.UserControllerIntegrationTest.getUsers_asAdmin_returns200WithList -- Time elapsed: 0.023 s
+in.gov.ncl.itsm.user.api.UserControllerIntegrationTest.getUsers_nonAdminRoles_allReturn403(String)[1] -- Time elapsed: 0.021 s
+in.gov.ncl.itsm.user.api.UserControllerIntegrationTest.getUsers_nonAdminRoles_allReturn403(String)[2] -- Time elapsed: 0.011 s
+in.gov.ncl.itsm.user.api.UserControllerIntegrationTest.getUsers_nonAdminRoles_allReturn403(String)[3] -- Time elapsed: 0.013 s
+in.gov.ncl.itsm.user.api.UserControllerIntegrationTest.getUsers_nonAdminRoles_allReturn403(String)[4] -- Time elapsed: 0.011 s

@@ -10,7 +10,7 @@ export const AppShell: React.FC = () => {
   // Determine page title based on active path
   const getPageTitle = () => {
     const path = location.pathname;
-    if (path === '/' || path === '/dashboard') return 'Industrial Service Portal';
+    if (path === '/' || path === '/dashboard') return 'Service Hub Portal';
     if (path === '/requests/new') return 'Create New Service Request';
     if (path.startsWith('/requests/')) return 'Service Request Details';
     if (path === '/requests') return 'Service Requests Queue';
@@ -20,7 +20,7 @@ export const AppShell: React.FC = () => {
     if (path === '/logs') return 'Audit & System Logs';
     if (path === '/users') return 'User Management';
     if (path === '/settings') return 'System Settings';
-    return 'Industrial Service Portal';
+    return 'Service Hub Portal';
   };
 
   return (

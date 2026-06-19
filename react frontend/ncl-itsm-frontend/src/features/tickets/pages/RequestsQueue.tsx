@@ -1,17 +1,21 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTicketStore, type Ticket } from '../../../store/ticketStore';
 import { useAuthStore } from '../../../store/authStore';
 
 export const RequestsQueue: React.FC = () => {
   const navigate = useNavigate();
-  const { tickets, setSelectedTicketId } = useTicketStore();
+  const { tickets, setSelectedTicketId, fetchTickets } = useTicketStore();
   const { user } = useAuthStore();
 
   const [activeTab, setActiveTab] = useState<'all' | 'mine' | 'unassigned' | 'resolved'>('all');
   const [priorityFilter, setPriorityFilter] = useState<string>('All');
   const [categoryFilter, setCategoryFilter] = useState<string>('All');
   const [searchQuery, setSearchQuery] = useState<string>('');
+
+  useEffect(() => {
+    fetchTickets();
+  }, [fetchTickets]);
 
   const handleTicketClick = (ticketId: string) => {
     setSelectedTicketId(ticketId);
@@ -51,6 +55,7 @@ export const RequestsQueue: React.FC = () => {
     const query = searchQuery.toLowerCase();
     filteredTickets = filteredTickets.filter(t =>
       t.id.toLowerCase().includes(query) ||
+      (t.ticketNumber && t.ticketNumber.toLowerCase().includes(query)) ||
       t.title.toLowerCase().includes(query) ||
       t.description.toLowerCase().includes(query) ||
       t.reporterName.toLowerCase().includes(query)
@@ -208,7 +213,7 @@ export const RequestsQueue: React.FC = () => {
                     className="hover:bg-gray-50/70 transition-colors cursor-pointer group"
                   >
                     <td className="py-4 px-5 font-bold text-gray-400 group-hover:text-indigo-600 transition-colors">
-                      #{ticket.id}
+                      #{ticket.ticketNumber || ticket.id.substring(0, 8)}
                     </td>
                     <td className="py-4 px-5 text-gray-800 font-bold">
                       {ticket.reporterName}
