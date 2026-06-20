@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useState, useMemo, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTicketStore, type Ticket } from '../../../store/ticketStore';
 import { useAuthStore } from '../../../store/authStore';
@@ -23,6 +23,37 @@ export const Dashboard: React.FC = () => {
 
   const isEngineer = user?.role === 'Support Engineer';
   const [isApiOnline, setIsApiOnline] = useState(true);
+
+  const [timeframe, setTimeframe] = useState<'7' | '30' | '90' | 'all'>('30');
+  const [timeframeOpen, setTimeframeOpen] = useState(false);
+  const timeframeRef = useRef<HTMLDivElement>(null);
+
+  // Close timeframe dropdown on click outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (timeframeRef.current && !timeframeRef.current.contains(event.target as Node)) {
+        setTimeframeOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const filteredTickets = useMemo(() => {
+    if (timeframe === 'all') return tickets;
+    const daysLimit = parseInt(timeframe);
+    const limitMs = daysLimit * 24 * 60 * 60 * 1000;
+    const now = Date.now();
+    return tickets.filter(t => {
+      try {
+        const ticketTime = new Date(t.date).getTime();
+        if (isNaN(ticketTime)) return true;
+        return (now - ticketTime) <= limitMs;
+      } catch {
+        return true;
+      }
+    });
+  }, [tickets, timeframe]);
 
   useEffect(() => {
     const initData = async () => {
@@ -122,8 +153,8 @@ export const Dashboard: React.FC = () => {
       });
     }
 
-    // Populate data dynamically from tickets
-    tickets.forEach(ticket => {
+    // Populate data dynamically from filteredTickets
+    filteredTickets.forEach(ticket => {
       const match = days.find(d => d.dateStr === ticket.date);
       if (match) {
         match.logged += 1;
@@ -134,12 +165,12 @@ export const Dashboard: React.FC = () => {
     });
 
     return days;
-  }, [tickets]);
+  }, [filteredTickets]);
 
   const dynamicComplianceData = useMemo(() => {
-    const totalWithSla = tickets.filter(t => t.slaStatus).length;
-    const metSla = tickets.filter(t => t.slaStatus && t.slaStatus !== 'Breached').length;
-    const breachedSla = tickets.filter(t => t.slaStatus === 'Breached').length;
+    const totalWithSla = filteredTickets.filter(t => t.slaStatus).length;
+    const metSla = filteredTickets.filter(t => t.slaStatus && t.slaStatus !== 'Breached').length;
+    const breachedSla = filteredTickets.filter(t => t.slaStatus === 'Breached').length;
 
     if (totalWithSla === 0) {
       return {
@@ -160,31 +191,31 @@ export const Dashboard: React.FC = () => {
       metCount: metSla,
       breachedCount: breachedSla
     };
-  }, [tickets]);
+  }, [filteredTickets]);
 
   // -------------------------------------------------------------------------
   // EMPLOYEE DASHBOARD COMPUTATIONS
   // -------------------------------------------------------------------------
   const pendingCount = useMemo(() => {
-    return tickets.filter(t => !['Resolved', 'Closed', 'Discussion'].includes(t.status)).length;
-  }, [tickets]);
+    return filteredTickets.filter(t => !['Resolved', 'Closed', 'Discussion'].includes(t.status)).length;
+  }, [filteredTickets]);
 
   const resolvedCount = useMemo(() => {
-    return tickets.filter(t => ['Resolved', 'Closed'].includes(t.status)).length;
-  }, [tickets]);
+    return filteredTickets.filter(t => ['Resolved', 'Closed'].includes(t.status)).length;
+  }, [filteredTickets]);
 
   const discussionCount = useMemo(() => {
-    return tickets.filter(t => t.status === 'Discussion').length;
-  }, [tickets]);
+    return filteredTickets.filter(t => t.status === 'Discussion').length;
+  }, [filteredTickets]);
 
   const recentPendingCount = useMemo(() => {
     const todayStr = new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-    return tickets.filter(t => !['Resolved', 'Closed'].includes(t.status) && t.date === todayStr).length;
-  }, [tickets]);
+    return filteredTickets.filter(t => !['Resolved', 'Closed'].includes(t.status) && t.date === todayStr).length;
+  }, [filteredTickets]);
 
   const activeTicketsCount = useMemo(() => {
-    return tickets.filter(t => !['Resolved', 'Closed'].includes(t.status)).length;
-  }, [tickets]);
+    return filteredTickets.filter(t => !['Resolved', 'Closed'].includes(t.status)).length;
+  }, [filteredTickets]);
 
   const loadPercentage = useMemo(() => {
     if (!isApiOnline) return 0;
@@ -199,18 +230,18 @@ export const Dashboard: React.FC = () => {
   }, [loadPercentage, isApiOnline]);
 
   const activeTechniciansCount = useMemo(() => {
-    const uniqueEngineers = new Set(tickets.map(t => t.engineerName).filter(Boolean));
+    const uniqueEngineers = new Set(filteredTickets.map(t => t.engineerName).filter(Boolean));
     return uniqueEngineers.size || (user?.role === 'Support Engineer' ? 1 : 0);
-  }, [tickets, user]);
+  }, [filteredTickets, user]);
 
   // -------------------------------------------------------------------------
   // RENDER ENGINEER DASHBOARD
   // -------------------------------------------------------------------------
   if (isEngineer) {
-    const myTickets = tickets.filter(t => t.engineerName === user?.fullName);
+    const myTickets = filteredTickets.filter(t => t.engineerName === user?.fullName);
     const myActiveCount = myTickets.filter(t => t.status !== 'Resolved' && t.status !== 'Closed').length;
-    const criticalCount = tickets.filter(t => t.priority === 'Critical' && t.status !== 'Resolved' && t.status !== 'Closed').length;
-    const breachedCount = tickets.filter(t => t.slaStatus === 'Breached').length;
+    const criticalCount = filteredTickets.filter(t => t.priority === 'Critical' && t.status !== 'Resolved' && t.status !== 'Closed').length;
+    const breachedCount = filteredTickets.filter(t => t.slaStatus === 'Breached').length;
 
     return (
       <div className="space-y-6 md:space-y-8 select-none">
@@ -422,12 +453,39 @@ export const Dashboard: React.FC = () => {
           <h2 className="text-2xl font-extrabold text-gray-900 tracking-tight leading-none m-0">Operations Dashboard</h2>
           <p className="text-sm text-gray-500 font-medium mt-1">Real-time oversight of IT service efficiency and request volume.</p>
         </div>
-        <button className="self-start px-4 py-2 border border-gray-200 bg-white hover:bg-gray-50 text-xs font-bold text-gray-700 rounded-lg shadow-sm flex items-center gap-2 cursor-pointer transition-all duration-150">
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-          </svg>
-          Last 30 Days
-        </button>
+        <div className="relative" ref={timeframeRef}>
+          <button
+            onClick={() => setTimeframeOpen(!timeframeOpen)}
+            className="self-start px-4 py-2 border border-gray-200 bg-white hover:bg-gray-50 text-xs font-bold text-gray-700 rounded-lg shadow-sm flex items-center gap-2 cursor-pointer transition-all duration-150"
+          >
+            <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            </svg>
+            {timeframe === '7' ? 'Last 7 Days' : timeframe === '30' ? 'Last 30 Days' : timeframe === '90' ? 'Last 90 Days' : 'All Time'}
+            <svg className="w-3 h-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M19 9l-7 7-7-7" />
+            </svg>
+          </button>
+          
+          {timeframeOpen && (
+            <div className="absolute right-0 mt-1.5 w-40 bg-white border border-gray-200 rounded-xl shadow-xl z-50 overflow-hidden text-xs py-1 select-none">
+              {(['7', '30', '90', 'all'] as const).map(option => (
+                <button
+                  key={option}
+                  onClick={() => {
+                    setTimeframe(option);
+                    setTimeframeOpen(false);
+                  }}
+                  className={`w-full text-left px-4 py-2 hover:bg-gray-50 font-bold transition-colors cursor-pointer ${
+                    timeframe === option ? 'text-indigo-600 bg-indigo-50/30' : 'text-gray-600'
+                  }`}
+                >
+                  {option === '7' ? 'Last 7 Days' : option === '30' ? 'Last 30 Days' : option === '90' ? 'Last 90 Days' : 'All Time'}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
 
       {/* KPI Cards Grid */}
@@ -456,9 +514,9 @@ export const Dashboard: React.FC = () => {
             <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">Resolved</span>
             <div className="flex items-baseline gap-2">
               <h3 className="text-3xl font-extrabold text-gray-900 m-0">{resolvedCount}</h3>
-              {tickets.length > 0 && (
+              {filteredTickets.length > 0 && (
                 <span className="text-xs text-green-600 font-bold tracking-tight bg-green-50 px-1.5 py-0.5 rounded">
-                  {Math.round((resolvedCount / tickets.length) * 100)}% efficiency
+                  {Math.round((resolvedCount / filteredTickets.length) * 100)}% efficiency
                 </span>
               )}
             </div>
@@ -514,7 +572,7 @@ export const Dashboard: React.FC = () => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100 text-xs font-semibold text-gray-700">
-                {tickets.length === 0 ? (
+                {filteredTickets.length === 0 ? (
                   <tr>
                     <td colSpan={5} className="py-8 text-center text-gray-400 font-bold">
                       <div className="flex flex-col items-center justify-center gap-1">
@@ -524,7 +582,7 @@ export const Dashboard: React.FC = () => {
                     </td>
                   </tr>
                 ) : (
-                  tickets.slice(0, 7).map((ticket) => (
+                  filteredTickets.slice(0, 7).map((ticket) => (
                     <tr
                       key={ticket.id}
                       onClick={() => handleTicketClick(ticket.id)}
@@ -639,13 +697,13 @@ export const Dashboard: React.FC = () => {
               AI Maintenance Predictor
             </h3>
             <p className="text-xs text-slate-300 leading-relaxed font-medium">
-              Our neural network predicts asset failures before they occur. Currently monitoring {tickets.length > 0 ? (4100 + tickets.length).toLocaleString() : 0} critical components across all regions.
+              Our neural network predicts asset failures before they occur. Currently monitoring {filteredTickets.length > 0 ? (4100 + filteredTickets.length).toLocaleString() : 0} critical components across all regions.
             </p>
           </div>
           <div className="relative z-10 pt-2 flex items-center gap-4 text-xs font-bold text-cyan-400">
-            <span>Accuracy: {tickets.length > 0 ? '94.2%' : 'N/A (No data)'}</span>
+            <span>Accuracy: {filteredTickets.length > 0 ? '94.2%' : 'N/A (No data)'}</span>
             <span>·</span>
-            <span>Next Scan: {tickets.length > 0 ? 'In 4 mins' : 'N/A'}</span>
+            <span>Next Scan: {filteredTickets.length > 0 ? 'In 4 mins' : 'N/A'}</span>
           </div>
         </div>
 
