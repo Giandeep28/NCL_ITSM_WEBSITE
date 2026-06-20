@@ -4,6 +4,7 @@ import in.gov.ncl.itsm.user.domain.User;
 import java.util.Optional;
 
 public interface UserService {
+    Optional<User> findById(java.util.UUID id);
     Optional<User> findByEisNumber(String eisNumber);
     Optional<User> findByUsername(String username);
     Optional<User> findByUsernameOrEisNumber(String username, String eisNumber);

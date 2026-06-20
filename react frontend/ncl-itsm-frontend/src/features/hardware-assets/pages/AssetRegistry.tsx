@@ -2,27 +2,11 @@ import React, { useState } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
 // Mock Databases for HAM & SAM
-const initialHardwareAssets = [
-  { id: '1', tag: 'HW-DESK-0012', category: 'Desktop', make: 'HP', model: 'EliteDesk 800', serial: 'SGH90210X', dept: 'Power Systems', status: 'Assigned', location: 'Bay 7, Sector Delta' },
-  { id: '2', tag: 'HW-LAP-9014', category: 'Laptop', make: 'Dell', model: 'Latitude 5420', serial: 'CN088210Y', dept: 'Electrical Ops', status: 'Available', location: 'IT Center, Floor 2' },
-  { id: '3', tag: 'HW-PRN-0481', category: 'Printer', make: 'Canon', model: 'LBP6030', serial: 'CAN994821Z', dept: 'Instrumentation', status: 'Maintenance', location: 'Boiler 4 Room' },
-  { id: '4', tag: 'HW-PHN-2210', category: 'IPPhone', make: 'Cisco', model: '7841', serial: 'CIS221098W', dept: 'Automation Systems', status: 'Assigned', location: 'Main Assembly Line' },
-  { id: '5', tag: 'HW-LAP-1029', category: 'Laptop', make: 'Lenovo', model: 'ThinkPad T14', serial: 'LNV402918P', dept: 'Power Systems', status: 'Assigned', location: 'Bay 3' }
-];
+const initialHardwareAssets: any[] = [];
 
-const initialSoftwareLicenses = [
-  { id: '1', product: 'Windows 11 Enterprise', vendor: 'Microsoft', type: 'Volume', seats: 500, allocated: 382, expiry: '2026-12-31', daysRemaining: 180 },
-  { id: '2', product: 'Symantec Endpoint Protection', vendor: 'Broadcom', type: 'Subscription', seats: 200, allocated: 198, expiry: '2026-07-15', daysRemaining: 32 },
-  { id: '3', product: 'Adobe Acrobat Pro', vendor: 'Adobe', type: 'OEM', seats: 50, allocated: 48, expiry: '2026-08-22', daysRemaining: 68 },
-  { id: '4', product: 'SCADA HMI Suite', vendor: 'Siemens', type: 'Volume', seats: 15, allocated: 12, expiry: '2026-06-25', daysRemaining: 12 }
-];
+const initialSoftwareLicenses: any[] = [];
 
-const initialConsumables = [
-  { id: '1', code: 'MAT-9020', desc: 'HP LaserJet 85A Toner', qty: 42, reserved: 8, minLevel: 15 },
-  { id: '2', code: 'MAT-1029', desc: 'CAT6 Ethernet Cable (10m)', qty: 8, reserved: 2, minLevel: 10 }, // Alert triggered!
-  { id: '3', code: 'MAT-4481', desc: 'RJ45 Connectors Pack (100pcs)', qty: 3, reserved: 0, minLevel: 5 }, // Alert triggered!
-  { id: '4', code: 'MAT-5029', desc: 'USB Optical Mouse', qty: 25, reserved: 5, minLevel: 10 }
-];
+const initialConsumables: any[] = [];
 
 export const AssetRegistry: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'hardware' | 'software' | 'expiry' | 'consumables' | 'import'>('hardware');
@@ -43,11 +27,13 @@ export const AssetRegistry: React.FC = () => {
   });
 
   // Reconciled Preview Table
-  const reconciliationData = [
-    { code: 'MAT-9020', desc: 'HP LaserJet 85A Toner', dbQty: 42, fileQty: 50, status: 'Match (Update +50)', badge: 'bg-green-50 text-green-700 border-green-150' },
-    { code: 'MAT-1029', desc: 'CAT6 Ethernet Cable (10m)', dbQty: 8, fileQty: 8, status: 'Duplicate (Skipped)', badge: 'bg-amber-50 text-amber-700 border-amber-150' },
-    { code: 'MAT-4481', desc: 'RJ45 Connectors Premium', dbQty: 3, fileQty: 20, status: 'Conflict: Overwrite Name', badge: 'bg-red-50 text-red-700 border-red-150' }
-  ];
+  const reconciliationData: any[] = [];
+
+  // Dynamically compute license counts and low stock warnings
+  const expiring30 = initialSoftwareLicenses.filter(l => l.daysRemaining <= 30).length;
+  const expiring60 = initialSoftwareLicenses.filter(l => l.daysRemaining > 30 && l.daysRemaining <= 60).length;
+  const expiring90 = initialSoftwareLicenses.filter(l => l.daysRemaining > 60 && l.daysRemaining <= 90).length;
+  const lowStockConsumablesCount = initialConsumables.filter(item => item.qty <= item.minLevel).length;
 
   // Filtering hardware assets
   const filteredHardware = initialHardwareAssets.filter(asset => {
@@ -260,21 +246,21 @@ export const AssetRegistry: React.FC = () => {
             <div className="bg-red-50 border border-red-100 rounded-xl p-5 shadow-sm flex items-center justify-between">
               <div>
                 <span className="text-[10px] font-bold text-red-500 uppercase tracking-wider block">Expiring (30 Days)</span>
-                <h3 className="text-2xl font-black text-red-700 m-0 mt-1">1 License</h3>
+                <h3 className="text-2xl font-black text-red-700 m-0 mt-1">{expiring30} {expiring30 === 1 ? 'License' : 'Licenses'}</h3>
               </div>
               <span className="w-8 h-8 rounded-full bg-red-200 flex items-center justify-center text-red-700 font-black">!</span>
             </div>
             <div className="bg-amber-50 border border-amber-100 rounded-xl p-5 shadow-sm flex items-center justify-between">
               <div>
                 <span className="text-[10px] font-bold text-amber-500 uppercase tracking-wider block">Expiring (60 Days)</span>
-                <h3 className="text-2xl font-black text-amber-700 m-0 mt-1">2 Licenses</h3>
+                <h3 className="text-2xl font-black text-amber-700 m-0 mt-1">{expiring60} {expiring60 === 1 ? 'License' : 'Licenses'}</h3>
               </div>
               <span className="w-8 h-8 rounded-full bg-amber-200 flex items-center justify-center text-amber-700 font-black">!</span>
             </div>
             <div className="bg-indigo-50 border border-indigo-100 rounded-xl p-5 shadow-sm flex items-center justify-between">
               <div>
                 <span className="text-[10px] font-bold text-indigo-500 uppercase tracking-wider block">Expiring (90 Days)</span>
-                <h3 className="text-2xl font-black text-indigo-700 m-0 mt-1">3 Licenses</h3>
+                <h3 className="text-2xl font-black text-indigo-700 m-0 mt-1">{expiring90} {expiring90 === 1 ? 'License' : 'Licenses'}</h3>
               </div>
               <span className="w-8 h-8 rounded-full bg-indigo-200 flex items-center justify-center text-indigo-700 font-black">✓</span>
             </div>
@@ -328,15 +314,19 @@ export const AssetRegistry: React.FC = () => {
         /* ========================================================================= */
         <div className="space-y-6">
           {/* Low Stock Notification banner */}
-          <div className="bg-amber-500/10 border border-amber-500/30 rounded-xl p-4 flex items-center justify-between text-amber-700">
-            <div className="flex items-center gap-3">
-              <span className="w-8 h-8 rounded-full bg-amber-500/20 flex items-center justify-center text-amber-700 font-extrabold">!</span>
-              <div>
-                <h4 className="text-xs font-extrabold m-0">Low Stock Threshold Triggered</h4>
-                <p className="text-[10px] font-bold text-amber-600 mt-0.5">Two consumable materials are currently below their safety inventory levels.</p>
+          {lowStockConsumablesCount > 0 && (
+            <div className="bg-amber-500/10 border border-amber-500/30 rounded-xl p-4 flex items-center justify-between text-amber-700">
+              <div className="flex items-center gap-3">
+                <span className="w-8 h-8 rounded-full bg-amber-500/20 flex items-center justify-center text-amber-700 font-extrabold">!</span>
+                <div>
+                  <h4 className="text-xs font-extrabold m-0">Low Stock Threshold Triggered</h4>
+                  <p className="text-[10px] font-bold text-amber-600 mt-0.5">
+                    {lowStockConsumablesCount} {lowStockConsumablesCount === 1 ? 'consumable material is' : 'consumable materials are'} currently below their safety inventory levels.
+                  </p>
+                </div>
               </div>
             </div>
-          </div>
+          )}
 
           {/* Consumables Inventory Table */}
           <div className="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">

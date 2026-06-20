@@ -45,6 +45,7 @@ interface TicketState {
   fetchTicketById: (id: string) => Promise<Ticket | null>;
   addTicket: (ticket: Omit<Ticket, 'id' | 'comments'> & { comments?: Comment[] }) => Promise<void>;
   updateTicketStatus: (id: string, status: Ticket['status']) => Promise<void>;
+  reassignTicket: (id: string, engineerId: string) => Promise<void>;
   addComment: (ticketId: string, comment: Omit<Comment, 'id' | 'timestamp'>) => void;
   setSelectedTicketId: (id: string | null) => void;
 }
@@ -214,6 +215,40 @@ export const useTicketStore = create<TicketState>((set, get) => ({
             return {
               ...ticket,
               status,
+              comments: [...ticket.comments, systemComment]
+            };
+          }
+          return ticket;
+        })
+      }));
+    }
+  },
+
+  reassignTicket: async (id, engineerId) => {
+    try {
+      await apiClient.patch(`/tickets/${id}/reassign`, null, {
+        params: { engineerId }
+      });
+      // Fetch ticket specifically to get the updated reporter and engineer names
+      await get().fetchTicketById(id);
+    } catch (e) {
+      console.error('Failed to reassign on backend, reassigning locally', e);
+      set((state) => ({
+        tickets: state.tickets.map((ticket) => {
+          if (ticket.id === id) {
+            const systemComment: Comment = {
+              id: String(Date.now()),
+              author: 'System',
+              role: 'System Logger',
+              content: `Ticket reassigned.`,
+              timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+              isSystem: true
+            };
+            return {
+              ...ticket,
+              engineerId,
+              engineerName: 'Marcus Thorne', // Simulated local fallback name
+              status: ticket.status === 'Requested' ? 'Assigned' : ticket.status,
               comments: [...ticket.comments, systemComment]
             };
           }

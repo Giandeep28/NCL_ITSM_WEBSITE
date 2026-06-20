@@ -24,6 +24,12 @@ public class UserController {
         return ResponseEntity.ok(users);
     }
 
+    @GetMapping("/engineers")
+    public ResponseEntity<List<User>> getSupportEngineers() {
+        List<User> engineers = userService.findUsersByRole("Support Engineer", "NCL_HQ");
+        return ResponseEntity.ok(engineers);
+    }
+
     @PutMapping("/{eisNumber}/toggle-active")
     @PreAuthorize("hasAnyRole('ROLE_IT_ADMINISTRATOR', 'ROLE_SUPER_ADMINISTRATOR')")
     public ResponseEntity<?> toggleUserActive(@PathVariable String eisNumber) {

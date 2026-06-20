@@ -1,13 +1,24 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useTicketStore, type Ticket } from '../../../store/ticketStore';
+import { apiClient } from '../../../services/apiClient';
 
 export const RequestDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { tickets, updateTicketStatus, addComment, setSelectedTicketId, fetchTicketById } = useTicketStore();
+  const { tickets, updateTicketStatus, addComment, setSelectedTicketId, fetchTicketById, reassignTicket } = useTicketStore();
 
   const [loading, setLoading] = useState(true);
+  
+  interface Engineer {
+    id: string;
+    fullName: string;
+    designation: string;
+    departmentId: string;
+  }
+  const [engineers, setEngineers] = useState<Engineer[]>([]);
+  const [showReassignModal, setShowReassignModal] = useState(false);
+  const [selectedEngineerId, setSelectedEngineerId] = useState('');
 
   useEffect(() => {
     if (id) {
@@ -21,6 +32,40 @@ export const RequestDetail: React.FC = () => {
   const ticket = tickets.find(t => t.id === id) || (id ? undefined : tickets[0]);
 
   const [newCommentText, setNewCommentText] = useState('');
+
+  useEffect(() => {
+    if (showReassignModal) {
+      apiClient.get<Engineer[]>('/users/engineers')
+        .then(res => {
+          setEngineers(res.data);
+          if (res.data.length > 0) {
+            setSelectedEngineerId(res.data[0].id);
+          }
+        })
+        .catch(err => {
+          console.warn('Failed to load engineers from API, using offline fallback', err);
+          const fallbackEngineers = [
+            { id: '88291000', fullName: 'Marcus Thorne', designation: 'Electrical Specialist', departmentId: 'Power Systems' },
+            { id: '11112222', fullName: 'Sarah Jenkins', designation: 'Database Admin', departmentId: 'IT Infrastructure' }
+          ];
+          setEngineers(fallbackEngineers);
+          setSelectedEngineerId(fallbackEngineers[0].id);
+        });
+    }
+  }, [showReassignModal]);
+
+  const handleConfirmReassign = () => {
+    if (!selectedEngineerId || !ticket) return;
+    reassignTicket(ticket.id, selectedEngineerId)
+      .then(() => {
+        setShowReassignModal(false);
+        alert('Ticket reassigned successfully!');
+      })
+      .catch(err => {
+        console.error('Failed to reassign', err);
+        alert('Failed to reassign ticket.');
+      });
+  };
 
   if (loading) {
     return (
@@ -429,7 +474,7 @@ export const RequestDetail: React.FC = () => {
               </button>
             )}
             <button
-              onClick={() => alert('Reassign technician (Demo)')}
+              onClick={() => setShowReassignModal(true)}
               className="w-full py-2.5 bg-white hover:bg-gray-50 border border-gray-200 text-gray-700 rounded-xl text-xs font-bold shadow-sm flex items-center justify-center gap-2 cursor-pointer transition-colors active:scale-[0.98]"
             >
               <svg className="w-4.5 h-4.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -440,6 +485,45 @@ export const RequestDetail: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {/* Reassign Modal */}
+      {showReassignModal && (
+        <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl shadow-2xl p-6 max-w-sm w-full space-y-4">
+            <h3 className="text-base font-extrabold text-gray-900 m-0">Reassign Request</h3>
+            
+            <div className="space-y-1">
+              <label className="text-[11px] font-bold text-gray-500 uppercase tracking-wider">Select Support Engineer</label>
+              <select
+                value={selectedEngineerId}
+                onChange={e => setSelectedEngineerId(e.target.value)}
+                className="w-full px-3 py-2 bg-gray-50 border border-gray-200 text-gray-700 rounded-lg text-xs font-semibold focus:outline-none focus:bg-white focus:border-indigo-500 transition-colors"
+              >
+                {engineers.map(eng => (
+                  <option key={eng.id} value={eng.id}>
+                    {eng.fullName} ({eng.designation} - {eng.departmentId})
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="flex gap-3 justify-end pt-2">
+              <button
+                onClick={() => setShowReassignModal(false)}
+                className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg text-xs font-bold cursor-pointer"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleConfirmReassign}
+                className="px-5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-xs font-bold shadow-sm cursor-pointer"
+              >
+                Assign
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

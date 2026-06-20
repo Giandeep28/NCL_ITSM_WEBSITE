@@ -11,14 +11,7 @@ interface AuditLogEntry {
   afterJson: string | null;
 }
 
-const initialAuditLogs: AuditLogEntry[] = [
-  { id: '1', occurredAt: '2026-06-13 11:12:01', actorName: 'System', eventType: 'SYSTEM_BOOT', entityType: 'Application', entityId: 'A-901', beforeJson: null, afterJson: '{"status":"STARTED"}' },
-  { id: '2', occurredAt: '2026-06-13 11:12:02', actorName: 'System', eventType: 'LDAP_CONNECT', entityType: 'ActiveDirectory', entityId: 'AD-99', beforeJson: null, afterJson: '{"status":"CONNECTED","host":"ldaps://ncl-ad.gov.in"}' },
-  { id: '3', occurredAt: '2026-06-13 11:15:32', actorName: 'Marcus Thorne', eventType: 'VIEW_TICKET', entityType: 'Ticket', entityId: 'SR-88291', beforeJson: null, afterJson: '{"viewed":true}' },
-  { id: '4', occurredAt: '2026-06-13 11:22:15', actorName: 'Marcus Thorne', eventType: 'UPDATE_STATUS', entityType: 'Ticket', entityId: 'SR-88291', beforeJson: '{"status":"Created"}', afterJson: '{"status":"Assigned","assignedTo":"Marcus Thorne"}' },
-  { id: '5', occurredAt: '2026-06-13 11:25:40', actorName: 'J. Henderson', eventType: 'CREATE_TICKET', entityType: 'Ticket', entityId: 'SR-9402', beforeJson: null, afterJson: '{"status":"Created","category":"Turbine Maintenance"}' },
-  { id: '6', occurredAt: '2026-06-13 11:32:11', actorName: 'Admin', eventType: 'UPDATE_CONFIG', entityType: 'Configuration', entityId: 'CFG-201', beforeJson: '{"sla_hours":24}', afterJson: '{"sla_hours":12}' },
-];
+const initialAuditLogs: AuditLogEntry[] = [];
 
 export const AuditLogViewer: React.FC = () => {
   const [logs] = useState<AuditLogEntry[]>(initialAuditLogs);

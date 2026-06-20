@@ -11,68 +11,7 @@ interface Article {
   lastUpdated: string;
 }
 
-const ARTICLES: Article[] = [
-  {
-    id: '1',
-    title: 'Turbine Vibration Calibration Protocol',
-    category: 'Turbine Maintenance',
-    tags: ['vibration', 'calibration', 'turbine', 'mechanical'],
-    summary: 'Step-by-step guide to diagnosing and recalibrating abnormal turbine vibration levels exceeding safety thresholds.',
-    content: `## Overview\nAbnormal vibration levels (>4.0 mm/s) on turbine units indicate potential coupling or bearing issues. Immediate diagnostic is required.\n\n## Procedure\n1. **Safety Lockout**: Initiate lockout-tagout (LOTO) on turbine breaker panel before any inspection.\n2. **Initial Inspection**: Check secondary coupling assembly for visible wear. Look for lubricant leaks and gasket condition.\n3. **Sensor Verification**: Validate vibration sensor (TX series) calibration against reference. Replace if deviation exceeds ±0.3 mm/s.\n4. **Bearing Check**: Inspect bearing clearances using feeler gauges. Standard clearance: 0.03–0.06 mm.\n5. **Recalibration**: Using calibration rig, slowly bring turbine to operational speed. Target: ≤2.5 mm/s at full load.\n6. **Sign-off**: Close service request only after 2-hour stable operation log.\n\n## Parts Reference\n- Coupler Kit B-90 (Standard)\n- Vibration Sensor TX-99012 series\n- Gasket Set TG-4400`,
-    readTime: '8 min',
-    lastUpdated: 'Nov 2024',
-  },
-  {
-    id: '2',
-    title: 'PLC Firmware Upload Protocol (Safe Mode)',
-    category: 'PLC Update',
-    tags: ['PLC', 'firmware', 'automation', 'conveyor', 'programming'],
-    summary: 'Procedures for uploading new PLC firmware during scheduled downtime. Covers backup, verification, and rollback steps.',
-    content: `## Pre-requisites\n- Obtain Change Control Number from IT\n- Ensure 2-hour maintenance window is scheduled\n- Backup existing PLC project to shared drive: \\\\NCL-NAS\\\\PLC-Backups\\\\\n\n## Upload Steps\n1. Connect RS232/Ethernet cable to PLC programming port.\n2. Launch STEP 7 or TIA Portal (v17+).\n3. Load new firmware project file (*.ap17).\n4. Compare online/offline blocks — ensure no unexpected differences.\n5. Download project with **Stop PLC before download** option checked.\n6. Restart PLC in RUN mode.\n7. Validate I/O mapping on HMI panel.\n\n## Rollback Procedure\nIf conveyor does not initialize within 60 seconds:\n1. Immediately halt PLC.\n2. Load backup project from NAS.\n3. Re-download.\n4. Raise Severity 1 ticket tagging "PLC Failure" category.`,
-    readTime: '12 min',
-    lastUpdated: 'Oct 2024',
-  },
-  {
-    id: '3',
-    title: 'Substation Grid Phase Calibration',
-    category: 'Grid Calibration',
-    tags: ['grid', 'substation', 'phase', 'electrical', 'feeder'],
-    summary: 'Instructions for identifying and correcting phase mismatch on distribution feeder lines at NCL substations.',
-    content: `## Background\nPhase mismatch on feeder lines can cause asymmetric loading and equipment damage. Only qualified grid engineers may perform calibration.\n\n## Diagnosis\n1. Using a Power Quality Analyzer, record phase voltages and angles at the affected substation.\n2. Expected values: 415V ±5%, phase angle 120° ±2° between phases.\n3. If mismatch >3°: escalate to Senior Grid Engineer.\n\n## Correction Steps\n1. Issue Substation Work Permit.\n2. Isolate affected feeder using motorized disconnector.\n3. Adjust tap changer position on distribution transformer (one tap = 2.5% voltage).\n4. Reconnect feeder and verify on PQA.\n5. Log all tap settings in Substation Log Book.\n\n## Safety Note\nNever attempt phase correction without energized line clearance from Control Room (Phone: 4029).`,
-    readTime: '10 min',
-    lastUpdated: 'Sep 2024',
-  },
-  {
-    id: '4',
-    title: 'Temperature Sensor Replacement (Boiler Series)',
-    category: 'Sensor Replacement',
-    tags: ['sensor', 'thermocouple', 'boiler', 'temperature'],
-    summary: 'Guide for replacing faulty thermocouple sensors in NCL boiler units, including wiring and calibration steps.',
-    content: `## Parts Required\n- Thermocouple: Type K, 6mm probe, M12 connector (NCL Part: TC-K6M12)\n- Terminal block screwdriver\n- HART Communicator or calibrator\n\n## Replacement Procedure\n1. Lower boiler load to <20% before sensor work.\n2. Disconnect terminal block leads (document wire colors).\n3. Remove sensor from thermowell using 22mm spanner.\n4. Insert new sensor — torque to 25 Nm.\n5. Reconnect terminals per documentation.\n6. Zero calibration using HART Communicator: set at 0°C (ice bath reference).\n7. Span calibration: set at 100°C (boiling water or reference oven).\n8. Verify reading on DCS screen matches reference within ±1°C.`,
-    readTime: '7 min',
-    lastUpdated: 'Oct 2024',
-  },
-  {
-    id: '5',
-    title: 'IT Hardware Asset Intake & Tagging SOP',
-    category: 'IT Operations',
-    tags: ['hardware', 'asset', 'inventory', 'tagging', 'onboarding'],
-    summary: 'Standard procedure for receiving, registering, and tagging new hardware assets in the NCL IT inventory system.',
-    content: `## Intake Checklist\n- [ ] Inspect packaging for damage\n- [ ] Verify model and serial number against purchase order\n- [ ] Photograph asset front and back\n- [ ] Apply NCL Asset Tag (format: HW-[TYPE]-[XXXX])\n\n## ITSM Registration Steps\n1. Navigate to Assets > Hardware Registry > Add Asset.\n2. Fill: Category, Make, Model, Serial Number, Department, Location.\n3. Set Status to "Procured".\n4. Attach photos to asset record.\n5. Update procurement date.\n\n## Assignment\n- To assign to a user: change Status to "Assigned" and fill Assigned User field.\n- Notify user via email: use template "Asset Assignment Notification".\n\n## Retirement\n- For assets >5 years or irrepairable: change Status to "Retired".\n- Move to Disposal Queue and notify Finance for write-off.`,
-    readTime: '9 min',
-    lastUpdated: 'Nov 2024',
-  },
-  {
-    id: '6',
-    title: 'Software License Renewal Workflow',
-    category: 'IT Operations',
-    tags: ['software', 'license', 'renewal', 'SAM', 'Microsoft'],
-    summary: 'Process for tracking expiring software licenses and initiating renewal through the procurement channel.',
-    content: `## Monitoring\nThe ITSM system sends automated alerts for licenses expiring within:\n- 90 days: Informational email to IT Admin\n- 30 days: Escalation email to IT Head\n- 15 days: Critical alert on dashboard with SLA tracking\n\n## Renewal Process\n1. Identify expiring license in ITSM Assets > Software Registry > Expiry Dashboard.\n2. Raise Procurement Request (PR) in SAP with the license details.\n3. Attach vendor quote to PR.\n4. On approval, upload new license key to ITSM (hashed storage — never plain text).\n5. Update Expiry Date in software record.\n\n## Volume License Management\n- Microsoft: Managed via Open Value Agreement (OVA). Contact: software@ncl.gov.in\n- Siemens SCADA: Requires on-site vendor engineer for activation. SLA: 5 business days.`,
-    readTime: '6 min',
-    lastUpdated: 'Oct 2024',
-  },
-];
+const ARTICLES: Article[] = [];
 
 const CATEGORIES = ['All', ...Array.from(new Set(ARTICLES.map((a) => a.category)))];
 

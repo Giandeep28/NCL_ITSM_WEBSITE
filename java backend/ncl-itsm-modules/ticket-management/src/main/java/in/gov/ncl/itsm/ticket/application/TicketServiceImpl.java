@@ -24,6 +24,7 @@ public class TicketServiceImpl implements TicketService {
     private final TicketRepository ticketRepository;
     private final TicketHistoryRepository ticketHistoryRepository;
     private final org.springframework.context.ApplicationEventPublisher eventPublisher;
+    private final in.gov.ncl.itsm.user.application.UserService userService;
     private final Random random = new Random();
 
     @Override
@@ -131,6 +132,40 @@ public class TicketServiceImpl implements TicketService {
                 .oldStatus(oldStatus)
                 .newStatus(newStatus)
                 .comment(comment)
+                .build();
+
+        ticketHistoryRepository.save(history);
+
+        return ticket;
+    }
+
+    @Override
+    public Ticket assignTicket(UUID ticketId, UUID engineerId, UUID actorId) {
+        Ticket ticket = ticketRepository.findById(ticketId)
+                .orElseThrow(() -> new IllegalArgumentException("Ticket context not found: " + ticketId));
+
+        ticket.setEngineerId(engineerId);
+        
+        String oldStatus = ticket.getStatus();
+        if ("Created".equalsIgnoreCase(oldStatus) || "Requested".equalsIgnoreCase(oldStatus)) {
+            ticket.setStatus("Assigned");
+        }
+
+        ticket = ticketRepository.save(ticket);
+
+        // Fetch engineer details to log their name
+        String engName = "Engineer";
+        var engOpt = userService.findById(engineerId);
+        if (engOpt.isPresent()) {
+            engName = engOpt.get().getFullName();
+        }
+
+        TicketHistory history = TicketHistory.builder()
+                .ticket(ticket)
+                .actorId(actorId)
+                .oldStatus(oldStatus)
+                .newStatus(ticket.getStatus())
+                .comment("Ticket reassigned to " + engName)
                 .build();
 
         ticketHistoryRepository.save(history);

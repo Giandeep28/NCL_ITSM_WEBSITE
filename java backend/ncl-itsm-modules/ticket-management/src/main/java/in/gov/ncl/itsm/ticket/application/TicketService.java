@@ -15,5 +15,6 @@ public interface TicketService {
     List<Ticket> getTicketsByReporter(UUID reporterId);
     List<Ticket> getAllTickets(String tenantId);
     Ticket updateTicketStatus(UUID ticketId, String newStatus, String comment, UUID actorId);
+    Ticket assignTicket(UUID ticketId, UUID engineerId, UUID actorId);
     List<TicketHistory> getTicketHistory(UUID ticketId);
 }

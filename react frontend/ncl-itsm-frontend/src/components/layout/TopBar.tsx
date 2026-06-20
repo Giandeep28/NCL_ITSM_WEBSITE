@@ -1,5 +1,46 @@
-import React from 'react';
+import React, { useState, useRef, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../../store/authStore';
+
+interface NotificationItem {
+  id: string;
+  title: string;
+  description: string;
+  time: string;
+  unread: boolean;
+  type: 'info' | 'success' | 'alert';
+  route?: string;
+}
+
+const SAMPLE_NOTIFICATIONS: NotificationItem[] = [
+  {
+    id: 'n1',
+    title: 'New Service Request Assigned',
+    description: 'Ticket INC-2026-92815 has been assigned to you for Grid Calibration.',
+    time: '5 mins ago',
+    unread: true,
+    type: 'info',
+    route: '/engineer',
+  },
+  {
+    id: 'n2',
+    title: 'SLA Level Critical Update',
+    description: 'System settings updated: Critical SLA threshold changed to 2 hours.',
+    time: '1 hour ago',
+    unread: false,
+    type: 'success',
+    route: '/settings',
+  },
+  {
+    id: 'n3',
+    title: 'Low Stock Alert: CAT6 Cable',
+    description: 'Stock quantity of CAT6 Ethernet Cable (10m) is below minimum level (8 left).',
+    time: '3 hours ago',
+    unread: true,
+    type: 'alert',
+    route: '/assets',
+  },
+];
 
 interface TopBarProps {
   title: string;
@@ -45,6 +86,55 @@ const UserProfileChip: React.FC = () => {
 };
 
 export const TopBar: React.FC<TopBarProps> = ({ title }) => {
+  const navigate = useNavigate();
+  const [notifications, setNotifications] = useState<NotificationItem[]>(() => {
+    const saved = localStorage.getItem('ncl_notifications');
+    if (saved) {
+      try {
+        return JSON.parse(saved);
+      } catch {
+        return SAMPLE_NOTIFICATIONS;
+      }
+    }
+    return SAMPLE_NOTIFICATIONS;
+  });
+  const [notificationsOpen, setNotificationsOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  // Sync notifications to localStorage
+  useEffect(() => {
+    localStorage.setItem('ncl_notifications', JSON.stringify(notifications));
+  }, [notifications]);
+
+  // Close notifications dropdown on click outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setNotificationsOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const unreadCount = notifications.filter(n => n.unread).length;
+
+  const handleMarkAllRead = () => {
+    setNotifications(prev => prev.map(n => ({ ...n, unread: false })));
+  };
+
+  const handleClearNotifications = () => {
+    setNotifications([]);
+  };
+
+  const handleNotificationClick = (n: NotificationItem) => {
+    setNotifications(prev => prev.map(item => item.id === n.id ? { ...item, unread: false } : item));
+    setNotificationsOpen(false);
+    if (n.route) {
+      navigate(n.route);
+    }
+  };
+
   return (
     <header className="h-16 bg-white border-b border-gray-200 px-6 flex items-center justify-between sticky top-0 z-40 select-none">
       {/* Page Title / Section Brand */}
@@ -71,12 +161,90 @@ export const TopBar: React.FC<TopBarProps> = ({ title }) => {
         {/* Action Buttons */}
         <div className="flex items-center gap-4.5 text-gray-500">
           {/* Notification Bell */}
-          <button className="relative p-1.5 hover:bg-gray-100 hover:text-gray-700 rounded-full transition-all duration-150 cursor-pointer">
-            <svg className="w-5.5 h-5.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.659A6.002 6.002 0 006 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
-            </svg>
-            <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-indigo-600 rounded-full border border-white"></span>
-          </button>
+          <div className="relative" ref={dropdownRef}>
+            <button
+              onClick={() => setNotificationsOpen(!notificationsOpen)}
+              className="relative p-1.5 hover:bg-gray-100 hover:text-gray-700 rounded-full transition-all duration-150 cursor-pointer"
+            >
+              <svg className="w-5.5 h-5.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.659A6.002 6.002 0 006 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+              </svg>
+              {unreadCount > 0 && (
+                <span className="absolute top-1 right-1 flex h-4 w-4">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-4 w-4 bg-indigo-600 text-[8px] font-black text-white items-center justify-center border border-white">
+                    {unreadCount}
+                  </span>
+                </span>
+              )}
+            </button>
+
+            {/* Notification Dropdown Panel */}
+            {notificationsOpen && (
+              <div className="absolute right-0 mt-2.5 w-80 bg-white border border-gray-200 rounded-2xl shadow-xl z-50 overflow-hidden text-xs">
+                <div className="p-3 bg-gray-50 border-b border-gray-200 flex justify-between items-center">
+                  <span className="font-extrabold text-gray-800">Notifications</span>
+                  <div className="flex gap-2">
+                    {unreadCount > 0 && (
+                      <button
+                        onClick={handleMarkAllRead}
+                        className="text-[10px] text-indigo-600 hover:text-indigo-800 font-extrabold cursor-pointer"
+                      >
+                        Mark read
+                      </button>
+                    )}
+                    {notifications.length > 0 && (
+                      <button
+                        onClick={handleClearNotifications}
+                        className="text-[10px] text-gray-500 hover:text-red-500 font-extrabold cursor-pointer"
+                      >
+                        Clear all
+                      </button>
+                    )}
+                  </div>
+                </div>
+
+                <div className="max-h-64 overflow-y-auto divide-y divide-gray-100">
+                  {notifications.length === 0 ? (
+                    <div className="p-6 text-center text-gray-400 font-bold">
+                      No notifications
+                    </div>
+                  ) : (
+                    notifications.map(n => (
+                      <div
+                        key={n.id}
+                        onClick={() => handleNotificationClick(n)}
+                        className={`p-3.5 flex gap-2.5 hover:bg-gray-50 cursor-pointer transition-colors ${
+                          n.unread ? 'bg-indigo-50/20' : ''
+                        }`}
+                      >
+                        <div className="mt-0.5">
+                          {n.type === 'alert' ? (
+                            <span className="flex h-2.5 w-2.5 rounded-full bg-red-500 ring-4 ring-red-50"></span>
+                          ) : n.type === 'success' ? (
+                            <span className="flex h-2.5 w-2.5 rounded-full bg-green-500 ring-4 ring-green-50"></span>
+                          ) : (
+                            <span className="flex h-2.5 w-2.5 rounded-full bg-indigo-500 ring-4 ring-indigo-50"></span>
+                          )}
+                        </div>
+                        <div className="flex-1 space-y-0.5">
+                          <div className="flex justify-between items-baseline gap-1">
+                            <span className={`font-bold ${n.unread ? 'text-gray-900' : 'text-gray-600'}`}>
+                              {n.title}
+                            </span>
+                            <span className="text-[9px] text-gray-400 font-semibold whitespace-nowrap">{n.time}</span>
+                          </div>
+                          <p className="text-[11px] text-gray-500 font-semibold leading-snug">
+                            {n.description}
+                          </p>
+                        </div>
+                      </div>
+                    ))
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
 
           {/* Help */}
           <button className="p-1.5 hover:bg-gray-100 hover:text-gray-700 rounded-full transition-all duration-150 cursor-pointer">

@@ -136,7 +136,43 @@ public class TicketController {
         }
     }
 
+    @PatchMapping("/{id}/reassign")
+    public ResponseEntity<?> reassignTicket(
+            @PathVariable UUID id,
+            @RequestParam UUID engineerId,
+            @AuthenticationPrincipal UserDetails principal
+    ) {
+        Optional<User> userOpt = userService.findByEisNumber(principal.getUsername());
+        if (userOpt.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User context not found");
+        }
+        User actor = userOpt.get();
+
+        try {
+            Ticket updatedTicket = ticketService.assignTicket(id, engineerId, actor.getId());
+            return ResponseEntity.ok(mapToResponse(updatedTicket));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Error reassigning ticket: " + e.getMessage());
+        }
+    }
+
     private TicketResponse mapToResponse(Ticket ticket) {
+        String reporterName = "Employee";
+        if (ticket.getReporterId() != null) {
+            Optional<User> rOpt = userService.findById(ticket.getReporterId());
+            if (rOpt.isPresent()) {
+                reporterName = rOpt.get().getFullName();
+            }
+        }
+
+        String engineerName = null;
+        if (ticket.getEngineerId() != null) {
+            Optional<User> eOpt = userService.findById(ticket.getEngineerId());
+            if (eOpt.isPresent()) {
+                engineerName = eOpt.get().getFullName();
+            }
+        }
+
         return TicketResponse.builder()
                 .id(ticket.getId())
                 .ticketNumber(ticket.getTicketNumber())
@@ -148,9 +184,9 @@ public class TicketController {
                 .status(ticket.getStatus())
                 .priority(ticket.getPriority())
                 .reporterId(ticket.getReporterId())
-                .reporterName("J. Henderson") // Mock name mapping or retrieve from User module
+                .reporterName(reporterName)
                 .engineerId(ticket.getEngineerId())
-                .engineerName(ticket.getEngineerId() != null ? "Marcus Thorne" : null)
+                .engineerName(engineerName)
                 .serialNumber(ticket.getSerialNumber())
                 .location(ticket.getLocation())
                 .createdAt(ticket.getCreatedAt())

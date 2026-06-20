@@ -12,48 +12,7 @@ interface User {
   roles: { id: string; name: string }[];
 }
 
-const mockUsers: User[] = [
-  {
-    id: 'u1',
-    eisNumber: '12345678',
-    fullName: 'J. Henderson',
-    email: '12345678@ncl.gov.in',
-    designation: 'Operations Lead',
-    departmentId: 'Power Generation',
-    isActive: true,
-    roles: [{ id: 'r1', name: 'Employee' }]
-  },
-  {
-    id: 'u2',
-    eisNumber: '88291000',
-    fullName: 'Marcus Thorne',
-    email: '88291000@ncl.gov.in',
-    designation: 'Electrical Specialist',
-    departmentId: 'Power Systems',
-    isActive: true,
-    roles: [{ id: 'r2', name: 'Support Engineer' }]
-  },
-  {
-    id: 'u3',
-    eisNumber: '90000001',
-    fullName: 'David Sterling',
-    email: 'admin@ncl.gov.in',
-    designation: 'IT Administrator',
-    departmentId: 'IT Infrastructure',
-    isActive: true,
-    roles: [{ id: 'r3', name: 'IT Administrator' }]
-  },
-  {
-    id: 'u4',
-    eisNumber: '11112222',
-    fullName: 'Sarah Jenkins',
-    email: 'sjenkins@ncl.gov.in',
-    designation: 'Database Admin',
-    departmentId: 'IT Infrastructure',
-    isActive: false, // Locked account example
-    roles: [{ id: 'r4', name: 'Support Engineer' }]
-  }
-];
+const mockUsers: User[] = [];
 
 export const UserManagement: React.FC = () => {
   const [users, setUsers] = useState<User[]>([]);

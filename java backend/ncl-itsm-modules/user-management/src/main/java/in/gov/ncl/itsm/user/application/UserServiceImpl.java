@@ -33,6 +33,14 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
+    public Optional<User> findById(java.util.UUID id) {
+        Optional<User> userOpt = userRepository.findById(id);
+        userOpt.ifPresent(this::checkAndAutoUnlock);
+        return userOpt;
+    }
+
+    @Override
+    @Transactional
     public Optional<User> findByEisNumber(String eisNumber) {
         Optional<User> userOpt = userRepository.findByEisNumber(eisNumber);
         userOpt.ifPresent(this::checkAndAutoUnlock);
