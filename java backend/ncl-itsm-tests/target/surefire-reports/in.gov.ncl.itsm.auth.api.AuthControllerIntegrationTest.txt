@@ -1,9 +1,9 @@
 -------------------------------------------------------------------------------
 Test set: in.gov.ncl.itsm.auth.api.AuthControllerIntegrationTest
 -------------------------------------------------------------------------------
-Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 13.34 s -- in in.gov.ncl.itsm.auth.api.AuthControllerIntegrationTest
-in.gov.ncl.itsm.auth.api.AuthControllerIntegrationTest.forgotAndResetPassword_success -- Time elapsed: 1.405 s
-in.gov.ncl.itsm.auth.api.AuthControllerIntegrationTest.login_lockoutAfter5Attempts -- Time elapsed: 0.456 s
-in.gov.ncl.itsm.auth.api.AuthControllerIntegrationTest.login_success -- Time elapsed: 0.158 s
-in.gov.ncl.itsm.auth.api.AuthControllerIntegrationTest.register_mismatchedPasswords -- Time elapsed: 0.022 s
-in.gov.ncl.itsm.auth.api.AuthControllerIntegrationTest.register_success -- Time elapsed: 0.105 s
+Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 17.64 s -- in in.gov.ncl.itsm.auth.api.AuthControllerIntegrationTest
+in.gov.ncl.itsm.auth.api.AuthControllerIntegrationTest.forgotAndResetPassword_success -- Time elapsed: 1.694 s
+in.gov.ncl.itsm.auth.api.AuthControllerIntegrationTest.login_lockoutAfter5Attempts -- Time elapsed: 0.493 s
+in.gov.ncl.itsm.auth.api.AuthControllerIntegrationTest.login_success -- Time elapsed: 0.162 s
+in.gov.ncl.itsm.auth.api.AuthControllerIntegrationTest.register_mismatchedPasswords -- Time elapsed: 0.014 s
+in.gov.ncl.itsm.auth.api.AuthControllerIntegrationTest.register_success -- Time elapsed: 0.096 s

@@ -2,4 +2,4 @@
 Test set: in.gov.ncl.itsm.performance.PerformanceLoadTest
 -------------------------------------------------------------------------------
 Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.132 s -- in in.gov.ncl.itsm.performance.PerformanceLoadTest
-in.gov.ncl.itsm.performance.PerformanceLoadTest.loadTest_concurrentTicketProcessing -- Time elapsed: 0.132 s
+in.gov.ncl.itsm.performance.PerformanceLoadTest.loadTest_concurrentTicketProcessing -- Time elapsed: 0.131 s
