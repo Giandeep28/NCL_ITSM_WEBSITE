@@ -63,8 +63,6 @@ public class AuthController {
                 .username(request.getUsername())
                 .password(hashedPassword)
                 .mobile(request.getMobile())
-                .designation("Staff")
-                .departmentId("Operations")
                 .tenantId("NCL_HQ")
                 .orgId("HQ_OPS")
                 .locationId("Main Building")
@@ -158,6 +156,7 @@ public class AuthController {
         String refreshToken = jwtTokenProvider.generateRefreshToken(userDetails);
 
         AuthResponse authResponse = AuthResponse.builder()
+                .id(user.getId())
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
                 .role(primaryRole)

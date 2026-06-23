@@ -21,7 +21,7 @@ export const Dashboard: React.FC = () => {
   const { tickets, setSelectedTicketId, fetchTickets } = useTicketStore();
   const { user } = useAuthStore();
 
-  const isEngineer = user?.role === 'Support Engineer';
+  const isEngineer = user?.role === 'Support Engineer' || user?.role === 'IT Administrator' || user?.role === 'Super Admin';
   const [isApiOnline, setIsApiOnline] = useState(true);
 
   const [timeframe, setTimeframe] = useState<'7' | '30' | '90' | 'all'>('30');
@@ -40,11 +40,19 @@ export const Dashboard: React.FC = () => {
   }, []);
 
   const filteredTickets = useMemo(() => {
-    if (timeframe === 'all') return tickets;
+    let list = tickets;
+    if (!isEngineer) {
+      list = tickets.filter(t => 
+        t.reporterId === user?.id ||
+        t.reporterId === user?.eisNumber ||
+        t.reporterName.toLowerCase().trim() === user?.fullName.toLowerCase().trim()
+      );
+    }
+    if (timeframe === 'all') return list;
     const daysLimit = parseInt(timeframe);
     const limitMs = daysLimit * 24 * 60 * 60 * 1000;
     const now = Date.now();
-    return tickets.filter(t => {
+    return list.filter(t => {
       try {
         const ticketTime = new Date(t.date).getTime();
         if (isNaN(ticketTime)) return true;
@@ -53,7 +61,7 @@ export const Dashboard: React.FC = () => {
         return true;
       }
     });
-  }, [tickets, timeframe]);
+  }, [tickets, timeframe, isEngineer, user]);
 
   useEffect(() => {
     const initData = async () => {
@@ -94,43 +102,16 @@ export const Dashboard: React.FC = () => {
     }
   };
 
-  // Category Icons helper
-  const getCategoryIcon = (category: string) => {
+  // Category Icons helper — uses a generic icon for all categories
+  const getCategoryIcon = (_category: string) => {
     const iconClass = "p-1.5 rounded-lg text-white bg-[#0F2D54]";
-    switch (category) {
-      case 'Turbine Maintenance':
-        return (
-          <span className={iconClass}>
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-            </svg>
-          </span>
-        );
-      case 'Grid Calibration':
-        return (
-          <span className={iconClass}>
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M13 10V3L4 14h7v7l9-11h-7z" />
-            </svg>
-          </span>
-        );
-      case 'Sensor Replacement':
-        return (
-          <span className={iconClass}>
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z" />
-            </svg>
-          </span>
-        );
-      default:
-        return (
-          <span className={iconClass}>
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2" />
-            </svg>
-          </span>
-        );
-    }
+    return (
+      <span className={iconClass}>
+        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2" />
+        </svg>
+      </span>
+    );
   };
 
   // -------------------------------------------------------------------------

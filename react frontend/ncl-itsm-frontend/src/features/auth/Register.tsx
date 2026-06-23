@@ -172,7 +172,7 @@ export const Register: React.FC = () => {
                 onChange={e => setEisNumber(e.target.value.replace(/[^A-Za-z0-9]/g, ''))}
                 maxLength={20}
                 disabled={isLoading}
-                className="w-full px-4 py-2 bg-[#0F172A] border border-slate-700/80 text-white rounded-lg text-xs font-semibold focus:outline-none focus:border-indigo-500 transition-colors placeholder:text-slate-600"
+                className="w-full px-4 py-2 bg-[#0F172A] border border-slate-700/80 text-white rounded-lg text-xs font-semibold focus:outline-none focus:border-indigo-500 transition-colors"
               />
             </div>
           </div>

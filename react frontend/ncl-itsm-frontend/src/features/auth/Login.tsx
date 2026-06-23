@@ -70,9 +70,9 @@ export const Login: React.FC = () => {
     try {
       // 1. Try backend authentication first
       const response = await apiClient.post('/auth/login', { usernameOrEmployeeId: usernameOrEis, password });
-      const { accessToken, refreshToken, role, fullName, eisNumber, departmentId } = response.data;
+      const { accessToken, refreshToken, role, fullName, eisNumber, departmentId, id } = response.data;
       
-      const user: AuthUser = { eisNumber, fullName, role, departmentId };
+      const user: AuthUser = { id, eisNumber, fullName, role, departmentId };
       
       if (BYPASS_OTP) {
         setAuth(user, accessToken, refreshToken);
@@ -88,68 +88,13 @@ export const Login: React.FC = () => {
       }
     } catch (err: any) {
       setIsLoading(false);
-      
-      // 2. Fallback Mock Bypass (For offline presentation/sandbox)
-      if (err.code === 'ERR_NETWORK' || err.response?.status === 404 || err.response?.status === 401) {
-        // Mock success for evaluation convenience
-        if (password === 'password') {
-          // Resolve mock identity from known sandbox accounts
-          let mockFullName = 'J. Henderson';
-          let mockRole: AuthUser['role'] = 'Employee';
-          let mockDept = 'Power Generation';
-          let finalEis = /^\d{8}$/.test(usernameOrEis) ? usernameOrEis : '12345678';
-
-          if (usernameOrEis === '88291000' || usernameOrEis === 'marcus') {
-            mockFullName = 'Marcus Thorne';
-            mockRole = 'Support Engineer';
-            mockDept = 'Power Systems';
-            finalEis = '88291000';
-          } else if (usernameOrEis === '90000001' || usernameOrEis === 'admin') {
-            mockFullName = 'Admin User';
-            mockRole = 'IT Administrator';
-            mockDept = 'IT Administration';
-            finalEis = '90000001';
-          }
-
-          const mockUser: AuthUser = {
-            eisNumber: finalEis,
-            fullName: mockFullName,
-            role: mockRole,
-            departmentId: mockDept,
-          };
-          if (BYPASS_OTP) {
-            setAuth(mockUser, 'mock-access-token', 'mock-refresh-token');
-            navigate('/dashboard');
-          } else {
-            setTempAuthData({
-              user: mockUser,
-              accessToken: 'mock-access-token',
-              refreshToken: 'mock-refresh-token'
-            });
-            setOtpMode(true);
-            setCountdown(60);
-          }
-        } else {
-          // Track mock lockout
-          setFailCount(prev => {
-            const next = prev + 1;
-            if (next >= 5) {
-              setLockoutTime(900); // 15 mins
-              return 0;
-            }
-            return next;
-          });
-          setErrorMsg(`Invalid credentials. ${5 - (failCount + 1)} attempts remaining. (Hint: Use password "password")`);
-        }
-      } else {
-        const status = err.response?.status;
-        const data = err.response?.data;
-        const msg =
-          data?.message ||
-          data?.error ||
-          (status ? `Server error (${status}). Please try again or contact support.` : 'Network error. Please check your connection and try again.');
-        setErrorMsg(msg);
-      }
+      const status = err.response?.status;
+      const data = err.response?.data;
+      const msg =
+        data?.message ||
+        data?.error ||
+        (status ? `Server error (${status}). Please try again or contact support.` : 'Network error. Please check your connection and try again.');
+      setErrorMsg(msg);
     }
   };
 
@@ -159,17 +104,15 @@ export const Login: React.FC = () => {
     refreshToken: string;
   } | null>(null);
 
-  const [failCount, setFailCount] = useState(0);
-
   const handleOtpSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (otpCode === '123456' || otpCode === '1234' || tempAuthData) {
+    if (tempAuthData && otpCode.trim()) {
       if (tempAuthData) {
         setAuth(tempAuthData.user, tempAuthData.accessToken, tempAuthData.refreshToken);
       }
       navigate('/dashboard');
     } else {
-      setErrorMsg('Invalid OTP code. Try "123456"');
+      setErrorMsg('Invalid OTP code.');
     }
   };
 
@@ -266,7 +209,7 @@ export const Login: React.FC = () => {
           /* ========================================================================= */
           <form onSubmit={handleOtpSubmit} className="space-y-4">
             <div className="bg-indigo-600/10 border border-indigo-500/20 text-indigo-400 px-4 py-3 rounded-lg text-xs font-bold text-center leading-relaxed">
-              🔑 OTP sent to your registered mobile number ending in *9012. (Simulation Hint: Click Submit directly)
+              OTP sent to your registered contact.
             </div>
 
             <div className="space-y-1">
@@ -312,10 +255,6 @@ export const Login: React.FC = () => {
           </form>
         )}
 
-        <div className="text-center text-[10px] text-slate-500 font-bold border-t border-slate-800 pt-4 flex flex-col gap-1 leading-normal">
-          <span>ℹ Sandbox Accounts (Password: "password", OTP: any)</span>
-          <span>Employee: 12345678 | Engineer: 88291000 | Admin: 90000001</span>
-        </div>
       </div>
     </div>
   );

@@ -1,10 +1,16 @@
 package in.gov.ncl.itsm.user.api;
 
+import in.gov.ncl.itsm.user.api.dto.ProfileUpdateRequest;
+import in.gov.ncl.itsm.user.api.dto.ProfileResponse;
 import in.gov.ncl.itsm.user.application.UserService;
 import in.gov.ncl.itsm.user.domain.User;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,6 +22,7 @@ import java.util.Optional;
 public class UserController {
 
     private final UserService userService;
+    private final PasswordEncoder passwordEncoder;
 
     @GetMapping
     @PreAuthorize("hasAnyRole('ROLE_IT_ADMINISTRATOR', 'ROLE_SUPER_ADMINISTRATOR')")
@@ -47,5 +54,48 @@ public class UserController {
 
         // Return updated user
         return ResponseEntity.ok(userService.findByEisNumber(eisNumber).orElseThrow());
+    }
+
+    @GetMapping("/profile")
+    public ResponseEntity<?> getProfile(@AuthenticationPrincipal UserDetails principal) {
+        Optional<User> userOpt = userService.findByEisNumber(principal.getUsername());
+        if (userOpt.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User context not found");
+        }
+        return ResponseEntity.ok(ProfileResponse.from(userOpt.get()));
+    }
+
+    @PatchMapping("/profile")
+    public ResponseEntity<?> updateProfile(
+            @RequestBody ProfileUpdateRequest request,
+            @AuthenticationPrincipal UserDetails principal
+    ) {
+        Optional<User> userOpt = userService.findByEisNumber(principal.getUsername());
+        if (userOpt.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User context not found");
+        }
+
+        User user = userOpt.get();
+        if (request.getFullName() != null && !request.getFullName().isBlank()) {
+            user.setFullName(request.getFullName().trim());
+        }
+        if (request.getEmail() != null && !request.getEmail().isBlank()) {
+            user.setEmail(request.getEmail().trim());
+        }
+        if (request.getMobile() != null && !request.getMobile().isBlank()) {
+            user.setMobile(request.getMobile().trim());
+        }
+        if (request.getDesignation() != null && !request.getDesignation().isBlank()) {
+            user.setDesignation(request.getDesignation().trim());
+        }
+        if (request.getDepartmentId() != null && !request.getDepartmentId().isBlank()) {
+            user.setDepartmentId(request.getDepartmentId().trim());
+        }
+        if (request.getPassword() != null && !request.getPassword().isBlank()) {
+            user.setPassword(passwordEncoder.encode(request.getPassword()));
+        }
+
+        User saved = userService.saveUser(user);
+        return ResponseEntity.ok(ProfileResponse.from(saved));
     }
 }

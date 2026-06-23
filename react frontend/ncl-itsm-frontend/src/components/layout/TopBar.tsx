@@ -12,42 +12,16 @@ interface NotificationItem {
   route?: string;
 }
 
-const SAMPLE_NOTIFICATIONS: NotificationItem[] = [
-  {
-    id: 'n1',
-    title: 'New Service Request Assigned',
-    description: 'Ticket INC-2026-92815 has been assigned to you for Grid Calibration.',
-    time: '5 mins ago',
-    unread: true,
-    type: 'info',
-    route: '/engineer',
-  },
-  {
-    id: 'n2',
-    title: 'SLA Level Critical Update',
-    description: 'System settings updated: Critical SLA threshold changed to 2 hours.',
-    time: '1 hour ago',
-    unread: false,
-    type: 'success',
-    route: '/settings',
-  },
-  {
-    id: 'n3',
-    title: 'Low Stock Alert: CAT6 Cable',
-    description: 'Stock quantity of CAT6 Ethernet Cable (10m) is below minimum level (8 left).',
-    time: '3 hours ago',
-    unread: true,
-    type: 'alert',
-    route: '/assets',
-  },
-];
-
 interface TopBarProps {
   title: string;
 }
 
 // Sub-component for dynamic user profile chip
-const UserProfileChip: React.FC = () => {
+interface UserProfileChipProps {
+  onClick: () => void;
+}
+
+const UserProfileChip: React.FC<UserProfileChipProps> = ({ onClick }) => {
   const { user } = useAuthStore();
 
   if (!user) return null;
@@ -71,7 +45,10 @@ const UserProfileChip: React.FC = () => {
       : 'bg-gray-100 text-gray-600';
 
   return (
-    <div className="flex items-center gap-3 border-l border-gray-200 pl-6">
+    <div 
+      onClick={onClick}
+      className="flex items-center gap-3 border-l border-gray-200 pl-6 cursor-pointer hover:opacity-80 transition-opacity"
+    >
       <div className="text-right hidden md:block">
         <p className="text-xs font-extrabold text-gray-800 leading-tight">{user.fullName}</p>
         <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded ${roleBadgeColor}`}>
@@ -87,30 +64,36 @@ const UserProfileChip: React.FC = () => {
 
 export const TopBar: React.FC<TopBarProps> = ({ title }) => {
   const navigate = useNavigate();
+  const { user } = useAuthStore();
   const [notifications, setNotifications] = useState<NotificationItem[]>(() => {
     const saved = localStorage.getItem('ncl_notifications');
     if (saved) {
       try {
         return JSON.parse(saved);
       } catch {
-        return SAMPLE_NOTIFICATIONS;
+        return [];
       }
     }
-    return SAMPLE_NOTIFICATIONS;
+    return [];
   });
   const [notificationsOpen, setNotificationsOpen] = useState(false);
+  const [profileMenuOpen, setProfileMenuOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const profileDropdownRef = useRef<HTMLDivElement>(null);
 
   // Sync notifications to localStorage
   useEffect(() => {
     localStorage.setItem('ncl_notifications', JSON.stringify(notifications));
   }, [notifications]);
 
-  // Close notifications dropdown on click outside
+  // Close dropdowns on click outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
         setNotificationsOpen(false);
+      }
+      if (profileDropdownRef.current && !profileDropdownRef.current.contains(event.target as Node)) {
+        setProfileMenuOpen(false);
       }
     };
     document.addEventListener('mousedown', handleClickOutside);
@@ -254,8 +237,49 @@ export const TopBar: React.FC<TopBarProps> = ({ title }) => {
           </button>
         </div>
 
-        {/* Dynamic User Profile */}
-        <UserProfileChip />
+        {/* Dynamic User Profile & Dropdown */}
+        <div className="relative" ref={profileDropdownRef}>
+          <UserProfileChip onClick={() => setProfileMenuOpen(!profileMenuOpen)} />
+          
+          {profileMenuOpen && (
+            <div className="absolute right-0 mt-2.5 w-56 bg-white border border-gray-200 rounded-2xl shadow-xl z-50 overflow-hidden text-xs py-1.5 select-none">
+              {/* Account header */}
+              <div className="px-4 py-2.5 border-b border-gray-100 bg-gray-50/50">
+                <p className="font-extrabold text-gray-800 leading-tight m-0 text-left">{user?.fullName}</p>
+                <p className="text-[10px] text-gray-400 font-semibold mt-0.5 truncate m-0 text-left">{user?.eisNumber}@ncl.gov.in</p>
+              </div>
+
+              {/* Menu items */}
+              <button
+                onClick={() => {
+                  setProfileMenuOpen(false);
+                  navigate('/profile');
+                }}
+                className="w-full text-left px-4 py-2 hover:bg-gray-50 text-gray-600 font-bold transition-colors cursor-pointer flex items-center gap-2"
+              >
+                <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                </svg>
+                My Profile
+              </button>
+
+              <button
+                onClick={() => {
+                  setProfileMenuOpen(false);
+                  const { logout } = useAuthStore.getState();
+                  logout();
+                  navigate('/login');
+                }}
+                className="w-full text-left px-4 py-2 hover:bg-red-50 text-red-600 font-bold transition-colors border-t border-gray-100 cursor-pointer flex items-center gap-2"
+              >
+                <svg className="w-4 h-4 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                </svg>
+                Logout
+              </button>
+            </div>
+          )}
+        </div>
       </div>
     </header>
   );

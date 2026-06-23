@@ -28,7 +28,11 @@ export const RequestsQueue: React.FC = () => {
   let filteredTickets = tickets;
   if (!isEngineer) {
     // Regular employees see only their own tickets
-    filteredTickets = tickets.filter(t => t.reporterId === user?.eisNumber || t.reporterName === user?.fullName);
+    filteredTickets = tickets.filter(t => 
+      t.reporterId === user?.id ||
+      t.reporterId === user?.eisNumber ||
+      t.reporterName.toLowerCase().trim() === user?.fullName.toLowerCase().trim()
+    );
   }
 
   // 2. Filter by Active Tab selection
@@ -124,9 +128,9 @@ export const RequestsQueue: React.FC = () => {
               className="px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-xs font-bold text-gray-600 focus:outline-none focus:bg-white"
             >
               <option value="All">Category: All</option>
-              <option value="Turbine Maintenance">Turbine Maintenance</option>
-              <option value="Grid Calibration">Grid Calibration</option>
-              <option value="Sensor Replacement">Sensor Replacement</option>
+              <option value="Software">Software</option>
+              <option value="Hardware">Hardware</option>
+              <option value="Other">Other</option>
             </select>
           </div>
         </div>

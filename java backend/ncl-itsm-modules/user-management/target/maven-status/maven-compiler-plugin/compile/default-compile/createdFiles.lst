@@ -1,8 +1,11 @@
+in\gov\ncl\itsm\user\api\dto\ProfileResponse.class
+in\gov\ncl\itsm\user\api\dto\ProfileResponse$ProfileResponseBuilder.class
 in\gov\ncl\itsm\user\infrastructure\PasswordResetTokenRepository.class
 in\gov\ncl\itsm\user\domain\Permission$PermissionBuilder.class
 in\gov\ncl\itsm\user\domain\User$UserBuilder.class
 in\gov\ncl\itsm\user\domain\Role.class
 in\gov\ncl\itsm\user\infrastructure\UserRepository.class
+in\gov\ncl\itsm\user\api\dto\ProfileUpdateRequest.class
 in\gov\ncl\itsm\user\domain\Role$RoleBuilder.class
 in\gov\ncl\itsm\user\domain\PasswordResetToken$PasswordResetTokenBuilder.class
 in\gov\ncl\itsm\user\domain\PasswordResetToken.class

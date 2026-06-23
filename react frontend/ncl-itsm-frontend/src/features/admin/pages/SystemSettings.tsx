@@ -42,16 +42,9 @@ export const SystemSettings: React.FC = () => {
         if (item.configKey === 'sla_low_hours') setSlaLow(item.configValue);
       });
     } catch (err: any) {
-      console.warn('API call failed, using mock config settings', err);
-      // Populate with default mock settings
-      const mockConfigs = [
-        { id: '1', configKey: 'low_stock_threshold', configValue: '10', scope: 'GLOBAL', description: 'Reorder alert trigger limit for consumables' },
-        { id: '2', configKey: 'sla_critical_hours', configValue: '2', scope: 'GLOBAL', description: 'SLA deadline for Critical tickets' },
-        { id: '3', configKey: 'sla_high_hours', configValue: '8', scope: 'GLOBAL', description: 'SLA deadline for High tickets' },
-        { id: '4', configKey: 'sla_medium_hours', configValue: '24', scope: 'GLOBAL', description: 'SLA deadline for Medium tickets' },
-        { id: '5', configKey: 'sla_low_hours', configValue: '48', scope: 'GLOBAL', description: 'SLA deadline for Low tickets' }
-      ];
-      setConfigs(mockConfigs);
+      console.error('Failed to fetch system configurations', err);
+      setError('Failed to load system configurations from the server. Please ensure the backend is running.');
+      setConfigs([]);
     } finally {
       setIsLoading(false);
     }

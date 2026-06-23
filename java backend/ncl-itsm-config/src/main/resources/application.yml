@@ -3,6 +3,52 @@ spring:
     name: ncl-itsm-platform
   profiles:
     active: dev
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASS:}
+      timeout: 2000ms
+  rabbitmq:
+    host: ${RABBIT_HOST:localhost}
+    port: ${RABBIT_PORT:5672}
+    username: ${RABBIT_USER:guest}
+    password: ${RABBIT_PASS:guest}
+    listener:
+      simple:
+        retry:
+          enabled: true
+          initial-interval: 1000ms
+          max-attempts: 5
+          max-interval: 10000ms
+          multiplier: 2.0
+  devtools:
+    restart:
+      enabled: true
+      poll-interval: 2s
+      quiet-period: 1s
+    livereload:
+      enabled: false
+
+server:
+  port: 8080
+
+logging:
+  level:
+    root: INFO
+    in.gov.ncl.itsm: DEBUG
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%X{correlationId}] %-5level [%t] %logger{36} - %msg%n"
+
+ncl:
+  auth:
+    bypass-otp: false
+
+---
+spring:
+  config:
+    activate:
+      on-profile: dev
   datasource:
     url: jdbc:h2:mem:ncl_itsm;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
     username: sa
@@ -31,45 +77,35 @@ spring:
     enabled: false
     baseline-on-migrate: true
     baseline-version: 0
-  data:
-    redis:
-      host: ${REDIS_HOST:localhost}
-      port: ${REDIS_PORT:6379}
-      password: ${REDIS_PASS:}
-      timeout: 2000ms
-  rabbitmq:
-    host: ${RABBIT_HOST:localhost}
-    port: ${RABBIT_PORT:5672}
-    username: ${RABBIT_USER:guest}
-    password: ${RABBIT_PASS:guest}
-    listener:
-      simple:
-        retry:
-          enabled: true
-          initial-interval: 1000ms
-          max-attempts: 5
-          max-interval: 10000ms
-          multiplier: 2.0
-  # DevTools — auto-restart when compiled classes change (works with dev-watch.ps1)
-  devtools:
-    restart:
-      enabled: true
-      poll-interval: 2s        # check for class changes every 2 seconds
-      quiet-period: 1s         # wait 1s after last change before restarting
-    livereload:
-      enabled: false           # not needed (frontend uses Vite HMR)
 
-server:
-  port: 8080
-
-logging:
-  level:
-    root: INFO
-    in.gov.ncl.itsm: DEBUG
-  pattern:
-    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%X{correlationId}] %-5level [%t] %logger{36} - %msg%n"
-
-ncl:
-  auth:
-    bypass-otp: false
+---
+spring:
+  config:
+    activate:
+      on-profile: postgres
+  datasource:
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:ncl_itsm}
+    username: ${DB_USER:postgres}
+    password: ${DB_PASS:password}
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      pool-name: NCL_ITSM_HikariCP
+      maximum-pool-size: 20
+      minimum-idle: 5
+      idle-timeout: 300000
+      max-lifetime: 1800000
+      connection-timeout: 20000
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        jdbc:
+          batch_size: 25
+        order_inserts: true
+        order_updates: true
+  flyway:
+    enabled: false
 

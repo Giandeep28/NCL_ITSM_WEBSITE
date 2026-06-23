@@ -12,11 +12,10 @@ interface User {
   roles: { id: string; name: string }[];
 }
 
-const mockUsers: User[] = [];
-
 export const UserManagement: React.FC = () => {
   const [users, setUsers] = useState<User[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [errorMsg, setErrorMsg] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
   const [roleFilter, setRoleFilter] = useState('All');
   const [statusFilter, setStatusFilter] = useState('All');
@@ -27,9 +26,9 @@ export const UserManagement: React.FC = () => {
       const response = await apiClient.get<User[]>('/users');
       setUsers(response.data);
     } catch (err: any) {
-      console.warn('API call failed, falling back to mock data', err);
-      // Fallback mock data
-      setUsers(mockUsers);
+      console.error('Failed to fetch users from backend', err);
+      setErrorMsg('Failed to load user directory from the server.');
+      setUsers([]);
     } finally {
       setIsLoading(false);
     }
@@ -47,12 +46,8 @@ export const UserManagement: React.FC = () => {
       );
     } catch (err: any) {
       console.error('Failed to toggle active status', err);
-      // Local toggle fallback for frontend demo
-      setUsers(prevUsers =>
-        prevUsers.map(user =>
-          user.eisNumber === eisNumber ? { ...user, isActive: !user.isActive } : user
-        )
-      );
+      setErrorMsg('Failed to update user status. Please try again.');
+      setTimeout(() => setErrorMsg(''), 4000);
     }
   };
 
@@ -76,6 +71,14 @@ export const UserManagement: React.FC = () => {
 
   return (
     <div className="space-y-6 select-none font-sans">
+      {errorMsg && (
+        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl text-xs font-bold shadow-sm flex items-center gap-2">
+          <svg className="w-4 h-4 text-red-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+          </svg>
+          {errorMsg}
+        </div>
+      )}
       {/* Header and Controls */}
       <div className="bg-white border border-gray-200 rounded-xl p-5 shadow-sm flex flex-col md:flex-row gap-4 items-center justify-between">
         <div className="flex flex-1 gap-3 w-full md:w-auto">

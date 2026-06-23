@@ -76,17 +76,17 @@ const formatTime = (dateStr: string) => {
 };
 
 const formatSlaDeadline = (dateStr: string | undefined) => {
-  if (!dateStr) return 'N/A';
+  if (!dateStr) return '';
   try {
     const d = new Date(dateStr);
     return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) + ', ' + d.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
   } catch {
-    return 'N/A';
+    return '';
   }
 };
 
 const getSlaStatus = (slaDueAt: string | undefined, status: string): Ticket['slaStatus'] => {
-  if (!slaDueAt) return 'Optimal';
+  if (!slaDueAt) return undefined;
   if (['Resolved', 'Closed'].includes(status)) return 'Optimal';
   try {
     const due = new Date(slaDueAt).getTime();
@@ -95,7 +95,7 @@ const getSlaStatus = (slaDueAt: string | undefined, status: string): Ticket['sla
     if (due - now < 2 * 60 * 60 * 1000) return 'At Risk'; // within 2 hours
     return 'Optimal';
   } catch {
-    return 'Optimal';
+    return undefined;
   }
 };
 
@@ -103,18 +103,18 @@ const mapBackendTicket = (t: any): Ticket => {
   return {
     id: t.id,
     ticketNumber: t.ticketNumber,
-    title: t.summary || 'Untitled Service Request',
-    category: t.category || 'General',
+    title: t.summary || '',
+    category: t.category || '',
     subCategory: t.subCategory || '',
     status: mapStatus(t.status),
-    priority: (t.priority === 'High' ? 'Critical' : t.priority) as Ticket['priority'] || 'Medium',
+    priority: (t.priority === 'High' ? 'Critical' : t.priority) as Ticket['priority'],
     date: formatDate(t.createdAt),
     time: formatTime(t.createdAt),
-    description: t.description || 'No description provided.',
+    description: t.description || '',
     serialNumber: t.serialNumber || '',
     location: t.location || '',
-    department: 'General',
-    reporterName: t.reporterName || 'Employee',
+    department: t.department || '',
+    reporterName: t.reporterName || '',
     reporterId: t.reporterId || '',
     engineerName: t.engineerName || undefined,
     slaDeadline: formatSlaDeadline(t.slaDueAt),
@@ -122,7 +122,7 @@ const mapBackendTicket = (t: any): Ticket => {
     comments: t.history ? t.history.map((h: any) => ({
       id: h.id,
       author: h.actorName || 'System',
-      role: h.actorName === 'System' ? 'System Logger' : 'Support Specialist',
+      role: h.actorName === 'System' ? 'System Logger' : '',
       content: h.comment || `Status changed from ${h.oldStatus || 'None'} to ${h.newStatus}`,
       timestamp: h.changedAt ? new Date(h.changedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'N/A',
       isSystem: !h.comment || h.comment.startsWith('Status') || h.oldStatus !== h.newStatus
@@ -170,7 +170,7 @@ export const useTicketStore = create<TicketState>((set, get) => ({
     try {
       const payload = {
         category: newTicket.category,
-        subCategory: newTicket.subCategory || 'General',
+        subCategory: newTicket.subCategory || '',
         impactLevel: newTicket.priority || 'Medium',
         summary: newTicket.title,
         description: newTicket.description,
@@ -232,7 +232,7 @@ export const useTicketStore = create<TicketState>((set, get) => ({
       // Fetch ticket specifically to get the updated reporter and engineer names
       await get().fetchTicketById(id);
     } catch (e) {
-      console.error('Failed to reassign on backend, reassigning locally', e);
+      console.error('Failed to reassign on backend, updating local status only', e);
       set((state) => ({
         tickets: state.tickets.map((ticket) => {
           if (ticket.id === id) {
@@ -246,8 +246,6 @@ export const useTicketStore = create<TicketState>((set, get) => ({
             };
             return {
               ...ticket,
-              engineerId,
-              engineerName: 'Marcus Thorne', // Simulated local fallback name
               status: ticket.status === 'Requested' ? 'Assigned' : ticket.status,
               comments: [...ticket.comments, systemComment]
             };

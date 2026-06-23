@@ -15,6 +15,7 @@ import { UserManagement } from './features/admin/pages/UserManagement';
 import { SystemSettings } from './features/admin/pages/SystemSettings';
 import { EngineerWorkspace } from './features/engineer/pages/EngineerWorkspace';
 import { KnowledgeBase } from './features/knowledge-base/KnowledgeBase';
+import { Profile } from './features/profile/Profile';
 
 // SupportPage inline component
 
@@ -69,6 +70,7 @@ function App() {
           <Route path="logs" element={<ProtectedRoute allowedRoles={['IT Administrator', 'Super Admin', 'Read Only Auditor']}><AuditLogViewer /></ProtectedRoute>} />
           <Route path="users" element={<ProtectedRoute allowedRoles={['IT Administrator', 'Super Admin']}><UserManagement /></ProtectedRoute>} />
           <Route path="settings" element={<ProtectedRoute allowedRoles={['IT Administrator', 'Super Admin']}><SystemSettings /></ProtectedRoute>} />
+          <Route path="profile" element={<Profile />} />
           <Route path="support" element={<SupportPage />} />
         </Route>
 

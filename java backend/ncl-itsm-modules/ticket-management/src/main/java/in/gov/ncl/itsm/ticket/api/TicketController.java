@@ -38,6 +38,14 @@ public class TicketController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User context not found");
         }
         User user = userOpt.get();
+        
+        // Validate that required employee profile details are populated
+        if (user.getFullName() == null || user.getFullName().isBlank() ||
+            user.getEisNumber() == null || user.getEisNumber().isBlank() ||
+            user.getDesignation() == null || user.getDesignation().isBlank()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(java.util.Map.of("message", "Required profile details are missing. Please update your profile (Name, Employee ID, and Designation) before creating a service request."));
+        }
 
         Ticket ticket = ticketService.createTicket(
                 request,

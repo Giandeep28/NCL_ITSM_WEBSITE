@@ -1,19 +1,19 @@
 -------------------------------------------------------------------------------
 Test set: in.gov.ncl.itsm.metrics.SoftwareMetricsTest
 -------------------------------------------------------------------------------
-Tests run: 15, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.125 s -- in in.gov.ncl.itsm.metrics.SoftwareMetricsTest
-in.gov.ncl.itsm.metrics.SoftwareMetricsTest.iso9000_documentationCompleteness -- Time elapsed: 0.027 s
-in.gov.ncl.itsm.metrics.SoftwareMetricsTest.mttf_systemReliability -- Time elapsed: 0.007 s
-in.gov.ncl.itsm.metrics.SoftwareMetricsTest.cocomo_basic_effortEstimate -- Time elapsed: 0.002 s
-in.gov.ncl.itsm.metrics.SoftwareMetricsTest.costBenefit_automationRoi -- Time elapsed: 0.002 s
-in.gov.ncl.itsm.metrics.SoftwareMetricsTest.fpa_ticketManagementSubsystem -- Time elapsed: 0.001 s
-in.gov.ncl.itsm.metrics.SoftwareMetricsTest.defectArrivalRate_isDecreasing -- Time elapsed: 0.005 s
+Tests run: 15, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.043 s -- in in.gov.ncl.itsm.metrics.SoftwareMetricsTest
+in.gov.ncl.itsm.metrics.SoftwareMetricsTest.iso9000_documentationCompleteness -- Time elapsed: 0.014 s
+in.gov.ncl.itsm.metrics.SoftwareMetricsTest.mttf_systemReliability -- Time elapsed: 0.003 s
+in.gov.ncl.itsm.metrics.SoftwareMetricsTest.cocomo_basic_effortEstimate -- Time elapsed: 0.001 s
+in.gov.ncl.itsm.metrics.SoftwareMetricsTest.costBenefit_automationRoi -- Time elapsed: 0 s
+in.gov.ncl.itsm.metrics.SoftwareMetricsTest.fpa_ticketManagementSubsystem -- Time elapsed: 0 s
+in.gov.ncl.itsm.metrics.SoftwareMetricsTest.defectArrivalRate_isDecreasing -- Time elapsed: 0.001 s
 in.gov.ncl.itsm.metrics.SoftwareMetricsTest.complexity_computeSlaHours_isLow -- Time elapsed: 0 s
-in.gov.ncl.itsm.metrics.SoftwareMetricsTest.cmm_level2_repeatabilityMetrics -- Time elapsed: 0.001 s
-in.gov.ncl.itsm.metrics.SoftwareMetricsTest.mttr_criticalTickets_withinSla -- Time elapsed: 0.003 s
-in.gov.ncl.itsm.metrics.SoftwareMetricsTest.locMetrics_coreModulesEstimate -- Time elapsed: 0.032 s
-in.gov.ncl.itsm.metrics.SoftwareMetricsTest.defectDensity_calculation -- Time elapsed: 0.007 s
-in.gov.ncl.itsm.metrics.SoftwareMetricsTest.complexity_threshold_above10_flagsRefactoring -- Time elapsed: 0.002 s
-in.gov.ncl.itsm.metrics.SoftwareMetricsTest.costBenefit_multiVariableAdjustment -- Time elapsed: 0.002 s
-in.gov.ncl.itsm.metrics.SoftwareMetricsTest.cocomo_duration_estimate -- Time elapsed: 0.002 s
-in.gov.ncl.itsm.metrics.SoftwareMetricsTest.fpa_fullSystemEstimate -- Time elapsed: 0.001 s
+in.gov.ncl.itsm.metrics.SoftwareMetricsTest.cmm_level2_repeatabilityMetrics -- Time elapsed: 0 s
+in.gov.ncl.itsm.metrics.SoftwareMetricsTest.mttr_criticalTickets_withinSla -- Time elapsed: 0.001 s
+in.gov.ncl.itsm.metrics.SoftwareMetricsTest.locMetrics_coreModulesEstimate -- Time elapsed: 0.009 s
+in.gov.ncl.itsm.metrics.SoftwareMetricsTest.defectDensity_calculation -- Time elapsed: 0.004 s
+in.gov.ncl.itsm.metrics.SoftwareMetricsTest.complexity_threshold_above10_flagsRefactoring -- Time elapsed: 0.001 s
+in.gov.ncl.itsm.metrics.SoftwareMetricsTest.costBenefit_multiVariableAdjustment -- Time elapsed: 0.001 s
+in.gov.ncl.itsm.metrics.SoftwareMetricsTest.cocomo_duration_estimate -- Time elapsed: 0 s
+in.gov.ncl.itsm.metrics.SoftwareMetricsTest.fpa_fullSystemEstimate -- Time elapsed: 0 s

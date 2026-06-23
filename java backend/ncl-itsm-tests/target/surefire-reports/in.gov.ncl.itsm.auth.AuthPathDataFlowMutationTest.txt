@@ -1,13 +1,13 @@
 -------------------------------------------------------------------------------
 Test set: in.gov.ncl.itsm.auth.AuthPathDataFlowMutationTest
 -------------------------------------------------------------------------------
-Tests run: 9, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 6.178 s -- in in.gov.ncl.itsm.auth.AuthPathDataFlowMutationTest
-in.gov.ncl.itsm.auth.AuthPathDataFlowMutationTest.path_happyPath_fullLifecycle -- Time elapsed: 1.137 s
-in.gov.ncl.itsm.auth.AuthPathDataFlowMutationTest.dataFlow_otp_defUseKill -- Time elapsed: 0.499 s
-in.gov.ncl.itsm.auth.AuthPathDataFlowMutationTest.mutation_aor_wrongOtp_killed -- Time elapsed: 0.222 s
-in.gov.ncl.itsm.auth.AuthPathDataFlowMutationTest.mutation_ror_lockoutThreshold_killed -- Time elapsed: 0.909 s
-in.gov.ncl.itsm.auth.AuthPathDataFlowMutationTest.mutation_cor_correctPasswordAccepted -- Time elapsed: 0.249 s
-in.gov.ncl.itsm.auth.AuthPathDataFlowMutationTest.performance_sequentialRegistrations -- Time elapsed: 1.374 s
-in.gov.ncl.itsm.auth.AuthPathDataFlowMutationTest.performance_concurrentDuplicateRegistration_onlyOneSucceeds -- Time elapsed: 0.459 s
-in.gov.ncl.itsm.auth.AuthPathDataFlowMutationTest.regression_fullAuthFlow -- Time elapsed: 0.971 s
-in.gov.ncl.itsm.auth.AuthPathDataFlowMutationTest.integration_crossModule_dbVerification -- Time elapsed: 0.288 s
+Tests run: 9, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 2.700 s -- in in.gov.ncl.itsm.auth.AuthPathDataFlowMutationTest
+in.gov.ncl.itsm.auth.AuthPathDataFlowMutationTest.path_happyPath_fullLifecycle -- Time elapsed: 0.333 s
+in.gov.ncl.itsm.auth.AuthPathDataFlowMutationTest.dataFlow_otp_defUseKill -- Time elapsed: 0.173 s
+in.gov.ncl.itsm.auth.AuthPathDataFlowMutationTest.mutation_aor_wrongOtp_killed -- Time elapsed: 0.099 s
+in.gov.ncl.itsm.auth.AuthPathDataFlowMutationTest.mutation_ror_lockoutThreshold_killed -- Time elapsed: 0.435 s
+in.gov.ncl.itsm.auth.AuthPathDataFlowMutationTest.mutation_cor_correctPasswordAccepted -- Time elapsed: 0.147 s
+in.gov.ncl.itsm.auth.AuthPathDataFlowMutationTest.performance_sequentialRegistrations -- Time elapsed: 0.730 s
+in.gov.ncl.itsm.auth.AuthPathDataFlowMutationTest.performance_concurrentDuplicateRegistration_onlyOneSucceeds -- Time elapsed: 0.214 s
+in.gov.ncl.itsm.auth.AuthPathDataFlowMutationTest.regression_fullAuthFlow -- Time elapsed: 0.442 s
+in.gov.ncl.itsm.auth.AuthPathDataFlowMutationTest.integration_crossModule_dbVerification -- Time elapsed: 0.110 s

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
-// Mock Databases for HAM & SAM
+// Asset data arrays (populated via API)
 const initialHardwareAssets: any[] = [];
 
 const initialSoftwareLicenses: any[] = [];

@@ -97,8 +97,8 @@ export const EngineerWorkspace: React.FC = () => {
     newStatus: Ticket['status'];
   } | null>(null);
 
-  // Simulate assignments for engineer (Marcus Thorne / EIS 88291000)
-  const engineerName = user?.fullName ?? 'Marcus Thorne';
+  // Use authenticated user's name for engineer assignment filtering
+  const engineerName = user?.fullName ?? '';
 
   const allOpen = tickets.filter(
     (t) => t.status !== 'Resolved' && t.status !== 'Closed'

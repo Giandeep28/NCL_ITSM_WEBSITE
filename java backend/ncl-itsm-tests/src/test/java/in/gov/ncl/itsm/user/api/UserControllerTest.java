@@ -182,6 +182,27 @@ class UserControllerIntegrationTest {
                .andExpect(jsonPath("$[0].isActive").exists());
     }
 
+    @Test
+    @WithMockUser(username = "88291000", roles = "EMPLOYEE")
+    @DisplayName("[Regression] GET /api/v1/users/profile returns logged-in user's registration profile only")
+    void getProfile_returnsCurrentUserRegistrationFieldsWithoutPassword() throws Exception {
+        engineerUser.setUsername("marcus");
+        engineerUser.setMobile("9876543210");
+        engineerUser.setPassword("$2a$10$hashed");
+
+        Mockito.when(userService.findByEisNumber("88291000"))
+               .thenReturn(Optional.of(engineerUser));
+
+        mockMvc.perform(get("/api/v1/users/profile"))
+               .andExpect(status().isOk())
+               .andExpect(jsonPath("$.eisNumber").value("88291000"))
+               .andExpect(jsonPath("$.fullName").value("Marcus Thorne"))
+               .andExpect(jsonPath("$.email").value("88291000@ncl.gov.in"))
+               .andExpect(jsonPath("$.username").value("marcus"))
+               .andExpect(jsonPath("$.mobile").value("9876543210"))
+               .andExpect(jsonPath("$.password").doesNotExist());
+    }
+
     // ========================= PARAMETERIZED ACCESS CONTROL =========================
 
     @ParameterizedTest(name = "[Black-Box/Security] Role={0} → GET /api/v1/users → 403")

@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
 export interface AuthUser {
+  id?: string;
   eisNumber: string;
   fullName: string;
   role: 'Employee' | 'Support Engineer' | 'Asset Manager' | 'IT Administrator' | 'Super Admin' | 'Read Only Auditor';

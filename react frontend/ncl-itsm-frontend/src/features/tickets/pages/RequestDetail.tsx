@@ -2,11 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useTicketStore, type Ticket } from '../../../store/ticketStore';
 import { apiClient } from '../../../services/apiClient';
+import { useAuthStore } from '../../../store/authStore';
 
 export const RequestDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { tickets, updateTicketStatus, addComment, setSelectedTicketId, fetchTicketById, reassignTicket } = useTicketStore();
+  const { user } = useAuthStore();
 
   const [loading, setLoading] = useState(true);
   
@@ -43,13 +45,9 @@ export const RequestDetail: React.FC = () => {
           }
         })
         .catch(err => {
-          console.warn('Failed to load engineers from API, using offline fallback', err);
-          const fallbackEngineers = [
-            { id: '88291000', fullName: 'Marcus Thorne', designation: 'Electrical Specialist', departmentId: 'Power Systems' },
-            { id: '11112222', fullName: 'Sarah Jenkins', designation: 'Database Admin', departmentId: 'IT Infrastructure' }
-          ];
-          setEngineers(fallbackEngineers);
-          setSelectedEngineerId(fallbackEngineers[0].id);
+          console.warn('Failed to load engineers from API', err);
+          setEngineers([]);
+          setSelectedEngineerId('');
         });
     }
   }, [showReassignModal]);
@@ -93,8 +91,8 @@ export const RequestDetail: React.FC = () => {
     if (!newCommentText.trim()) return;
 
     addComment(ticket.id, {
-      author: 'Marcus Thorne', // simulated current user
-      role: 'Electrical Specialist',
+      author: user?.fullName || '',
+      role: user?.role || '',
       content: newCommentText,
     });
     setNewCommentText('');
@@ -291,11 +289,9 @@ export const RequestDetail: React.FC = () => {
 
                 return (
                   <div key={comment.id} className="flex gap-4 items-start bg-gray-50/50 border border-gray-100 rounded-xl p-4 transition-all hover:bg-gray-50">
-                    <img
-                      src={comment.avatar || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=100&q=80'}
-                      alt={comment.author}
-                      className="w-8.5 h-8.5 rounded-full object-cover border border-gray-200 shadow-sm"
-                    />
+                    <div className="w-8.5 h-8.5 rounded-full bg-[#0F2D54] text-white flex items-center justify-center border border-gray-200 shadow-sm text-[10px] font-black">
+                      {comment.author.split(' ').map((n) => n[0]).join('').toUpperCase().slice(0, 2)}
+                    </div>
                     <div className="flex-1 space-y-1.5">
                       <div className="flex items-center justify-between">
                         <div className="flex items-baseline gap-1.5">
@@ -360,11 +356,9 @@ export const RequestDetail: React.FC = () => {
               <div className="space-y-1.5">
                 <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Assigned Technician</span>
                 <div className="flex items-center gap-3 p-3 bg-gray-50 border border-gray-150 rounded-xl">
-                  <img
-                    src={ticket.engineerAvatar || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=100&q=80'}
-                    alt={ticket.engineerName}
-                    className="w-9 h-9 rounded-full object-cover border border-gray-200 shadow-sm"
-                  />
+                  <div className="w-9 h-9 rounded-full bg-[#0F2D54] text-white flex items-center justify-center border border-gray-200 shadow-sm text-[10px] font-black">
+                    {ticket.engineerName.split(' ').map((n) => n[0]).join('').toUpperCase().slice(0, 2)}
+                  </div>
                   <div className="flex-1 min-w-0">
                     <h4 className="text-xs font-extrabold text-gray-800 m-0 truncate leading-tight">{ticket.engineerName}</h4>
                     <span className="text-[10px] text-gray-500 font-bold">{ticket.engineerRole}</span>
@@ -399,7 +393,7 @@ export const RequestDetail: React.FC = () => {
                   <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
-                  {ticket.slaStatus || 'Optimal'}
+                  {ticket.slaStatus || ''}
                 </span>
               </div>
             </div>
@@ -410,53 +404,18 @@ export const RequestDetail: React.FC = () => {
                 <span className="text-gray-400">Created By</span>
                 <span className="text-gray-800">{ticket.reporterName}</span>
               </div>
-              <div className="flex justify-between">
-                <span className="text-gray-400">Department</span>
-                <span className="text-gray-800">{ticket.department}</span>
-              </div>
+              {ticket.department && (
+                <div className="flex justify-between">
+                  <span className="text-gray-400">Department</span>
+                  <span className="text-gray-800">{ticket.department}</span>
+                </div>
+              )}
               {ticket.slaDeadline && (
                 <div className="flex justify-between">
                   <span className="text-gray-400">SLA Deadline</span>
                   <span className="text-red-500">{ticket.slaDeadline}</span>
                 </div>
               )}
-            </div>
-          </div>
-
-          {/* Related Assets Card */}
-          <div className="bg-white border border-gray-200 rounded-xl p-5 shadow-sm space-y-4">
-            <div className="flex justify-between items-center">
-              <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider m-0">Related Assets</h3>
-              <button className="text-gray-400 hover:text-indigo-600 cursor-pointer">
-                <svg className="w-4.5 h-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
-                </svg>
-              </button>
-            </div>
-
-            <div className="space-y-3">
-              <div className="flex gap-3 items-start p-2.5 hover:bg-gray-50 rounded-xl border border-gray-100 transition-colors">
-                <span className="p-2 rounded-lg bg-indigo-50 text-indigo-600 mt-0.5">
-                  <svg className="w-4.5 h-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 11H5m14 0a2 2 0 01-2 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
-                  </svg>
-                </span>
-                <div>
-                  <h4 className="text-xs font-extrabold text-gray-800 m-0 leading-tight">Turbine Unit #4</h4>
-                  <span className="text-[10px] text-gray-400 font-bold leading-normal block mt-0.5">Critical Power Grid Component</span>
-                </div>
-              </div>
-              <div className="flex gap-3 items-start p-2.5 hover:bg-gray-50 rounded-xl border border-gray-100 transition-colors">
-                <span className="p-2 rounded-lg bg-indigo-50 text-indigo-600 mt-0.5">
-                  <svg className="w-4.5 h-4.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                  </svg>
-                </span>
-                <div>
-                  <h4 className="text-xs font-extrabold text-gray-800 m-0 leading-tight">Coupling ASM-90</h4>
-                  <span className="text-[10px] text-gray-400 font-bold leading-normal block mt-0.5">Secondary Drive Assembly</span>
-                </div>
-              </div>
             </div>
           </div>
 
