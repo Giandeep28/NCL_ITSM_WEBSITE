@@ -83,7 +83,11 @@ public class UserController {
             user.setEmail(request.getEmail().trim());
         }
         if (request.getMobile() != null && !request.getMobile().isBlank()) {
-            user.setMobile(request.getMobile().trim());
+            String trimmedMobile = request.getMobile().trim();
+            if (!trimmedMobile.matches("^\\d{10}$")) {
+                return ResponseEntity.badRequest().body(java.util.Map.of("message", "Mobile number must be exactly 10 digits."));
+            }
+            user.setMobile(trimmedMobile);
         }
         if (request.getDesignation() != null && !request.getDesignation().isBlank()) {
             user.setDesignation(request.getDesignation().trim());

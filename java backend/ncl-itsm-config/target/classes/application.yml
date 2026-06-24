@@ -84,7 +84,7 @@ spring:
     activate:
       on-profile: postgres
   datasource:
-    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:ncl_itsm}
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:ncl_itsm}?sslmode=${DB_SSL_MODE:require}
     username: ${DB_USER:postgres}
     password: ${DB_PASS:password}
     driver-class-name: org.postgresql.Driver

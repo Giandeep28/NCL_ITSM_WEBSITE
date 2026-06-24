@@ -1,28 +1,28 @@
 -------------------------------------------------------------------------------
 Test set: in.gov.ncl.itsm.asset.software.unit.SoftwareLicenseUnitTest
 -------------------------------------------------------------------------------
-Tests run: 24, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.064 s -- in in.gov.ncl.itsm.asset.software.unit.SoftwareLicenseUnitTest
-in.gov.ncl.itsm.asset.software.unit.SoftwareLicenseUnitTest.license_isNotExpired_whenExpiryDateIsInFuture -- Time elapsed: 0.003 s
-in.gov.ncl.itsm.asset.software.unit.SoftwareLicenseUnitTest.deployment_inactiveWhen_undeployedAtIsSet -- Time elapsed: 0.003 s
-in.gov.ncl.itsm.asset.software.unit.SoftwareLicenseUnitTest.path2_seatsExhausted_cannotAllocate -- Time elapsed: 0.001 s
-in.gov.ncl.itsm.asset.software.unit.SoftwareLicenseUnitTest.license_daysRemainingBva(int)[1] -- Time elapsed: 0.007 s
-in.gov.ncl.itsm.asset.software.unit.SoftwareLicenseUnitTest.license_daysRemainingBva(int)[2] -- Time elapsed: 0.001 s
+Tests run: 24, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.096 s -- in in.gov.ncl.itsm.asset.software.unit.SoftwareLicenseUnitTest
+in.gov.ncl.itsm.asset.software.unit.SoftwareLicenseUnitTest.license_isNotExpired_whenExpiryDateIsInFuture -- Time elapsed: 0.009 s
+in.gov.ncl.itsm.asset.software.unit.SoftwareLicenseUnitTest.deployment_inactiveWhen_undeployedAtIsSet -- Time elapsed: 0.008 s
+in.gov.ncl.itsm.asset.software.unit.SoftwareLicenseUnitTest.path2_seatsExhausted_cannotAllocate -- Time elapsed: 0.004 s
+in.gov.ncl.itsm.asset.software.unit.SoftwareLicenseUnitTest.license_daysRemainingBva(int)[1] -- Time elapsed: 0.006 s
+in.gov.ncl.itsm.asset.software.unit.SoftwareLicenseUnitTest.license_daysRemainingBva(int)[2] -- Time elapsed: 0.002 s
 in.gov.ncl.itsm.asset.software.unit.SoftwareLicenseUnitTest.license_daysRemainingBva(int)[3] -- Time elapsed: 0.001 s
-in.gov.ncl.itsm.asset.software.unit.SoftwareLicenseUnitTest.license_daysRemainingBva(int)[4] -- Time elapsed: 0 s
-in.gov.ncl.itsm.asset.software.unit.SoftwareLicenseUnitTest.license_daysRemainingBva(int)[5] -- Time elapsed: 0.001 s
+in.gov.ncl.itsm.asset.software.unit.SoftwareLicenseUnitTest.license_daysRemainingBva(int)[4] -- Time elapsed: 0.001 s
+in.gov.ncl.itsm.asset.software.unit.SoftwareLicenseUnitTest.license_daysRemainingBva(int)[5] -- Time elapsed: 0.002 s
 in.gov.ncl.itsm.asset.software.unit.SoftwareLicenseUnitTest.license_daysRemainingBva(int)[6] -- Time elapsed: 0.001 s
-in.gov.ncl.itsm.asset.software.unit.SoftwareLicenseUnitTest.license_daysRemainingBva(int)[7] -- Time elapsed: 0 s
-in.gov.ncl.itsm.asset.software.unit.SoftwareLicenseUnitTest.license_daysRemainingBva(int)[8] -- Time elapsed: 0.004 s
-in.gov.ncl.itsm.asset.software.unit.SoftwareLicenseUnitTest.deployment_undeploy_setsUndeployedAt -- Time elapsed: 0.001 s
-in.gov.ncl.itsm.asset.software.unit.SoftwareLicenseUnitTest.license_isExpired_whenExpiryDateIsInPast -- Time elapsed: 0.001 s
-in.gov.ncl.itsm.asset.software.unit.SoftwareLicenseUnitTest.path1_availableSeats_canAllocate -- Time elapsed: 0.001 s
+in.gov.ncl.itsm.asset.software.unit.SoftwareLicenseUnitTest.license_daysRemainingBva(int)[7] -- Time elapsed: 0.001 s
+in.gov.ncl.itsm.asset.software.unit.SoftwareLicenseUnitTest.license_daysRemainingBva(int)[8] -- Time elapsed: 0 s
+in.gov.ncl.itsm.asset.software.unit.SoftwareLicenseUnitTest.deployment_undeploy_setsUndeployedAt -- Time elapsed: 0 s
+in.gov.ncl.itsm.asset.software.unit.SoftwareLicenseUnitTest.license_isExpired_whenExpiryDateIsInPast -- Time elapsed: 0 s
+in.gov.ncl.itsm.asset.software.unit.SoftwareLicenseUnitTest.path1_availableSeats_canAllocate -- Time elapsed: 0 s
 in.gov.ncl.itsm.asset.software.unit.SoftwareLicenseUnitTest.deployment_builderDefaults_deployedAtIsNow -- Time elapsed: 0.001 s
-in.gov.ncl.itsm.asset.software.unit.SoftwareLicenseUnitTest.dataFlow_define_use_kill_reuse -- Time elapsed: 0.001 s
+in.gov.ncl.itsm.asset.software.unit.SoftwareLicenseUnitTest.dataFlow_define_use_kill_reuse -- Time elapsed: 0 s
 in.gov.ncl.itsm.asset.software.unit.SoftwareLicenseUnitTest.path4_zeroSeatLicense_cannotAllocate -- Time elapsed: 0 s
-in.gov.ncl.itsm.asset.software.unit.SoftwareLicenseUnitTest.deployment_activeWhen_undeployedAtIsNull -- Time elapsed: 0.001 s
-in.gov.ncl.itsm.asset.software.unit.SoftwareLicenseUnitTest.whitebox_lastAvailableSeat -- Time elapsed: 0.001 s
+in.gov.ncl.itsm.asset.software.unit.SoftwareLicenseUnitTest.deployment_activeWhen_undeployedAtIsNull -- Time elapsed: 0 s
+in.gov.ncl.itsm.asset.software.unit.SoftwareLicenseUnitTest.whitebox_lastAvailableSeat -- Time elapsed: 0.002 s
 in.gov.ncl.itsm.asset.software.unit.SoftwareLicenseUnitTest.path4b_negativeSeatCount_cannotAllocate -- Time elapsed: 0.001 s
-in.gov.ncl.itsm.asset.software.unit.SoftwareLicenseUnitTest.license_builderDefaults_allocatedCountIsZero -- Time elapsed: 0.002 s
-in.gov.ncl.itsm.asset.software.unit.SoftwareLicenseUnitTest.dataFlow_define_allocated0_use_canAllocate -- Time elapsed: 0.001 s
+in.gov.ncl.itsm.asset.software.unit.SoftwareLicenseUnitTest.license_builderDefaults_allocatedCountIsZero -- Time elapsed: 0.001 s
+in.gov.ncl.itsm.asset.software.unit.SoftwareLicenseUnitTest.dataFlow_define_allocated0_use_canAllocate -- Time elapsed: 0 s
 in.gov.ncl.itsm.asset.software.unit.SoftwareLicenseUnitTest.whitebox_largeSeatCount_noOverflow -- Time elapsed: 0.001 s
 in.gov.ncl.itsm.asset.software.unit.SoftwareLicenseUnitTest.path3_overAllocated_cannotAllocate -- Time elapsed: 0.001 s

@@ -67,6 +67,11 @@ export const Profile: React.FC = () => {
       return;
     }
 
+    if (!/^\d{10}$/.test(mobile)) {
+      setErrorMsg('Mobile number must be exactly 10 digits.');
+      return;
+    }
+
     if (password && password !== confirmPassword) {
       setErrorMsg('Passwords do not match.');
       return;
@@ -237,7 +242,8 @@ export const Profile: React.FC = () => {
                 <input
                   type="text"
                   value={mobile}
-                  onChange={(e) => setMobile(e.target.value)}
+                  onChange={(e) => setMobile(e.target.value.replace(/\D/g, '').slice(0, 10))}
+                  maxLength={10}
                   className="w-full px-3.5 py-2 bg-gray-50 border border-gray-200 text-gray-700 rounded-lg text-xs font-semibold focus:outline-none focus:bg-white focus:border-indigo-500 transition-colors"
                 />
               </div>
