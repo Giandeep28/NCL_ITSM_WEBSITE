@@ -39,6 +39,9 @@ public class AuthController {
     @Value("${ncl.auth.bypass-otp:false}")
     private boolean bypassOtp;
 
+    @Value("${ncl.auth.bypass-login-otp:false}")
+    private boolean bypassLoginOtp;
+
     @PostMapping("/register")
     public ResponseEntity<?> register(@Valid @RequestBody RegisterRequest request, HttpServletRequest httpRequest) {
         if (userService.existsByUsername(request.getUsername())) {
@@ -132,6 +135,27 @@ public class AuthController {
         // 4. Success -> Reset failed logins
         userService.resetFailedLogin(user.getEisNumber());
 
+        if (!bypassLoginOtp) {
+            String otp = String.valueOf(100000 + new java.util.Random().nextInt(900000));
+            user.setLoginOtp(otp);
+            user.setLoginOtpExpiresAt(LocalDateTime.now().plusMinutes(5));
+            userService.saveUser(user);
+
+            // Print simulated SMS dispatch to console
+            System.out.println("=================================================");
+            System.out.println("📱 SIMULATED LOGIN OTP DISPATCH");
+            System.out.println("Recipient Mobile: +91 " + user.getMobile() + " (" + user.getFullName() + ")");
+            System.out.println("OTP Code: " + otp);
+            System.out.println("=================================================");
+
+            return ResponseEntity.ok(Map.of(
+                    "otpRequired", true,
+                    "username", user.getUsername() != null ? user.getUsername() : user.getEisNumber(),
+                    "mobile", user.getMobile() != null ? user.getMobile() : "",
+                    "simulationOtp", otp
+            ));
+        }
+
         // Audit log successful login
         auditLogService.logEvent(user.getId(), "USER_LOGIN_SUCCESS", "User", user.getId(), 
                 null, null, httpRequest.getRemoteAddr(), user.getTenantId());
@@ -164,6 +188,67 @@ public class AuthController {
                 .eisNumber(user.getEisNumber())
                 .departmentId(user.getDepartmentId())
                 .build();
+
+        return ResponseEntity.ok(authResponse);
+    }
+
+    @PostMapping("/login/verify-otp")
+    public ResponseEntity<?> verifyLoginOtp(@Valid @RequestBody LoginOtpVerificationRequest request, HttpServletRequest httpRequest) {
+        String usernameOrEis = request.getUsernameOrEmployeeId();
+        String otp = request.getOtp();
+
+        Optional<User> userOpt = userService.findByUsernameOrEisNumber(usernameOrEis, usernameOrEis);
+        if (userOpt.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("message", "User context not found."));
+        }
+
+        User user = userOpt.get();
+
+        if (user.getLoginOtp() == null || !user.getLoginOtp().equals(otp)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("message", "Invalid OTP code."));
+        }
+
+        if (user.getLoginOtpExpiresAt() == null || user.getLoginOtpExpiresAt().isBefore(LocalDateTime.now())) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("message", "OTP has expired. Please request a new one."));
+        }
+
+        // Clear OTP fields
+        user.setLoginOtp(null);
+        user.setLoginOtpExpiresAt(null);
+        userService.saveUser(user);
+
+        // Generate Access & Refresh Tokens
+        String primaryRole = user.getRoles().stream()
+                .map(Role::getName)
+                .findFirst()
+                .orElse("Employee");
+
+        List<SimpleGrantedAuthority> authorities = Collections.singletonList(
+                new SimpleGrantedAuthority("ROLE_" + primaryRole.toUpperCase().replace(" ", "_"))
+        );
+
+        UserDetails userDetails = new org.springframework.security.core.userdetails.User(
+                user.getEisNumber(),
+                "",
+                authorities
+        );
+
+        String accessToken = jwtTokenProvider.generateAccessToken(userDetails);
+        String refreshToken = jwtTokenProvider.generateRefreshToken(userDetails);
+
+        AuthResponse authResponse = AuthResponse.builder()
+                .id(user.getId())
+                .accessToken(accessToken)
+                .refreshToken(refreshToken)
+                .role(primaryRole)
+                .fullName(user.getFullName())
+                .eisNumber(user.getEisNumber())
+                .departmentId(user.getDepartmentId())
+                .build();
+
+        // Audit log login success
+        auditLogService.logEvent(user.getId(), "USER_LOGIN_SUCCESS", "User", user.getId(), 
+                "Login successful after OTP verification", null, httpRequest.getRemoteAddr(), user.getTenantId());
 
         return ResponseEntity.ok(authResponse);
     }

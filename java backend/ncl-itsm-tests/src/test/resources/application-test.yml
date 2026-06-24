@@ -25,4 +25,5 @@ spring:
 ncl:
   auth:
     bypass-otp: false
+    bypass-login-otp: true
 

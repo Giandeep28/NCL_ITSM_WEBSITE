@@ -43,6 +43,7 @@ logging:
 ncl:
   auth:
     bypass-otp: false
+    bypass-login-otp: false
 
 ---
 spring:

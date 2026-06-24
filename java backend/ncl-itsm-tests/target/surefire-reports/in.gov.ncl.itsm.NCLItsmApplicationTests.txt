@@ -1,5 +1,5 @@
 -------------------------------------------------------------------------------
 Test set: in.gov.ncl.itsm.NCLItsmApplicationTests
 -------------------------------------------------------------------------------
-Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 2.098 s -- in in.gov.ncl.itsm.NCLItsmApplicationTests
-in.gov.ncl.itsm.NCLItsmApplicationTests.contextLoads -- Time elapsed: 0.007 s
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 2.337 s -- in in.gov.ncl.itsm.NCLItsmApplicationTests
+in.gov.ncl.itsm.NCLItsmApplicationTests.contextLoads -- Time elapsed: 0.008 s

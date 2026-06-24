@@ -1,16 +1,16 @@
 -------------------------------------------------------------------------------
 Test set: in.gov.ncl.itsm.auth.AuthDecisionTableTest
 -------------------------------------------------------------------------------
-Tests run: 12, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.983 s -- in in.gov.ncl.itsm.auth.AuthDecisionTableTest
-in.gov.ncl.itsm.auth.AuthDecisionTableTest.dt_allConditionsTrue_registrationSuccess -- Time elapsed: 0.109 s
-in.gov.ncl.itsm.auth.AuthDecisionTableTest.dt_invalidEmail_rejected -- Time elapsed: 0.039 s
-in.gov.ncl.itsm.auth.AuthDecisionTableTest.dt_eisTooShort_rejected -- Time elapsed: 0.012 s
-in.gov.ncl.itsm.auth.AuthDecisionTableTest.dt_passwordMismatch_causeEffect -- Time elapsed: 0.020 s
-in.gov.ncl.itsm.auth.AuthDecisionTableTest.dt_duplicateUsername_causeEffect -- Time elapsed: 0.112 s
-in.gov.ncl.itsm.auth.AuthDecisionTableTest.dt_duplicateEmail_causeEffect -- Time elapsed: 0.115 s
-in.gov.ncl.itsm.auth.AuthDecisionTableTest.dt_duplicateEis_causeEffect -- Time elapsed: 0.121 s
-in.gov.ncl.itsm.auth.AuthDecisionTableTest.wb_login_usernameSuccess_branch -- Time elapsed: 0.219 s
-in.gov.ncl.itsm.auth.AuthDecisionTableTest.wb_login_eisSuccess_branch -- Time elapsed: 0.203 s
-in.gov.ncl.itsm.auth.AuthDecisionTableTest.wb_login_userNotFound_branch -- Time elapsed: 0.014 s
-in.gov.ncl.itsm.auth.AuthDecisionTableTest.wb_login_wrongPassword_branch -- Time elapsed: 0.214 s
-in.gov.ncl.itsm.auth.AuthDecisionTableTest.wb_login_lockout_branch -- Time elapsed: 0.752 s
+Tests run: 12, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.779 s -- in in.gov.ncl.itsm.auth.AuthDecisionTableTest
+in.gov.ncl.itsm.auth.AuthDecisionTableTest.dt_allConditionsTrue_registrationSuccess -- Time elapsed: 0.084 s
+in.gov.ncl.itsm.auth.AuthDecisionTableTest.dt_invalidEmail_rejected -- Time elapsed: 0.021 s
+in.gov.ncl.itsm.auth.AuthDecisionTableTest.dt_eisTooShort_rejected -- Time elapsed: 0.009 s
+in.gov.ncl.itsm.auth.AuthDecisionTableTest.dt_passwordMismatch_causeEffect -- Time elapsed: 0.025 s
+in.gov.ncl.itsm.auth.AuthDecisionTableTest.dt_duplicateUsername_causeEffect -- Time elapsed: 0.115 s
+in.gov.ncl.itsm.auth.AuthDecisionTableTest.dt_duplicateEmail_causeEffect -- Time elapsed: 0.116 s
+in.gov.ncl.itsm.auth.AuthDecisionTableTest.dt_duplicateEis_causeEffect -- Time elapsed: 0.134 s
+in.gov.ncl.itsm.auth.AuthDecisionTableTest.wb_login_usernameSuccess_branch -- Time elapsed: 0.203 s
+in.gov.ncl.itsm.auth.AuthDecisionTableTest.wb_login_eisSuccess_branch -- Time elapsed: 0.216 s
+in.gov.ncl.itsm.auth.AuthDecisionTableTest.wb_login_userNotFound_branch -- Time elapsed: 0.012 s
+in.gov.ncl.itsm.auth.AuthDecisionTableTest.wb_login_wrongPassword_branch -- Time elapsed: 0.204 s
+in.gov.ncl.itsm.auth.AuthDecisionTableTest.wb_login_lockout_branch -- Time elapsed: 0.595 s

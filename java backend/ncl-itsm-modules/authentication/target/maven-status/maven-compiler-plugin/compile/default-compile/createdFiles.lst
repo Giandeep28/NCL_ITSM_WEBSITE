@@ -1,5 +1,6 @@
 in\gov\ncl\itsm\auth\api\dto\AuthResponse.class
 in\gov\ncl\itsm\auth\api\dto\ForgotPasswordRequest.class
+in\gov\ncl\itsm\auth\api\dto\LoginOtpVerificationRequest.class
 in\gov\ncl\itsm\auth\infrastructure\JwtTokenProvider.class
 in\gov\ncl\itsm\auth\api\dto\AuthResponse$AuthResponseBuilder.class
 in\gov\ncl\itsm\auth\infrastructure\SecurityConfig.class

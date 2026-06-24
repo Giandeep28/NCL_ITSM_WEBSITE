@@ -13,6 +13,7 @@ export const Login: React.FC = () => {
   const [password, setPassword] = useState('');
   const [otpMode, setOtpMode] = useState(false);
   const [otpCode, setOtpCode] = useState('');
+  const [simulationOtp, setSimulationOtp] = useState('');
   const [countdown, setCountdown] = useState(0);
 
   const [isLoading, setIsLoading] = useState(false);
@@ -70,21 +71,17 @@ export const Login: React.FC = () => {
     try {
       // 1. Try backend authentication first
       const response = await apiClient.post('/auth/login', { usernameOrEmployeeId: usernameOrEis, password });
-      const { accessToken, refreshToken, role, fullName, eisNumber, departmentId, id } = response.data;
       
-      const user: AuthUser = { id, eisNumber, fullName, role, departmentId };
-      
-      if (BYPASS_OTP) {
-        setAuth(user, accessToken, refreshToken);
-        navigate('/dashboard');
-      } else {
-        // Navigate to OTP check for secure session completion
+      if (response.data.otpRequired) {
+        setSimulationOtp(response.data.simulationOtp || '');
         setOtpMode(true);
         setCountdown(60);
         setIsLoading(false);
-        
-        // Save temporary response in state for OTP validation
-        setTempAuthData({ user, accessToken, refreshToken });
+      } else {
+        const { accessToken, refreshToken, role, fullName, eisNumber, departmentId, id } = response.data;
+        const user: AuthUser = { id, eisNumber, fullName, role, departmentId };
+        setAuth(user, accessToken, refreshToken);
+        navigate('/dashboard');
       }
     } catch (err: any) {
       setIsLoading(false);
@@ -98,21 +95,34 @@ export const Login: React.FC = () => {
     }
   };
 
-  const [tempAuthData, setTempAuthData] = useState<{
-    user: AuthUser;
-    accessToken: string;
-    refreshToken: string;
-  } | null>(null);
-
-  const handleOtpSubmit = (e: React.FormEvent) => {
+  const handleOtpSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (tempAuthData && otpCode.trim()) {
-      if (tempAuthData) {
-        setAuth(tempAuthData.user, tempAuthData.accessToken, tempAuthData.refreshToken);
-      }
+    if (!otpCode.trim()) {
+      setErrorMsg('Please enter the OTP code.');
+      return;
+    }
+
+    setIsLoading(true);
+    setErrorMsg('');
+    try {
+      const response = await apiClient.post('/auth/login/verify-otp', {
+        usernameOrEmployeeId: usernameOrEis,
+        otp: otpCode.trim()
+      });
+      const { accessToken, refreshToken, role, fullName, eisNumber, departmentId, id } = response.data;
+      const user: AuthUser = { id, eisNumber, fullName, role, departmentId };
+      
+      setAuth(user, accessToken, refreshToken);
       navigate('/dashboard');
-    } else {
-      setErrorMsg('Invalid OTP code.');
+    } catch (err: any) {
+      setIsLoading(false);
+      const status = err.response?.status;
+      const data = err.response?.data;
+      const msg =
+        data?.message ||
+        data?.error ||
+        (status ? `Verification failed (${status}). Please check your code and try again.` : 'Network error. Please try again.');
+      setErrorMsg(msg);
     }
   };
 
@@ -211,6 +221,12 @@ export const Login: React.FC = () => {
             <div className="bg-indigo-600/10 border border-indigo-500/20 text-indigo-400 px-4 py-3 rounded-lg text-xs font-bold text-center leading-relaxed">
               OTP sent to your registered contact.
             </div>
+
+            {!BYPASS_OTP && simulationOtp && (
+              <div className="bg-indigo-500/10 border border-indigo-500/30 text-indigo-300 px-4 py-2 rounded-lg text-xs font-bold text-center">
+                🔑 Simulation Mode OTP: <span className="text-white font-mono bg-indigo-900/50 px-2 py-0.5 rounded text-sm">{simulationOtp}</span>
+              </div>
+            )}
 
             <div className="space-y-1">
               <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">One-Time Password (OTP)</label>

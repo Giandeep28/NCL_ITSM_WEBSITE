@@ -69,6 +69,12 @@ public class User {
     @Column(name = "ad_guid", length = 100)
     private String adGuid;
 
+    @Column(name = "login_otp", length = 10)
+    private String loginOtp;
+
+    @Column(name = "login_otp_expires_at")
+    private LocalDateTime loginOtpExpiresAt;
+
     @Column(name = "created_at", nullable = false, updatable = false)
     @Builder.Default
     private LocalDateTime createdAt = LocalDateTime.now();
