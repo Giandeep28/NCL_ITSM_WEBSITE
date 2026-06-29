@@ -3,6 +3,12 @@ spring:
     name: ncl-itsm-platform
   profiles:
     active: dev
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.amqp.RabbitAutoConfiguration
+      - org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration
+      - org.springframework.boot.autoconfigure.data.redis.RedisRepositoriesAutoConfiguration
+      - org.springframework.boot.autoconfigure.data.redis.RedisReactiveAutoConfiguration
   data:
     redis:
       host: ${REDIS_HOST:localhost}
@@ -87,7 +93,7 @@ spring:
     activate:
       on-profile: postgres
   datasource:
-    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:ncl_itsm}?sslmode=${DB_SSL_MODE:require}
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:ncl_itsm}?sslmode=${DB_SSL_MODE:prefer}
     username: ${DB_USER:postgres}
     password: ${DB_PASS:password}
     driver-class-name: org.postgresql.Driver
