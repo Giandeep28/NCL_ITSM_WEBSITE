@@ -62,7 +62,7 @@ export const Profile: React.FC = () => {
     setSuccessMsg('');
     setErrorMsg('');
 
-    if (!fullName.trim() || !email.trim() || !mobile.trim() || !designation.trim()) {
+    if (!fullName.trim() || !email.trim() || !mobile.trim()) {
       setErrorMsg('Please fill in all profile details.');
       return;
     }
@@ -83,7 +83,6 @@ export const Profile: React.FC = () => {
         fullName: fullName.trim(),
         email: email.trim(),
         mobile: mobile.trim(),
-        designation: designation.trim(),
       };
       if (password) {
         payload.password = password;
@@ -253,10 +252,10 @@ export const Profile: React.FC = () => {
                 <input
                   type="text"
                   value={designation}
-                  onChange={(e) => setDesignation(e.target.value)}
-                  placeholder="e.g. Operations Lead"
-                  className="w-full px-3.5 py-2 bg-gray-50 border border-gray-200 text-gray-700 rounded-lg text-xs font-semibold focus:outline-none focus:bg-white focus:border-indigo-500 transition-colors"
+                  disabled
+                  className="w-full px-3.5 py-2 bg-gray-100 border border-gray-200 text-gray-400 rounded-lg text-xs font-semibold cursor-not-allowed"
                 />
+                <span className="text-[10px] text-gray-400 font-bold block mt-1">🔒 Locked (Only IT Administrator can modify)</span>
               </div>
             </div>
 

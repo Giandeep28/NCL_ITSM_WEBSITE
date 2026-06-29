@@ -11,6 +11,7 @@ in\gov\ncl\itsm\user\domain\PasswordResetToken$PasswordResetTokenBuilder.class
 in\gov\ncl\itsm\user\domain\PasswordResetToken.class
 in\gov\ncl\itsm\user\infrastructure\RoleRepository.class
 in\gov\ncl\itsm\user\application\UserService.class
+in\gov\ncl\itsm\user\api\dto\UserAdminUpdateRequest.class
 in\gov\ncl\itsm\user\domain\User.class
 in\gov\ncl\itsm\user\api\UserController.class
 in\gov\ncl\itsm\user\application\UserServiceImpl.class

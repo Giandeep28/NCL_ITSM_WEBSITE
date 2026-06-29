@@ -2,6 +2,7 @@ package in.gov.ncl.itsm.user.api;
 
 import in.gov.ncl.itsm.user.api.dto.ProfileUpdateRequest;
 import in.gov.ncl.itsm.user.api.dto.ProfileResponse;
+import in.gov.ncl.itsm.user.api.dto.UserAdminUpdateRequest;
 import in.gov.ncl.itsm.user.application.UserService;
 import in.gov.ncl.itsm.user.domain.User;
 import lombok.RequiredArgsConstructor;
@@ -89,9 +90,6 @@ public class UserController {
             }
             user.setMobile(trimmedMobile);
         }
-        if (request.getDesignation() != null && !request.getDesignation().isBlank()) {
-            user.setDesignation(request.getDesignation().trim());
-        }
         if (request.getDepartmentId() != null && !request.getDepartmentId().isBlank()) {
             user.setDepartmentId(request.getDepartmentId().trim());
         }
@@ -101,5 +99,54 @@ public class UserController {
 
         User saved = userService.saveUser(user);
         return ResponseEntity.ok(ProfileResponse.from(saved));
+    }
+
+    @PutMapping("/{eisNumber}")
+    @PreAuthorize("hasAnyRole('ROLE_IT_ADMINISTRATOR', 'ROLE_SUPER_ADMINISTRATOR')")
+    public ResponseEntity<?> adminUpdateUser(
+            @PathVariable String eisNumber,
+            @RequestBody UserAdminUpdateRequest request
+    ) {
+        Optional<User> userOpt = userService.findByEisNumber(eisNumber);
+        if (userOpt.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        User user = userOpt.get();
+        if (request.getFullName() != null && !request.getFullName().isBlank()) {
+            user.setFullName(request.getFullName().trim());
+        }
+        if (request.getEmail() != null && !request.getEmail().isBlank()) {
+            Optional<User> existingEmail = userService.findByEmail(request.getEmail().trim());
+            if (existingEmail.isPresent() && !existingEmail.get().getEisNumber().equals(eisNumber)) {
+                return ResponseEntity.badRequest().body(java.util.Map.of("message", "Official Email ID is already in use."));
+            }
+            user.setEmail(request.getEmail().trim());
+        }
+        if (request.getMobile() != null && !request.getMobile().isBlank()) {
+            String trimmedMobile = request.getMobile().trim();
+            if (!trimmedMobile.matches("^\\d{10}$")) {
+                return ResponseEntity.badRequest().body(java.util.Map.of("message", "Mobile number must be exactly 10 digits."));
+            }
+            user.setMobile(trimmedMobile);
+        }
+        if (request.getDesignation() != null) {
+            user.setDesignation(request.getDesignation().trim());
+        }
+        if (request.getDepartmentId() != null) {
+            user.setDepartmentId(request.getDepartmentId().trim());
+        }
+        if (request.getPassword() != null && !request.getPassword().isBlank()) {
+            user.setPassword(passwordEncoder.encode(request.getPassword()));
+        }
+
+        User savedUser;
+        if (request.getRole() != null && !request.getRole().isBlank()) {
+            savedUser = userService.saveUserWithRole(user, request.getRole(), "NCL_HQ");
+        } else {
+            savedUser = userService.saveUser(user);
+        }
+
+        return ResponseEntity.ok(savedUser);
     }
 }

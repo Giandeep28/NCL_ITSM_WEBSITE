@@ -188,9 +188,6 @@ export const Login: React.FC = () => {
               <Link to="/forgot-password" className="text-indigo-400 hover:text-indigo-300">
                 Forgot Password?
               </Link>
-              <Link to="/register" className="text-indigo-400 hover:text-indigo-300">
-                Register Account
-              </Link>
             </div>
 
             {lockoutTime > 0 && (
@@ -219,7 +216,7 @@ export const Login: React.FC = () => {
           /* ========================================================================= */
           <form onSubmit={handleOtpSubmit} className="space-y-4">
             <div className="bg-indigo-600/10 border border-indigo-500/20 text-indigo-400 px-4 py-3 rounded-lg text-xs font-bold text-center leading-relaxed">
-              OTP sent to your registered contact.
+              OTP sent to your registered email address.
             </div>
 
             {!BYPASS_OTP && simulationOtp && (

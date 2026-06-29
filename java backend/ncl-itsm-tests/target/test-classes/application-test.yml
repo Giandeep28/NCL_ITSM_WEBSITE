@@ -26,4 +26,6 @@ ncl:
   auth:
     bypass-otp: false
     bypass-login-otp: true
+    expose-simulation-otp: true
+    bypass-register-restriction: true
 

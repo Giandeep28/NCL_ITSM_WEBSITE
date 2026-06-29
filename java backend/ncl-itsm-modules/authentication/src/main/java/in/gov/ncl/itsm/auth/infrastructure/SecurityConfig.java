@@ -17,6 +17,8 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import java.util.Arrays;
 import java.util.Collections;
 
+import org.springframework.beans.factory.annotation.Value;
+
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
@@ -25,17 +27,19 @@ public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
+    @Value("${ncl.auth.bypass-register-restriction:false}")
+    private boolean bypassRegisterRestriction;
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
             .csrf(AbstractHttpConfigurer::disable)
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-            .authorizeHttpRequests(auth -> auth
-                .requestMatchers(
+            .authorizeHttpRequests(auth -> {
+                var registry = auth.requestMatchers(
                     "/api/v1/auth/login",
                     "/api/v1/auth/login/verify-otp",
-                    "/api/v1/auth/register",
                     "/api/v1/auth/forgot-password",
                     "/api/v1/auth/reset-password",
                     "/api/v1/auth/otp/verify",
@@ -45,9 +49,17 @@ public class SecurityConfig {
                     "/swagger-ui/**",
                     "/swagger-ui.html",
                     "/error"
-                ).permitAll()
-                .anyRequest().authenticated()
-            )
+                ).permitAll();
+                
+                if (bypassRegisterRestriction) {
+                    registry = registry.requestMatchers("/api/v1/auth/register").permitAll();
+                } else {
+                    registry = registry.requestMatchers("/api/v1/auth/register")
+                        .hasAnyRole("IT_ADMINISTRATOR", "SUPER_ADMINISTRATOR");
+                }
+                
+                registry.anyRequest().authenticated();
+            })
             .exceptionHandling(exceptions -> exceptions
                 .authenticationEntryPoint((request, response, authException) -> {
                     response.setStatus(jakarta.servlet.http.HttpServletResponse.SC_UNAUTHORIZED);

@@ -44,6 +44,8 @@ ncl:
   auth:
     bypass-otp: false
     bypass-login-otp: false
+    expose-simulation-otp: true
+    bypass-register-restriction: false
 
 ---
 spring:

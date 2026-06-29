@@ -25,6 +25,8 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDateTime;
 import java.util.*;
 
+import in.gov.ncl.itsm.auth.infrastructure.EmailSenderService;
+
 @RestController
 @RequestMapping("/api/v1/auth")
 @RequiredArgsConstructor
@@ -35,12 +37,16 @@ public class AuthController {
     private final PasswordEncoder passwordEncoder;
     private final PasswordResetTokenRepository passwordResetTokenRepository;
     private final AuditLogService auditLogService;
+    private final EmailSenderService emailSenderService;
 
     @Value("${ncl.auth.bypass-otp:false}")
     private boolean bypassOtp;
 
     @Value("${ncl.auth.bypass-login-otp:false}")
     private boolean bypassLoginOtp;
+
+    @Value("${ncl.auth.expose-simulation-otp:true}")
+    private boolean exposeSimulationOtp;
 
     @PostMapping("/register")
     public ResponseEntity<?> register(@Valid @RequestBody RegisterRequest request, HttpServletRequest httpRequest) {
@@ -66,12 +72,16 @@ public class AuthController {
                 .username(request.getUsername())
                 .password(hashedPassword)
                 .mobile(request.getMobile())
+                .designation(request.getDesignation() != null ? request.getDesignation().trim() : "")
                 .tenantId("NCL_HQ")
                 .orgId("HQ_OPS")
                 .locationId("Main Building")
                 .build();
 
-        User savedUser = userService.saveUserWithRole(newUser, "Employee", "NCL_HQ");
+        String assignedRole = request.getRole() != null && !request.getRole().trim().isEmpty()
+                ? request.getRole()
+                : "Employee";
+        User savedUser = userService.saveUserWithRole(newUser, assignedRole, "NCL_HQ");
 
         // Audit log registration event
         auditLogService.logEvent(savedUser.getId(), "USER_REGISTERED", "User", savedUser.getId(),
@@ -141,19 +151,17 @@ public class AuthController {
             user.setLoginOtpExpiresAt(LocalDateTime.now().plusMinutes(5));
             userService.saveUser(user);
 
-            // Print simulated SMS dispatch to console
-            System.out.println("=================================================");
-            System.out.println("📱 SIMULATED LOGIN OTP DISPATCH");
-            System.out.println("Recipient Mobile: +91 " + user.getMobile() + " (" + user.getFullName() + ")");
-            System.out.println("OTP Code: " + otp);
-            System.out.println("=================================================");
+            // Send login OTP via Email
+            emailSenderService.sendOtpEmail(user.getEmail(), user.getFullName(), otp, "Login verification OTP");
 
-            return ResponseEntity.ok(Map.of(
-                    "otpRequired", true,
-                    "username", user.getUsername() != null ? user.getUsername() : user.getEisNumber(),
-                    "mobile", user.getMobile() != null ? user.getMobile() : "",
-                    "simulationOtp", otp
-            ));
+            Map<String, Object> response = new HashMap<>();
+            response.put("otpRequired", true);
+            response.put("username", user.getUsername() != null ? user.getUsername() : user.getEisNumber());
+            response.put("email", user.getEmail() != null ? user.getEmail() : "");
+            if (exposeSimulationOtp) {
+                response.put("simulationOtp", otp);
+            }
+            return ResponseEntity.ok(response);
         }
 
         // Audit log successful login
@@ -287,21 +295,19 @@ public class AuthController {
 
         passwordResetTokenRepository.save(resetToken);
 
-        // Print to console for simulation
-        System.out.println("=================================================");
-        System.out.println("🔑 SIMULATED PASSWORD RESET OTP");
-        System.out.println("Recipient: " + user.getEmail() + " (" + user.getFullName() + ")");
-        System.out.println("OTP Code: " + otp);
-        System.out.println("=================================================");
+        // Send password reset OTP via Email
+        emailSenderService.sendOtpEmail(user.getEmail(), user.getFullName(), otp, "Password Reset OTP");
 
         // Audit log password reset request
         auditLogService.logEvent(user.getId(), "PASSWORD_RESET_REQUESTED", "User", user.getId(), 
                 "OTP requested", null, httpRequest.getRemoteAddr(), user.getTenantId());
 
-        return ResponseEntity.ok(Map.of(
-                "message", "A secure OTP has been sent to your registered email address.",
-                "simulationOtp", otp
-        ));
+        Map<String, Object> response = new HashMap<>();
+        response.put("message", "A secure OTP has been sent to your registered email address.");
+        if (exposeSimulationOtp) {
+            response.put("simulationOtp", otp);
+        }
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping("/reset-password")

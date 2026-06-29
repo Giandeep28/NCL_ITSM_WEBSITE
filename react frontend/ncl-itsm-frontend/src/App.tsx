@@ -42,7 +42,6 @@ function App() {
       <Routes>
         {/* Public Routes */}
         <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
 
         {/* Protected App Routes */}
@@ -58,6 +57,9 @@ function App() {
           <Route index element={<Navigate to="/dashboard" replace />} />
           <Route path="dashboard" element={<Dashboard />} />
           
+          {/* Admin Registration */}
+          <Route path="register" element={<ProtectedRoute allowedRoles={['IT Administrator', 'Super Admin']}><Register /></ProtectedRoute>} />
+
           {/* Tickets features */}
           <Route path="requests" element={<RequestsQueue />} />
           <Route path="requests/new" element={<NewRequest />} />

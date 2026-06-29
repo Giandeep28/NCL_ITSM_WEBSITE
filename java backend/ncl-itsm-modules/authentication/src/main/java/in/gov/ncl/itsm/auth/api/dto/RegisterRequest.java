@@ -33,4 +33,8 @@ public class RegisterRequest {
 
     @NotBlank(message = "Confirm Password is required")
     private String confirmPassword;
+
+    private String role;
+
+    private String designation;
 }
