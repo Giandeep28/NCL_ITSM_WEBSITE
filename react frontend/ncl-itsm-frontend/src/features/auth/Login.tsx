@@ -5,6 +5,9 @@ import { apiClient } from '../../services/apiClient';
 
 const BYPASS_OTP = false;
 
+// Set to false to disable and hide the testing/credentials drawer at the bottom of the card (or define VITE_SHOW_TESTING_CREDENTIALS=false in .env)
+const SHOW_TESTING_CREDENTIALS = import.meta.env.VITE_SHOW_TESTING_CREDENTIALS !== 'false';
+
 export const Login: React.FC = () => {
   const navigate = useNavigate();
   const { setAuth, isAuthenticated } = useAuthStore();
@@ -266,6 +269,48 @@ export const Login: React.FC = () => {
               Verify OTP
             </button>
           </form>
+        )}
+
+        {/* Testing Access Helper Panel */}
+        {SHOW_TESTING_CREDENTIALS && (
+          <div className="border-t border-slate-700/50 pt-4 mt-2">
+            <details className="group">
+              <summary className="text-[10px] font-bold text-slate-400 hover:text-indigo-400 cursor-pointer list-none flex items-center justify-between transition-colors">
+                <span>🔧 TESTING &amp; QA LOGIN CREDENTIALS</span>
+                <svg className="w-3.5 h-3.5 transform group-open:rotate-180 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M19 9l-7 7-7-7" />
+                </svg>
+              </summary>
+              <div className="mt-3 space-y-2.5 text-[11px] text-slate-400 font-semibold bg-[#0F172A] p-3 rounded-lg border border-slate-800">
+                <div className="flex justify-between items-center">
+                  <span className="text-[9px] font-bold text-indigo-400 uppercase">IT Administrator Login</span>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setUsernameOrEis('admin');
+                      setPassword('password');
+                    }}
+                    className="px-2 py-0.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded text-[9px] font-black uppercase tracking-wider transition-colors cursor-pointer"
+                  >
+                    Autofill
+                  </button>
+                </div>
+                <div className="grid grid-cols-2 gap-2 text-left">
+                  <div>
+                    <span className="text-[9px] text-slate-500 uppercase block font-bold">Username</span>
+                    <span className="font-mono text-white font-bold select-all">admin</span>
+                  </div>
+                  <div>
+                    <span className="text-[9px] text-slate-500 uppercase block font-bold">Password</span>
+                    <span className="font-mono text-white font-bold select-all">password</span>
+                  </div>
+                </div>
+                <p className="text-[10px] text-slate-500 leading-normal border-t border-slate-800 pt-2 m-0">
+                  💡 Log in as Admin to access the full system. In the "User Management" dashboard, you can register and configure sample employee or support engineer accounts to test other roles.
+                </p>
+              </div>
+            </details>
+          </div>
         )}
 
       </div>

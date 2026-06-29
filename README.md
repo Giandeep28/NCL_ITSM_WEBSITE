@@ -96,6 +96,21 @@ To simplify development, QA, and testing, you can toggle OTP verification off or
 
 ---
 
+## 🔧 Testing & QA Login Credentials Console
+
+To help with testing, a toggleable credentials panel displays at the bottom of the Login page. Once you have registered all accounts and are ready to deploy to production, you can easily disable and hide this panel:
+
+* **Using Environment Variables (Recommended):** Add the following variable to your `.env` file in the react frontend directory:
+  ```env
+  VITE_SHOW_TESTING_CREDENTIALS=false
+  ```
+* **Directly in Code:** Inside [Login.tsx](file:///d:/GIANDEEP%20MAIN/NCL_ITSM_SOFTWARE_WEBSITE/react%20frontend/ncl-itsm-frontend/src/features/auth/Login.tsx), change:
+  ```typescript
+  const SHOW_TESTING_CREDENTIALS = false;
+  ```
+
+---
+
 ## 🧪 Running Tests & Code Quality Verifications
 
 To verify code changes and run quality audits:
@@ -119,11 +134,13 @@ npm run build
 
 The application runs with an **in-memory H2 database** in development mode. To prevent database wipes on server restart from deleting all default sandbox users, we have implemented an automatic database seeder:
 
-* **Automatic Seeding:** Every time the backend restarts, the default sandbox users below are automatically registered and seeded into the database.
-* **Credentials (Password is `password` for all):**
-  - **IT Administrator:** Employee ID `90000001` (Full Name: *David Sterling*)
-  - **Support Engineer:** Employee ID `88291000` (Full Name: *Marcus Thorne*)
-  - **Standard Employee:** Employee ID `12345678` (Full Name: *J. Henderson*)
+* **Automatic Seeding:** Every time the backend restarts, the default sandbox admin user below is automatically registered and seeded into the database.
+* **Administrator Login:** 
+  - **Username**: `admin`
+  - **Password**: `password`
+  - **Employee ID**: `90000001`
+  - **Designation**: `IT Administrator`
+* **Workflow Guide**: Log in using the `admin` credentials to access the full system. In the **User Management** console, you can register other user accounts (Employees, Support Engineers) and assign their designations and roles. Once registered by the Admin, those users can log in using their registered credentials.
 
 ---
 

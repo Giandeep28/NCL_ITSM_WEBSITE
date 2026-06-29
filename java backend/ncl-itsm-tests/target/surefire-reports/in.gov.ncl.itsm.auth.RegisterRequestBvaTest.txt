@@ -1,35 +1,35 @@
 -------------------------------------------------------------------------------
 Test set: in.gov.ncl.itsm.auth.RegisterRequestBvaTest
 -------------------------------------------------------------------------------
-Tests run: 31, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.030 s -- in in.gov.ncl.itsm.auth.RegisterRequestBvaTest
-in.gov.ncl.itsm.auth.RegisterRequestBvaTest.ec_allValid_noViolations -- Time elapsed: 0.003 s
-in.gov.ncl.itsm.auth.RegisterRequestBvaTest.bva_mobile_exactlyTen_valid -- Time elapsed: 0.001 s
-in.gov.ncl.itsm.auth.RegisterRequestBvaTest.bva_mobile_nine_invalid -- Time elapsed: 0.001 s
-in.gov.ncl.itsm.auth.RegisterRequestBvaTest.bva_mobile_eleven_invalid -- Time elapsed: 0 s
+Tests run: 31, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.058 s -- in in.gov.ncl.itsm.auth.RegisterRequestBvaTest
+in.gov.ncl.itsm.auth.RegisterRequestBvaTest.ec_allValid_noViolations -- Time elapsed: 0.007 s
+in.gov.ncl.itsm.auth.RegisterRequestBvaTest.bva_mobile_exactlyTen_valid -- Time elapsed: 0.002 s
+in.gov.ncl.itsm.auth.RegisterRequestBvaTest.bva_mobile_nine_invalid -- Time elapsed: 0.003 s
+in.gov.ncl.itsm.auth.RegisterRequestBvaTest.bva_mobile_eleven_invalid -- Time elapsed: 0.001 s
 in.gov.ncl.itsm.auth.RegisterRequestBvaTest.ec_mobile_nonNumeric_invalid -- Time elapsed: 0.001 s
-in.gov.ncl.itsm.auth.RegisterRequestBvaTest.bva_eis_four_valid -- Time elapsed: 0.001 s
+in.gov.ncl.itsm.auth.RegisterRequestBvaTest.bva_eis_four_valid -- Time elapsed: 0 s
 in.gov.ncl.itsm.auth.RegisterRequestBvaTest.bva_eis_three_invalid -- Time elapsed: 0 s
-in.gov.ncl.itsm.auth.RegisterRequestBvaTest.bva_eis_twenty_valid -- Time elapsed: 0 s
-in.gov.ncl.itsm.auth.RegisterRequestBvaTest.bva_eis_twentyOne_invalid -- Time elapsed: 0.001 s
-in.gov.ncl.itsm.auth.RegisterRequestBvaTest.ec_eis_validAlphanumericFormats(String)[1] -- Time elapsed: 0 s
+in.gov.ncl.itsm.auth.RegisterRequestBvaTest.bva_eis_twenty_valid -- Time elapsed: 0.001 s
+in.gov.ncl.itsm.auth.RegisterRequestBvaTest.bva_eis_twentyOne_invalid -- Time elapsed: 0 s
+in.gov.ncl.itsm.auth.RegisterRequestBvaTest.ec_eis_validAlphanumericFormats(String)[1] -- Time elapsed: 0.001 s
 in.gov.ncl.itsm.auth.RegisterRequestBvaTest.ec_eis_validAlphanumericFormats(String)[2] -- Time elapsed: 0.001 s
-in.gov.ncl.itsm.auth.RegisterRequestBvaTest.ec_eis_validAlphanumericFormats(String)[3] -- Time elapsed: 0 s
-in.gov.ncl.itsm.auth.RegisterRequestBvaTest.ec_eis_validAlphanumericFormats(String)[4] -- Time elapsed: 0.001 s
-in.gov.ncl.itsm.auth.RegisterRequestBvaTest.ec_eis_specialChars_invalid(String)[1] -- Time elapsed: 0 s
+in.gov.ncl.itsm.auth.RegisterRequestBvaTest.ec_eis_validAlphanumericFormats(String)[3] -- Time elapsed: 0.001 s
+in.gov.ncl.itsm.auth.RegisterRequestBvaTest.ec_eis_validAlphanumericFormats(String)[4] -- Time elapsed: 0 s
+in.gov.ncl.itsm.auth.RegisterRequestBvaTest.ec_eis_specialChars_invalid(String)[1] -- Time elapsed: 0.001 s
 in.gov.ncl.itsm.auth.RegisterRequestBvaTest.ec_eis_specialChars_invalid(String)[2] -- Time elapsed: 0.001 s
 in.gov.ncl.itsm.auth.RegisterRequestBvaTest.ec_eis_specialChars_invalid(String)[3] -- Time elapsed: 0 s
-in.gov.ncl.itsm.auth.RegisterRequestBvaTest.ec_eis_specialChars_invalid(String)[4] -- Time elapsed: 0 s
-in.gov.ncl.itsm.auth.RegisterRequestBvaTest.bva_password_six_valid -- Time elapsed: 0 s
-in.gov.ncl.itsm.auth.RegisterRequestBvaTest.bva_password_five_invalid -- Time elapsed: 0 s
+in.gov.ncl.itsm.auth.RegisterRequestBvaTest.ec_eis_specialChars_invalid(String)[4] -- Time elapsed: 0.001 s
+in.gov.ncl.itsm.auth.RegisterRequestBvaTest.bva_password_six_valid -- Time elapsed: 0.001 s
+in.gov.ncl.itsm.auth.RegisterRequestBvaTest.bva_password_five_invalid -- Time elapsed: 0.001 s
 in.gov.ncl.itsm.auth.RegisterRequestBvaTest.bva_password_seven_valid -- Time elapsed: 0 s
-in.gov.ncl.itsm.auth.RegisterRequestBvaTest.ec_email_validFormats(String)[1] -- Time elapsed: 0 s
+in.gov.ncl.itsm.auth.RegisterRequestBvaTest.ec_email_validFormats(String)[1] -- Time elapsed: 0.001 s
 in.gov.ncl.itsm.auth.RegisterRequestBvaTest.ec_email_validFormats(String)[2] -- Time elapsed: 0 s
 in.gov.ncl.itsm.auth.RegisterRequestBvaTest.ec_email_validFormats(String)[3] -- Time elapsed: 0.001 s
-in.gov.ncl.itsm.auth.RegisterRequestBvaTest.ec_email_invalidFormats(String)[1] -- Time elapsed: 0 s
+in.gov.ncl.itsm.auth.RegisterRequestBvaTest.ec_email_invalidFormats(String)[1] -- Time elapsed: 0.002 s
 in.gov.ncl.itsm.auth.RegisterRequestBvaTest.ec_email_invalidFormats(String)[2] -- Time elapsed: 0.001 s
 in.gov.ncl.itsm.auth.RegisterRequestBvaTest.ec_email_invalidFormats(String)[3] -- Time elapsed: 0.001 s
-in.gov.ncl.itsm.auth.RegisterRequestBvaTest.ec_email_invalidFormats(String)[4] -- Time elapsed: 0.001 s
+in.gov.ncl.itsm.auth.RegisterRequestBvaTest.ec_email_invalidFormats(String)[4] -- Time elapsed: 0 s
 in.gov.ncl.itsm.auth.RegisterRequestBvaTest.ec_nullFullName_violation -- Time elapsed: 0.001 s
 in.gov.ncl.itsm.auth.RegisterRequestBvaTest.ec_emptyUsername_violation -- Time elapsed: 0.001 s
 in.gov.ncl.itsm.auth.RegisterRequestBvaTest.ec_nullEmail_violation -- Time elapsed: 0 s
-in.gov.ncl.itsm.auth.RegisterRequestBvaTest.ec_nullMobile_violation -- Time elapsed: 0.001 s
+in.gov.ncl.itsm.auth.RegisterRequestBvaTest.ec_nullMobile_violation -- Time elapsed: 0 s
