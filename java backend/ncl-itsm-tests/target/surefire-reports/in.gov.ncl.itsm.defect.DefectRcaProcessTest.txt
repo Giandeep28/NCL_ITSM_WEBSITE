@@ -1,6 +1,6 @@
 -------------------------------------------------------------------------------
 Test set: in.gov.ncl.itsm.defect.DefectRcaProcessTest
 -------------------------------------------------------------------------------
-Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.018 s -- in in.gov.ncl.itsm.defect.DefectRcaProcessTest
-in.gov.ncl.itsm.defect.DefectRcaProcessTest.defect_cannotCloseWithoutRca -- Time elapsed: 0.014 s
+Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.008 s -- in in.gov.ncl.itsm.defect.DefectRcaProcessTest
+in.gov.ncl.itsm.defect.DefectRcaProcessTest.defect_cannotCloseWithoutRca -- Time elapsed: 0.006 s
 in.gov.ncl.itsm.defect.DefectRcaProcessTest.defect_rcaProcess_allowsClosure -- Time elapsed: 0.001 s
