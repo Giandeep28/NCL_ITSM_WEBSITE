@@ -1,0 +1,52 @@
+version: '3.8'
+
+services:
+  database:
+    image: postgres:16-alpine
+    container_name: ncl-itsm-database
+    environment:
+      POSTGRES_DB: ncl_itsm
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: secure_database_password_987
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d ncl_itsm"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend-api:
+    build:
+      context: ./java backend
+      dockerfile: Dockerfile
+    container_name: ncl-itsm-backend
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      DB_HOST: database
+      DB_PORT: 5432
+      DB_NAME: ncl_itsm
+      DB_USER: postgres
+      DB_PASS: secure_database_password_987
+      DB_SSL_MODE: disable
+      NCL_MAIL_ENABLED: "false"
+    ports:
+      - "8080:8080"
+    depends_on:
+      database:
+        condition: service_healthy
+
+  frontend:
+    build:
+      context: ./react frontend/ncl-itsm-frontend
+      dockerfile: Dockerfile
+    container_name: ncl-itsm-frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - backend-api
+
+volumes:
+  pgdata:

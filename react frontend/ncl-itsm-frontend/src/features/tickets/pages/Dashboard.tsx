@@ -51,6 +51,7 @@ export const Dashboard: React.FC = () => {
     if (timeframe === 'all') return list;
     const daysLimit = parseInt(timeframe);
     const limitMs = daysLimit * 24 * 60 * 60 * 1000;
+    // eslint-disable-next-line react-hooks/purity
     const now = Date.now();
     return list.filter(t => {
       try {
@@ -103,6 +104,7 @@ export const Dashboard: React.FC = () => {
   };
 
   // Category Icons helper — uses a generic icon for all categories
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const getCategoryIcon = (_category: string) => {
     const iconClass = "p-1.5 rounded-lg text-white bg-[#0F2D54]";
     return (

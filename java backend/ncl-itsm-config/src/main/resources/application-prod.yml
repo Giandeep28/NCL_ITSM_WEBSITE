@@ -1,0 +1,46 @@
+spring:
+  config:
+    activate:
+      on-profile: prod
+  datasource:
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:ncl_itsm}?sslmode=${DB_SSL_MODE:require}
+    username: ${DB_USER:postgres}
+    password: ${DB_PASS:password}
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      pool-name: NCL_ITSM_HikariCP
+      maximum-pool-size: 20
+      minimum-idle: 5
+      idle-timeout: 300000
+      max-lifetime: 1800000
+      connection-timeout: 20000
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        jdbc:
+          batch_size: 25
+        order_inserts: true
+        order_updates: true
+  flyway:
+    enabled: false
+  mail:
+    host: ${SMTP_HOST:smtp.ncl.gov.in}
+    port: ${SMTP_PORT:587}
+    username: ${SMTP_USERNAME:}
+    password: ${SMTP_PASSWORD:}
+    properties:
+      mail.smtp.auth: true
+      mail.smtp.starttls.enable: true
+
+ncl:
+  auth:
+    bypass-otp: false
+    bypass-login-otp: false
+    expose-simulation-otp: false
+    bypass-register-restriction: false
+  mail:
+    enabled: ${NCL_MAIL_ENABLED:true}

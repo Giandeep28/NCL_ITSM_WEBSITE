@@ -1,40 +1,40 @@
 -------------------------------------------------------------------------------
 Test set: in.gov.ncl.itsm.ticket.bva.TicketCreateRequestBvaTest
 -------------------------------------------------------------------------------
-Tests run: 36, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.108 s -- in in.gov.ncl.itsm.ticket.bva.TicketCreateRequestBvaTest
-in.gov.ncl.itsm.ticket.bva.TicketCreateRequestBvaTest.summary_100chars_isValid -- Time elapsed: 0.007 s
-in.gov.ncl.itsm.ticket.bva.TicketCreateRequestBvaTest.description_21chars_isValid -- Time elapsed: 0 s
-in.gov.ncl.itsm.ticket.bva.TicketCreateRequestBvaTest.description_5000chars_isInvalid -- Time elapsed: 0 s
+Tests run: 36, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.107 s -- in in.gov.ncl.itsm.ticket.bva.TicketCreateRequestBvaTest
+in.gov.ncl.itsm.ticket.bva.TicketCreateRequestBvaTest.summary_100chars_isValid -- Time elapsed: 0.010 s
+in.gov.ncl.itsm.ticket.bva.TicketCreateRequestBvaTest.description_21chars_isValid -- Time elapsed: 0.002 s
+in.gov.ncl.itsm.ticket.bva.TicketCreateRequestBvaTest.description_5000chars_isInvalid -- Time elapsed: 0.001 s
 in.gov.ncl.itsm.ticket.bva.TicketCreateRequestBvaTest.summary_99chars_isValid -- Time elapsed: 0.001 s
-in.gov.ncl.itsm.ticket.bva.TicketCreateRequestBvaTest.summary_101chars_isInvalid -- Time elapsed: 0 s
-in.gov.ncl.itsm.ticket.bva.TicketCreateRequestBvaTest.description_20chars_isValid -- Time elapsed: 0.001 s
+in.gov.ncl.itsm.ticket.bva.TicketCreateRequestBvaTest.summary_101chars_isInvalid -- Time elapsed: 0.001 s
+in.gov.ncl.itsm.ticket.bva.TicketCreateRequestBvaTest.description_20chars_isValid -- Time elapsed: 0 s
 in.gov.ncl.itsm.ticket.bva.TicketCreateRequestBvaTest.category_nullOrEmpty_isInvalid(String)[1] -- Time elapsed: 0.001 s
 in.gov.ncl.itsm.ticket.bva.TicketCreateRequestBvaTest.category_nullOrEmpty_isInvalid(String)[2] -- Time elapsed: 0.001 s
 in.gov.ncl.itsm.ticket.bva.TicketCreateRequestBvaTest.summary_1char_isValid -- Time elapsed: 0.001 s
-in.gov.ncl.itsm.ticket.bva.TicketCreateRequestBvaTest.summary_null_isInvalid -- Time elapsed: 0.001 s
-in.gov.ncl.itsm.ticket.bva.TicketCreateRequestBvaTest.summary_empty_isInvalid -- Time elapsed: 0.001 s
-in.gov.ncl.itsm.ticket.bva.TicketCreateRequestBvaTest.parameterized_descriptionLength(int, boolean)[1] -- Time elapsed: 0.002 s
-in.gov.ncl.itsm.ticket.bva.TicketCreateRequestBvaTest.parameterized_descriptionLength(int, boolean)[2] -- Time elapsed: 0 s
+in.gov.ncl.itsm.ticket.bva.TicketCreateRequestBvaTest.summary_null_isInvalid -- Time elapsed: 0 s
+in.gov.ncl.itsm.ticket.bva.TicketCreateRequestBvaTest.summary_empty_isInvalid -- Time elapsed: 0.002 s
+in.gov.ncl.itsm.ticket.bva.TicketCreateRequestBvaTest.parameterized_descriptionLength(int, boolean)[1] -- Time elapsed: 0.005 s
+in.gov.ncl.itsm.ticket.bva.TicketCreateRequestBvaTest.parameterized_descriptionLength(int, boolean)[2] -- Time elapsed: 0.001 s
 in.gov.ncl.itsm.ticket.bva.TicketCreateRequestBvaTest.parameterized_descriptionLength(int, boolean)[3] -- Time elapsed: 0.001 s
-in.gov.ncl.itsm.ticket.bva.TicketCreateRequestBvaTest.parameterized_descriptionLength(int, boolean)[4] -- Time elapsed: 0.024 s
-in.gov.ncl.itsm.ticket.bva.TicketCreateRequestBvaTest.parameterized_descriptionLength(int, boolean)[5] -- Time elapsed: 0 s
+in.gov.ncl.itsm.ticket.bva.TicketCreateRequestBvaTest.parameterized_descriptionLength(int, boolean)[4] -- Time elapsed: 0.002 s
+in.gov.ncl.itsm.ticket.bva.TicketCreateRequestBvaTest.parameterized_descriptionLength(int, boolean)[5] -- Time elapsed: 0.002 s
 in.gov.ncl.itsm.ticket.bva.TicketCreateRequestBvaTest.parameterized_descriptionLength(int, boolean)[6] -- Time elapsed: 0.002 s
-in.gov.ncl.itsm.ticket.bva.TicketCreateRequestBvaTest.parameterized_descriptionLength(int, boolean)[7] -- Time elapsed: 0 s
-in.gov.ncl.itsm.ticket.bva.TicketCreateRequestBvaTest.parameterized_descriptionLength(int, boolean)[8] -- Time elapsed: 0.001 s
-in.gov.ncl.itsm.ticket.bva.TicketCreateRequestBvaTest.allFieldsValid_noViolations -- Time elapsed: 0 s
-in.gov.ncl.itsm.ticket.bva.TicketCreateRequestBvaTest.description_19chars_isInvalid -- Time elapsed: 0.002 s
+in.gov.ncl.itsm.ticket.bva.TicketCreateRequestBvaTest.parameterized_descriptionLength(int, boolean)[7] -- Time elapsed: 0.001 s
+in.gov.ncl.itsm.ticket.bva.TicketCreateRequestBvaTest.parameterized_descriptionLength(int, boolean)[8] -- Time elapsed: 0.002 s
+in.gov.ncl.itsm.ticket.bva.TicketCreateRequestBvaTest.allFieldsValid_noViolations -- Time elapsed: 0.001 s
+in.gov.ncl.itsm.ticket.bva.TicketCreateRequestBvaTest.description_19chars_isInvalid -- Time elapsed: 0 s
 in.gov.ncl.itsm.ticket.bva.TicketCreateRequestBvaTest.description_999chars_isValid -- Time elapsed: 0.001 s
-in.gov.ncl.itsm.ticket.bva.TicketCreateRequestBvaTest.description_1char_isInvalid -- Time elapsed: 0 s
-in.gov.ncl.itsm.ticket.bva.TicketCreateRequestBvaTest.description_1001chars_isInvalid -- Time elapsed: 0 s
+in.gov.ncl.itsm.ticket.bva.TicketCreateRequestBvaTest.description_1char_isInvalid -- Time elapsed: 0.002 s
+in.gov.ncl.itsm.ticket.bva.TicketCreateRequestBvaTest.description_1001chars_isInvalid -- Time elapsed: 0.001 s
 in.gov.ncl.itsm.ticket.bva.TicketCreateRequestBvaTest.description_1000chars_isValid -- Time elapsed: 0 s
-in.gov.ncl.itsm.ticket.bva.TicketCreateRequestBvaTest.impactLevel_nullOrEmpty_isInvalid(String)[1] -- Time elapsed: 0 s
-in.gov.ncl.itsm.ticket.bva.TicketCreateRequestBvaTest.impactLevel_nullOrEmpty_isInvalid(String)[2] -- Time elapsed: 0 s
-in.gov.ncl.itsm.ticket.bva.TicketCreateRequestBvaTest.description_null_isInvalid -- Time elapsed: 0.001 s
+in.gov.ncl.itsm.ticket.bva.TicketCreateRequestBvaTest.impactLevel_nullOrEmpty_isInvalid(String)[1] -- Time elapsed: 0.003 s
+in.gov.ncl.itsm.ticket.bva.TicketCreateRequestBvaTest.impactLevel_nullOrEmpty_isInvalid(String)[2] -- Time elapsed: 0.001 s
+in.gov.ncl.itsm.ticket.bva.TicketCreateRequestBvaTest.description_null_isInvalid -- Time elapsed: 0 s
 in.gov.ncl.itsm.ticket.bva.TicketCreateRequestBvaTest.description_empty_isInvalid -- Time elapsed: 0 s
-in.gov.ncl.itsm.ticket.bva.TicketCreateRequestBvaTest.parameterized_summaryLength(int, boolean)[1] -- Time elapsed: 0 s
-in.gov.ncl.itsm.ticket.bva.TicketCreateRequestBvaTest.parameterized_summaryLength(int, boolean)[2] -- Time elapsed: 0 s
+in.gov.ncl.itsm.ticket.bva.TicketCreateRequestBvaTest.parameterized_summaryLength(int, boolean)[1] -- Time elapsed: 0.001 s
+in.gov.ncl.itsm.ticket.bva.TicketCreateRequestBvaTest.parameterized_summaryLength(int, boolean)[2] -- Time elapsed: 0.005 s
 in.gov.ncl.itsm.ticket.bva.TicketCreateRequestBvaTest.parameterized_summaryLength(int, boolean)[3] -- Time elapsed: 0.001 s
-in.gov.ncl.itsm.ticket.bva.TicketCreateRequestBvaTest.parameterized_summaryLength(int, boolean)[4] -- Time elapsed: 0 s
+in.gov.ncl.itsm.ticket.bva.TicketCreateRequestBvaTest.parameterized_summaryLength(int, boolean)[4] -- Time elapsed: 0.002 s
 in.gov.ncl.itsm.ticket.bva.TicketCreateRequestBvaTest.parameterized_summaryLength(int, boolean)[5] -- Time elapsed: 0.001 s
-in.gov.ncl.itsm.ticket.bva.TicketCreateRequestBvaTest.parameterized_summaryLength(int, boolean)[6] -- Time elapsed: 0.001 s
-in.gov.ncl.itsm.ticket.bva.TicketCreateRequestBvaTest.summary_200chars_isInvalid -- Time elapsed: 0 s
+in.gov.ncl.itsm.ticket.bva.TicketCreateRequestBvaTest.parameterized_summaryLength(int, boolean)[6] -- Time elapsed: 0.002 s
+in.gov.ncl.itsm.ticket.bva.TicketCreateRequestBvaTest.summary_200chars_isInvalid -- Time elapsed: 0.001 s

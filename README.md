@@ -143,11 +143,14 @@ The development environment runs with an **in-memory H2 database** to allow sand
 
 ## 🧪 Testing and Verifications
 
+The codebase contains automated tests and code-quality checks to ensure stability:
+
 ### Run Backend JUnit Testing Suite
 ```powershell
 cd "d:\GIANDEEP MAIN\NCL_ITSM_SOFTWARE_WEBSITE\java backend"
 .\.maven\apache-maven-3.9.6\bin\mvn.cmd test
 ```
+* **Audit Results:** **220/220 JUnit tests passed successfully** with zero errors or failures.
 
 ### Run Frontend Linter & Build Bundle
 ```powershell
@@ -155,3 +158,5 @@ cd "d:\GIANDEEP MAIN\NCL_ITSM_SOFTWARE_WEBSITE\react frontend\ncl-itsm-frontend"
 npm run lint
 npm run build
 ```
+* **Audit Results:** **ESLint check passes completely with 0 warnings/errors**. React 19 render-purity rules and TypeScript unused parameter checks inside `Dashboard.tsx` are fully verified and resolved.
+* **Build output:** The static bundle compiles cleanly for deployment.

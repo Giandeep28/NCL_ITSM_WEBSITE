@@ -1,23 +1,23 @@
 -------------------------------------------------------------------------------
 Test set: in.gov.ncl.itsm.ticket.mutation.TicketMutationKillTest
 -------------------------------------------------------------------------------
-Tests run: 19, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.020 s -- in in.gov.ncl.itsm.ticket.mutation.TicketMutationKillTest
-in.gov.ncl.itsm.ticket.mutation.TicketMutationKillTest.killMutant_ror_divisorGuard -- Time elapsed: 0.002 s
-in.gov.ncl.itsm.ticket.mutation.TicketMutationKillTest.killMutant_aor_at25pct -- Time elapsed: 0 s
-in.gov.ncl.itsm.ticket.mutation.TicketMutationKillTest.killMutant_svr_returnZero_computeSlaPct -- Time elapsed: 0 s
-in.gov.ncl.itsm.ticket.mutation.TicketMutationKillTest.baseline_isUrgent_5_isFalse -- Time elapsed: 0.001 s
+Tests run: 19, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.042 s -- in in.gov.ncl.itsm.ticket.mutation.TicketMutationKillTest
+in.gov.ncl.itsm.ticket.mutation.TicketMutationKillTest.killMutant_ror_divisorGuard -- Time elapsed: 0.001 s
+in.gov.ncl.itsm.ticket.mutation.TicketMutationKillTest.killMutant_aor_at25pct -- Time elapsed: 0.002 s
+in.gov.ncl.itsm.ticket.mutation.TicketMutationKillTest.killMutant_svr_returnZero_computeSlaPct -- Time elapsed: 0.001 s
+in.gov.ncl.itsm.ticket.mutation.TicketMutationKillTest.baseline_isUrgent_5_isFalse -- Time elapsed: 0 s
 in.gov.ncl.itsm.ticket.mutation.TicketMutationKillTest.killMutant_cor_and_to_or_nonTurbine1h -- Time elapsed: 0 s
-in.gov.ncl.itsm.ticket.mutation.TicketMutationKillTest.killMutant_cor_and_to_or_turbine3h -- Time elapsed: 0.001 s
-in.gov.ncl.itsm.ticket.mutation.TicketMutationKillTest.killMutant_cor_and_to_or_turbine5h -- Time elapsed: 0 s
+in.gov.ncl.itsm.ticket.mutation.TicketMutationKillTest.killMutant_cor_and_to_or_turbine3h -- Time elapsed: 0 s
+in.gov.ncl.itsm.ticket.mutation.TicketMutationKillTest.killMutant_cor_and_to_or_turbine5h -- Time elapsed: 0.001 s
 in.gov.ncl.itsm.ticket.mutation.TicketMutationKillTest.killAllBoundaryMutants_resolvePriority(int, String, String)[1] -- Time elapsed: 0.003 s
-in.gov.ncl.itsm.ticket.mutation.TicketMutationKillTest.killAllBoundaryMutants_resolvePriority(int, String, String)[2] -- Time elapsed: 0.001 s
+in.gov.ncl.itsm.ticket.mutation.TicketMutationKillTest.killAllBoundaryMutants_resolvePriority(int, String, String)[2] -- Time elapsed: 0.002 s
 in.gov.ncl.itsm.ticket.mutation.TicketMutationKillTest.killAllBoundaryMutants_resolvePriority(int, String, String)[3] -- Time elapsed: 0.001 s
-in.gov.ncl.itsm.ticket.mutation.TicketMutationKillTest.killAllBoundaryMutants_resolvePriority(int, String, String)[4] -- Time elapsed: 0 s
-in.gov.ncl.itsm.ticket.mutation.TicketMutationKillTest.killAllBoundaryMutants_resolvePriority(int, String, String)[5] -- Time elapsed: 0 s
-in.gov.ncl.itsm.ticket.mutation.TicketMutationKillTest.killAllBoundaryMutants_resolvePriority(int, String, String)[6] -- Time elapsed: 0 s
-in.gov.ncl.itsm.ticket.mutation.TicketMutationKillTest.killAllBoundaryMutants_resolvePriority(int, String, String)[7] -- Time elapsed: 0 s
-in.gov.ncl.itsm.ticket.mutation.TicketMutationKillTest.killAllBoundaryMutants_resolvePriority(int, String, String)[8] -- Time elapsed: 0.001 s
-in.gov.ncl.itsm.ticket.mutation.TicketMutationKillTest.killAllBoundaryMutants_resolvePriority(int, String, String)[9] -- Time elapsed: 0 s
-in.gov.ncl.itsm.ticket.mutation.TicketMutationKillTest.killMutant_ror_lessThan_to_lessOrEqual_at4 -- Time elapsed: 0 s
+in.gov.ncl.itsm.ticket.mutation.TicketMutationKillTest.killAllBoundaryMutants_resolvePriority(int, String, String)[4] -- Time elapsed: 0.001 s
+in.gov.ncl.itsm.ticket.mutation.TicketMutationKillTest.killAllBoundaryMutants_resolvePriority(int, String, String)[5] -- Time elapsed: 0.002 s
+in.gov.ncl.itsm.ticket.mutation.TicketMutationKillTest.killAllBoundaryMutants_resolvePriority(int, String, String)[6] -- Time elapsed: 0.001 s
+in.gov.ncl.itsm.ticket.mutation.TicketMutationKillTest.killAllBoundaryMutants_resolvePriority(int, String, String)[7] -- Time elapsed: 0.001 s
+in.gov.ncl.itsm.ticket.mutation.TicketMutationKillTest.killAllBoundaryMutants_resolvePriority(int, String, String)[8] -- Time elapsed: 0.002 s
+in.gov.ncl.itsm.ticket.mutation.TicketMutationKillTest.killAllBoundaryMutants_resolvePriority(int, String, String)[9] -- Time elapsed: 0.001 s
+in.gov.ncl.itsm.ticket.mutation.TicketMutationKillTest.killMutant_ror_lessThan_to_lessOrEqual_at4 -- Time elapsed: 0.001 s
 in.gov.ncl.itsm.ticket.mutation.TicketMutationKillTest.baseline_isUrgent_3_isTrue -- Time elapsed: 0 s
-in.gov.ncl.itsm.ticket.mutation.TicketMutationKillTest.killMutant_aor_multiply_to_divide -- Time elapsed: 0 s
+in.gov.ncl.itsm.ticket.mutation.TicketMutationKillTest.killMutant_aor_multiply_to_divide -- Time elapsed: 0.001 s
