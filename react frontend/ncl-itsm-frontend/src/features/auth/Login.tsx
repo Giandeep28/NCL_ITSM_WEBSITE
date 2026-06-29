@@ -3,7 +3,6 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useAuthStore, type AuthUser } from '../../store/authStore';
 import { apiClient } from '../../services/apiClient';
 
-const BYPASS_OTP = false;
 
 // Set to false to disable and hide the testing/credentials drawer at the bottom of the card (or define VITE_SHOW_TESTING_CREDENTIALS=false in .env)
 const SHOW_TESTING_CREDENTIALS = import.meta.env.VITE_SHOW_TESTING_CREDENTIALS !== 'false';
@@ -16,7 +15,6 @@ export const Login: React.FC = () => {
   const [password, setPassword] = useState('');
   const [otpMode, setOtpMode] = useState(false);
   const [otpCode, setOtpCode] = useState('');
-  const [simulationOtp, setSimulationOtp] = useState('');
   const [countdown, setCountdown] = useState(0);
 
   const [isLoading, setIsLoading] = useState(false);
@@ -76,7 +74,9 @@ export const Login: React.FC = () => {
       const response = await apiClient.post('/auth/login', { usernameOrEmployeeId: usernameOrEis, password });
       
       if (response.data.otpRequired) {
-        setSimulationOtp(response.data.simulationOtp || '');
+        if (response.data.simulationOtp) {
+          console.log('Simulation OTP:', response.data.simulationOtp);
+        }
         setOtpMode(true);
         setCountdown(60);
         setIsLoading(false);
@@ -221,12 +221,6 @@ export const Login: React.FC = () => {
             <div className="bg-indigo-600/10 border border-indigo-500/20 text-indigo-400 px-4 py-3 rounded-lg text-xs font-bold text-center leading-relaxed">
               OTP sent to your registered email address.
             </div>
-
-            {!BYPASS_OTP && simulationOtp && (
-              <div className="bg-indigo-500/10 border border-indigo-500/30 text-indigo-300 px-4 py-2 rounded-lg text-xs font-bold text-center">
-                🔑 Simulation Mode OTP: <span className="text-white font-mono bg-indigo-900/50 px-2 py-0.5 rounded text-sm">{simulationOtp}</span>
-              </div>
-            )}
 
             <div className="space-y-1">
               <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">One-Time Password (OTP)</label>

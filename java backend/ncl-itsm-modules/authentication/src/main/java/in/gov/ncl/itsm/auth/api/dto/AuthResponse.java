@@ -18,4 +18,5 @@ public class AuthResponse {
     private String fullName;
     private String eisNumber;
     private String departmentId;
+    private String profilePhoto;
 }

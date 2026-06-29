@@ -7,6 +7,7 @@ export interface AuthUser {
   fullName: string;
   role: 'Employee' | 'Support Engineer' | 'Asset Manager' | 'IT Administrator' | 'Super Admin' | 'Read Only Auditor';
   departmentId: string;
+  profilePhoto?: string;
 }
 
 interface AuthState {

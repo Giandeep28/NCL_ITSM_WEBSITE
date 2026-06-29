@@ -14,4 +14,5 @@ public class ProfileUpdateRequest {
     private String designation;
     private String departmentId;
     private String password;
+    private String profilePhoto;
 }

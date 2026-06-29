@@ -19,6 +19,7 @@ public class ProfileResponse {
     private String designation;
     private String locationId;
     private Boolean isActive;
+    private String profilePhoto;
 
     public static ProfileResponse from(User user) {
         return ProfileResponse.builder()
@@ -32,6 +33,7 @@ public class ProfileResponse {
                 .designation(user.getDesignation())
                 .locationId(user.getLocationId())
                 .isActive(user.getIsActive())
+                .profilePhoto(user.getProfilePhoto())
                 .build();
     }
 }

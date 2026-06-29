@@ -55,8 +55,12 @@ const UserProfileChip: React.FC<UserProfileChipProps> = ({ onClick }) => {
           {user.role}
         </span>
       </div>
-      <div className="w-9 h-9 rounded-full bg-[#0F2D54] flex items-center justify-center text-white font-extrabold text-sm shadow-md">
-        {initials}
+      <div className="w-9 h-9 rounded-full bg-[#0F2D54] flex items-center justify-center text-white font-extrabold text-sm shadow-md overflow-hidden">
+        {user.profilePhoto ? (
+          <img src={user.profilePhoto} alt="Profile" className="w-full h-full object-cover" />
+        ) : (
+          initials
+        )}
       </div>
     </div>
   );

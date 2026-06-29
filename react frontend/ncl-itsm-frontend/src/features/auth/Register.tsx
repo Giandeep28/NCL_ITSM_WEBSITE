@@ -13,10 +13,27 @@ export const Register: React.FC = () => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [role, setRole] = useState('Employee');
   const [designation, setDesignation] = useState('');
+  const [profilePhoto, setProfilePhoto] = useState('');
 
   const [isLoading, setIsLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
   const [successMsg, setSuccessMsg] = useState('');
+
+  const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (file.size > 2 * 1024 * 1024) {
+      setErrorMsg('Image size must be less than 2MB.');
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setProfilePhoto(reader.result as string);
+    };
+    reader.readAsDataURL(file);
+  };
 
   const handleRegisterSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -66,6 +83,7 @@ export const Register: React.FC = () => {
         confirmPassword,
         role,
         designation,
+        profilePhoto,
       });
 
       setSuccessMsg('User registered successfully! Redirecting to User Directory...');
@@ -113,6 +131,28 @@ export const Register: React.FC = () => {
         )}
 
         <form onSubmit={handleRegisterSubmit} className="space-y-3">
+          <div className="flex items-center gap-4 bg-gray-50/50 p-3 rounded-xl border border-gray-200">
+            <div className="w-12 h-12 rounded-full bg-[#0F2D54] flex items-center justify-center text-white font-extrabold text-lg overflow-hidden shrink-0 border border-gray-300 shadow-sm">
+              {profilePhoto ? (
+                <img src={profilePhoto} alt="Preview" className="w-full h-full object-cover" />
+              ) : (
+                '📷'
+              )}
+            </div>
+            <div className="space-y-0.5">
+              <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wider block">Profile Photo (Optional)</span>
+              <label className="px-2.5 py-1 bg-white border border-gray-250 text-gray-600 hover:bg-gray-50 rounded text-[10px] font-bold cursor-pointer transition-colors shadow-sm inline-block">
+                Choose Image
+                <input 
+                  type="file" 
+                  accept="image/*" 
+                  className="hidden" 
+                  onChange={handlePhotoChange} 
+                  disabled={isLoading}
+                />
+              </label>
+            </div>
+          </div>
           <div className="space-y-1">
             <label className="text-[10px] font-bold text-gray-500 uppercase tracking-wider block">Full Name</label>
             <input

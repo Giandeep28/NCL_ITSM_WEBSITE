@@ -20,4 +20,5 @@ public interface UserService {
     void unlockUser(String eisNumber);
     java.util.List<User> findUsersByRole(String roleName, String tenantId);
     java.util.List<User> findAllUsers();
+    void deleteUserByEisNumber(String eisNumber);
 }

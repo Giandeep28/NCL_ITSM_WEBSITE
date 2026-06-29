@@ -13,6 +13,7 @@ interface BackendUser {
   designation?: string;
   locationId: string;
   isActive: boolean;
+  profilePhoto?: string;
 }
 
 export const Profile: React.FC = () => {
@@ -26,6 +27,7 @@ export const Profile: React.FC = () => {
   const [designation, setDesignation] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [profilePhoto, setProfilePhoto] = useState('');
 
   // Status states
   const [loading, setLoading] = useState(true);
@@ -46,6 +48,7 @@ export const Profile: React.FC = () => {
         setEmail(data.email || '');
         setMobile(data.mobile || '');
         setDesignation(data.designation || '');
+        setProfilePhoto(data.profilePhoto || '');
       } catch (err: any) {
         console.error('Failed to load profile from backend', err);
         setErrorMsg('Failed to fetch user profile details from the database.');
@@ -56,6 +59,22 @@ export const Profile: React.FC = () => {
 
     loadProfile();
   }, [user]);
+
+  const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (file.size > 2 * 1024 * 1024) {
+      setErrorMsg('Image size must be less than 2MB.');
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setProfilePhoto(reader.result as string);
+    };
+    reader.readAsDataURL(file);
+  };
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -83,6 +102,7 @@ export const Profile: React.FC = () => {
         fullName: fullName.trim(),
         email: email.trim(),
         mobile: mobile.trim(),
+        profilePhoto: profilePhoto,
       };
       if (password) {
         payload.password = password;
@@ -98,6 +118,7 @@ export const Profile: React.FC = () => {
             ...user,
             fullName: updatedUser.fullName,
             departmentId: updatedUser.departmentId,
+            profilePhoto: updatedUser.profilePhoto,
           },
           accessToken,
           refreshToken
@@ -160,9 +181,26 @@ export const Profile: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Left Column: Avatar & System Details Card */}
         <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm flex flex-col items-center text-center gap-4 h-fit">
-          <div className="w-24 h-24 rounded-full bg-[#0F2D54] flex items-center justify-center text-white font-black text-3xl shadow-lg shadow-slate-900/10">
-            {initials}
+          <div className="w-24 h-24 rounded-full bg-[#0F2D54] flex items-center justify-center text-white font-black text-3xl shadow-lg shadow-slate-900/10 overflow-hidden">
+            {profilePhoto ? (
+              <img src={profilePhoto} alt="Profile" className="w-full h-full object-cover" />
+            ) : (
+              initials
+            )}
           </div>
+          
+          <label className="px-3.5 py-1.5 border border-indigo-200 hover:border-indigo-300 text-indigo-600 hover:bg-indigo-50/50 rounded-lg text-xs font-bold transition-all cursor-pointer inline-flex items-center gap-1.5 shadow-sm">
+            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            </svg>
+            Choose Photo
+            <input 
+              type="file" 
+              accept="image/*" 
+              className="hidden" 
+              onChange={handlePhotoChange} 
+            />
+          </label>
           <div>
             <h3 className="text-lg font-black text-gray-800 leading-none m-0">{dbUser?.fullName}</h3>
             <span className="text-xs text-indigo-600 font-extrabold bg-indigo-50 px-2.5 py-0.5 rounded-full inline-block mt-2">

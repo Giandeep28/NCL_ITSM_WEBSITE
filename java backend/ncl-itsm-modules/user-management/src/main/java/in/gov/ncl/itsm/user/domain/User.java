@@ -43,6 +43,10 @@ public class User {
     @Column(length = 100)
     private String designation;
 
+    @Lob
+    @Column(name = "profile_photo", columnDefinition = "TEXT")
+    private String profilePhoto;
+
     @Column(name = "department_id", length = 100)
     private String departmentId;
 

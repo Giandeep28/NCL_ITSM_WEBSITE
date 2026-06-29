@@ -73,6 +73,7 @@ public class AuthController {
                 .password(hashedPassword)
                 .mobile(request.getMobile())
                 .designation(request.getDesignation() != null ? request.getDesignation().trim() : "")
+                .profilePhoto(request.getProfilePhoto())
                 .tenantId("NCL_HQ")
                 .orgId("HQ_OPS")
                 .locationId("Main Building")
@@ -195,6 +196,7 @@ public class AuthController {
                 .fullName(user.getFullName())
                 .eisNumber(user.getEisNumber())
                 .departmentId(user.getDepartmentId())
+                .profilePhoto(user.getProfilePhoto())
                 .build();
 
         return ResponseEntity.ok(authResponse);
@@ -252,6 +254,7 @@ public class AuthController {
                 .fullName(user.getFullName())
                 .eisNumber(user.getEisNumber())
                 .departmentId(user.getDepartmentId())
+                .profilePhoto(user.getProfilePhoto())
                 .build();
 
         // Audit log login success
@@ -414,6 +417,7 @@ public class AuthController {
                         .fullName(user.getFullName())
                         .eisNumber(user.getEisNumber())
                         .departmentId(user.getDepartmentId())
+                        .profilePhoto(user.getProfilePhoto())
                         .build();
 
                 return ResponseEntity.ok(response);

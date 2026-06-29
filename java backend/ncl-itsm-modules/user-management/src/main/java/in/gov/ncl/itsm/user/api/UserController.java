@@ -96,6 +96,9 @@ public class UserController {
         if (request.getPassword() != null && !request.getPassword().isBlank()) {
             user.setPassword(passwordEncoder.encode(request.getPassword()));
         }
+        if (request.getProfilePhoto() != null) {
+            user.setProfilePhoto(request.getProfilePhoto());
+        }
 
         User saved = userService.saveUser(user);
         return ResponseEntity.ok(ProfileResponse.from(saved));
@@ -139,6 +142,9 @@ public class UserController {
         if (request.getPassword() != null && !request.getPassword().isBlank()) {
             user.setPassword(passwordEncoder.encode(request.getPassword()));
         }
+        if (request.getProfilePhoto() != null) {
+            user.setProfilePhoto(request.getProfilePhoto());
+        }
 
         User savedUser;
         if (request.getRole() != null && !request.getRole().isBlank()) {
@@ -148,5 +154,16 @@ public class UserController {
         }
 
         return ResponseEntity.ok(savedUser);
+    }
+
+    @DeleteMapping("/{eisNumber}")
+    @PreAuthorize("hasAnyRole('ROLE_IT_ADMINISTRATOR', 'ROLE_SUPER_ADMINISTRATOR')")
+    public ResponseEntity<?> deleteUser(@PathVariable String eisNumber) {
+        Optional<User> userOpt = userService.findByEisNumber(eisNumber);
+        if (userOpt.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        userService.deleteUserByEisNumber(eisNumber);
+        return ResponseEntity.ok(java.util.Map.of("message", "User account deleted successfully."));
     }
 }

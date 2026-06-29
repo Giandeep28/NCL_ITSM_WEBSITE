@@ -12,6 +12,7 @@ interface User {
   departmentId: string;
   isActive: boolean;
   roles: { id: string; name: string }[];
+  profilePhoto?: string;
 }
 
 export const UserManagement: React.FC = () => {
@@ -32,6 +33,7 @@ export const UserManagement: React.FC = () => {
   const [editDepartmentId, setEditDepartmentId] = useState('');
   const [editRole, setEditRole] = useState('Employee');
   const [editPassword, setEditPassword] = useState('');
+  const [editProfilePhoto, setEditProfilePhoto] = useState('');
   const [isUpdating, setIsUpdating] = useState(false);
 
   const fetchUsers = async () => {
@@ -65,6 +67,36 @@ export const UserManagement: React.FC = () => {
     }
   };
 
+  const handleDeleteUser = async (eisNumber: string) => {
+    if (!window.confirm('Are you sure you want to permanently delete this user account? This action cannot be undone.')) {
+      return;
+    }
+    try {
+      await apiClient.delete(`/users/${eisNumber}`);
+      fetchUsers();
+    } catch (err: any) {
+      console.error('Failed to delete user', err);
+      setErrorMsg('Failed to delete user account. Please try again.');
+      setTimeout(() => setErrorMsg(''), 4000);
+    }
+  };
+
+  const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (file.size > 2 * 1024 * 1024) {
+      setErrorMsg('Image size must be less than 2MB.');
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setEditProfilePhoto(reader.result as string);
+    };
+    reader.readAsDataURL(file);
+  };
+
   const openEditModal = (user: User) => {
     setEditingUser(user);
     setEditFullName(user.fullName || '');
@@ -73,6 +105,7 @@ export const UserManagement: React.FC = () => {
     setEditDesignation(user.designation || '');
     setEditDepartmentId(user.departmentId || '');
     setEditRole(user.roles?.[0]?.name || 'Employee');
+    setEditProfilePhoto(user.profilePhoto || '');
     setEditPassword('');
   };
 
@@ -102,6 +135,7 @@ export const UserManagement: React.FC = () => {
         designation: editDesignation.trim(),
         departmentId: editDepartmentId.trim(),
         role: editRole,
+        profilePhoto: editProfilePhoto,
       };
 
       if (editPassword) {
@@ -276,22 +310,28 @@ export const UserManagement: React.FC = () => {
                           {user.isActive ? 'Active' : 'Locked'}
                         </span>
                       </td>
-                      <td className="py-4 px-5 text-right flex items-center justify-end gap-2">
+                      <td className="py-4 px-5 text-right flex items-center justify-end gap-1.5">
                         <button
                           onClick={() => openEditModal(user)}
-                          className="px-2.5 py-1.5 rounded text-[10px] font-extrabold uppercase tracking-wider bg-gray-50 hover:bg-gray-100 text-gray-600 border border-gray-200 transition-all cursor-pointer"
+                          className="px-2 py-1 rounded text-[10px] font-extrabold uppercase tracking-wider bg-gray-50 hover:bg-gray-100 text-gray-600 border border-gray-200 transition-all cursor-pointer"
                         >
                           Edit
                         </button>
                         <button
                           onClick={() => handleToggleActive(user.eisNumber)}
-                          className={`px-2.5 py-1.5 rounded text-[10px] font-extrabold uppercase tracking-wider transition-all cursor-pointer ${
+                          className={`px-2 py-1 rounded text-[10px] font-extrabold uppercase tracking-wider transition-all cursor-pointer ${
                             user.isActive
-                              ? 'bg-red-50 text-red-600 hover:bg-red-100 border border-red-200'
+                              ? 'bg-amber-50 text-amber-600 hover:bg-amber-100 border border-amber-200'
                               : 'bg-green-50 text-green-600 hover:bg-green-100 border border-green-200'
                           }`}
                         >
                           {user.isActive ? 'Disable' : 'Enable'}
+                        </button>
+                        <button
+                          onClick={() => handleDeleteUser(user.eisNumber)}
+                          className="px-2 py-1 rounded text-[10px] font-extrabold uppercase tracking-wider bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 transition-all cursor-pointer"
+                        >
+                          Delete
                         </button>
                       </td>
                     </tr>
@@ -332,6 +372,27 @@ export const UserManagement: React.FC = () => {
 
             {/* Modal Body (Scrollable Form) */}
             <form onSubmit={handleUpdateSubmit} className="flex-1 overflow-y-auto p-6 space-y-4 text-left">
+              <div className="flex items-center gap-4 bg-gray-50/50 p-3 rounded-xl border border-gray-200">
+                <div className="w-12 h-12 rounded-full bg-[#0F2D54] flex items-center justify-center text-white font-extrabold text-lg overflow-hidden shrink-0 border border-gray-300 shadow-sm">
+                  {editProfilePhoto ? (
+                    <img src={editProfilePhoto} alt="Preview" className="w-full h-full object-cover" />
+                  ) : (
+                    '📷'
+                  )}
+                </div>
+                <div className="space-y-0.5">
+                  <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wider block">User Profile Photo</span>
+                  <label className="px-2.5 py-1 bg-white border border-gray-250 text-gray-600 hover:bg-gray-50 rounded text-[10px] font-bold cursor-pointer transition-colors shadow-sm inline-block">
+                    Change Image
+                    <input 
+                      type="file" 
+                      accept="image/*" 
+                      className="hidden" 
+                      onChange={handlePhotoChange} 
+                    />
+                  </label>
+                </div>
+              </div>
               <div className="space-y-1">
                 <label className="text-[10px] font-bold text-gray-500 uppercase tracking-wider block">Full Name</label>
                 <input

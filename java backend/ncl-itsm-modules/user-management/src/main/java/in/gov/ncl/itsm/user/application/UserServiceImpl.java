@@ -173,4 +173,10 @@ public class UserServiceImpl implements UserService {
     public java.util.List<User> findAllUsers() {
         return userRepository.findAll();
     }
+
+    @Override
+    @Transactional
+    public void deleteUserByEisNumber(String eisNumber) {
+        userRepository.findByEisNumber(eisNumber).ifPresent(userRepository::delete);
+    }
 }

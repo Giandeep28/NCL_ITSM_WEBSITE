@@ -15,7 +15,6 @@ export const ForgotPassword: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
   const [successMsg, setSuccessMsg] = useState('');
-  const [simulationOtp, setSimulationOtp] = useState('');
 
   const handleRequestOtp = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -34,7 +33,7 @@ export const ForgotPassword: React.FC = () => {
       
       setSuccessMsg(message);
       if (receivedOtp) {
-        setSimulationOtp(receivedOtp);
+        console.log('Simulation OTP:', receivedOtp);
       }
       setStep(2);
       setIsLoading(false);
@@ -162,12 +161,6 @@ export const ForgotPassword: React.FC = () => {
           /* STEP 2: ENTER OTP & NEW PASSWORD                                         */
           /* ========================================================================= */
           <form onSubmit={handleResetPassword} className="space-y-4">
-            {!BYPASS_OTP && simulationOtp && (
-              <div className="bg-indigo-600/10 border border-indigo-500/20 text-indigo-400 px-4 py-3 rounded-lg text-xs font-bold text-center leading-relaxed">
-                🔑 Simulation Mode OTP: <span className="text-white font-mono bg-indigo-900/50 px-2 py-0.5 rounded text-sm">{simulationOtp}</span>
-              </div>
-            )}
-
             {!BYPASS_OTP && (
               <div className="space-y-1">
                 <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Verification OTP (6 Digits)</label>

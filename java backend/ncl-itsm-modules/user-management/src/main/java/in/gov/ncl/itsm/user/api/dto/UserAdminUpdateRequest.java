@@ -15,4 +15,5 @@ public class UserAdminUpdateRequest {
     private String departmentId;
     private String password;
     private String role;
+    private String profilePhoto;
 }

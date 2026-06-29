@@ -35,13 +35,14 @@ graph TD
 ### 1. Authentication & Security Portal
 * **Universal Secure Login:** Both administrators and standard employees log in using the same universal form.
 * **JWT Stateless Sessions:** The backend signs a cryptographic JSON Web Token that the frontend React app stores to authenticate sub-requests.
-* **Email One-Time Password (OTP):** Generates and sends a 6-digit OTP to the employee's registered corporate email during login and password resets.
+* **Email One-Time Password (OTP):** Generates and sends a 6-digit OTP to the employee's registered corporate email during login and password resets. In simulated testing mode, the OTP is outputted directly to the backend console log rather than being shown on the login screen.
 * **Testing Console Helper:** Displays a toggleable QA console at the bottom of the login card for sandbox testing, featuring an *Autofill* button for default admin access.
 
 ### 2. Administrative User Control
 * **Restricted Registrations:** Only users with `IT Administrator` or `Super Admin` roles can access the user registration page.
 * **Designation Locking:** Designation is set strictly by the Admin during registration. The employee's self-profile editing page disables this field (`🔒 Locked`).
-* **Complete Modification Console:** Admins can edit names, emails, phone numbers, designations, departments, roles, active/locked status, or set new passwords for any user from the centralized user management list.
+* **Dynamic Profile Photos:** Users can select and upload a custom profile image (Base64-encoded and persisted in the database). Avatars in the Profile panel and top header update instantly upon saving.
+* **Account Deletion & Modification Console:** Admins can edit names, emails, phone numbers, designations, departments, roles, lock/unlock status, or permanently delete user accounts (protected by double-confirmation check dialogs) directly from the dashboard.
 
 ### 3. Asset Registry & Excel Reconciliation Wizard
 * **Physical Hardware Registry:** Track corporate inventories (Desktops, Laptops, Printers, IP Phones) and allocation states (`Assigned`, `Available`, `Maintenance`).
