@@ -1,178 +1,157 @@
 # NCL HQ ITSM Platform
 
-Welcome to the **NCL HQ IT Service Management (ITSM) Platform**, an enterprise-grade service desk, ticketing, and asset management ecosystem custom-designed for the NCL HQ.
+Welcome to the **NCL HQ IT Service Management (ITSM) Platform**, an enterprise-grade service desk, ticketing, and asset management ecosystem custom-designed for the Northern Coalfields Limited (NCL) Headquarters.
 
-This project is organized as a monorepo containing a multi-module Spring Boot Java backend and a Vite-based React frontend.
-
----
-
-## 📂 Project Structure
-
-* **[java backend](file:///d:/GIANDEEP%20MAIN/NCL_ITSM_SOFTWARE_WEBSITE/java%20backend)**: Multi-module Maven project implementing REST APIs, Active Directory/LDAP integration, ticket workflows, POI Excel reconciliation, and audit logs.
-* **[react frontend](file:///d:/GIANDEEP%20MAIN/NCL_ITSM_SOFTWARE_WEBSITE/react%20frontend/ncl-itsm-frontend)**: Modern React 19 + TypeScript + Ant Design UI dashboard with state-managed Zustand stores and Axios routing.
+This repository is structured as a monorepo containing a multi-module Spring Boot Java backend and a Vite-based React frontend.
 
 ---
 
-## 🛠 Tech Stack
+## 📂 Project Architecture
 
-### Backend
-* **Core:** Java 21, Spring Boot 3.2.5, Spring Security, JPA/Hibernate
-* **Database:** H2 Database (In-Memory for Sandbox/Testing), PostgreSQL (Production migration baseline via Flyway)
-* **Services:** Redis Cache, Spring Boot DevTools (Hot Reloading), Lombok
+```mermaid
+graph TD
+    Client[React Frontend] -->|REST APIs + JWT| Gateway[Spring Boot Backend]
+    Gateway --> Auth[Authentication Module]
+    Gateway --> Users[User Management Module]
+    Gateway --> Assets[Asset Management Module]
+    Gateway --> Tickets[Ticket Management Module]
+    Gateway --> Audit[Audit & Compliance Module]
+    
+    Auth --> DB[(PostgreSQL / H2 Database)]
+    Users --> DB
+    Assets --> DB
+    Tickets --> DB
+    Audit --> DB
+```
 
-### Frontend
-* **Core:** React 19, TypeScript, Vite
-* **UI styling:** Ant Design 5, TailwindCSS, Recharts
-* **State & Routing:** Zustand, React Router DOM, Axios
+### 📦 Repository Directories
+* **[java backend](file:///d:/GIANDEEP%20MAIN/NCL_ITSM_SOFTWARE_WEBSITE/java%20backend)**: Multi-module Maven project implementing REST APIs, Spring Security (JWT), Active Directory/LDAP baselines, ticket workflows, POI Excel reconciliation, and audit log compliance.
+* **[react frontend](file:///d:/GIANDEEP%20MAIN/NCL_ITSM_SOFTWARE_WEBSITE/react%20frontend/ncl-itsm-frontend)**: Modern React 19 + TypeScript dashboard styled with Vanilla CSS and Tailwind, with state managed via Zustand and server routing using Axios.
 
 ---
 
-## 🚀 How to Run the Website
+## 🛠 Features & Module Breakdown
 
-Follow these steps to launch the backend and frontend application servers:
+### 1. Authentication & Security Portal
+* **Universal Secure Login:** Both administrators and standard employees log in using the same universal form.
+* **JWT Stateless Sessions:** The backend signs a cryptographic JSON Web Token that the frontend React app stores to authenticate sub-requests.
+* **Email One-Time Password (OTP):** Generates and sends a 6-digit OTP to the employee's registered corporate email during login and password resets.
+* **Testing Console Helper:** Displays a toggleable QA console at the bottom of the login card for sandbox testing, featuring an *Autofill* button for default admin access.
+
+### 2. Administrative User Control
+* **Restricted Registrations:** Only users with `IT Administrator` or `Super Admin` roles can access the user registration page.
+* **Designation Locking:** Designation is set strictly by the Admin during registration. The employee's self-profile editing page disables this field (`🔒 Locked`).
+* **Complete Modification Console:** Admins can edit names, emails, phone numbers, designations, departments, roles, active/locked status, or set new passwords for any user from the centralized user management list.
+
+### 3. Asset Registry & Excel Reconciliation Wizard
+* **Physical Hardware Registry:** Track corporate inventories (Desktops, Laptops, Printers, IP Phones) and allocation states (`Assigned`, `Available`, `Maintenance`).
+* **Software Registry & Expirations:** Dynamic visual progress bars tracking license allocations, automatic safety warnings, and Recharts graphs illustrating expiry timelines.
+* **Consumables Stock Tracker:** Real-time stock counts (Safety reserves) with triggers warning when stock falls below safety levels.
+* **Bulk Reconciliation Wizard (Excel Import):** A 3-step import wizard designed to upload large spreadsheets, map Excel columns to the active database catalog, resolve quantity conflicts, and bulk-sync inventory.
+
+### 4. Ticket Service Queue
+* **Dynamic Help Desk:** Create tickets categorized by urgency (`Low`, `Medium`, `High`, `Critical`).
+* **Lifecycle Routing:** Support engineers can claim requests, track statuses (`Pending`, `In Discussion`, `Resolved`), and measure SLA compliance.
+* **Intake Charting:** Integrates Recharts graph charts displaying ticket counts over the past 7 days.
+
+---
+
+## 🚀 How to Run the Ecosystem
 
 ### Prerequisites
-1. **Java Development Kit (JDK 21)** or higher.
-2. **Node.js (v18+)** and **npm** package manager.
+* **Java Development Kit (JDK 21)** or higher.
+* **Node.js (v18+)** and **npm** package manager.
 
 ---
 
-### Step 1: Run the Backend Server
+### Step 1: Launch the Backend Server
 
-1. Open a terminal on your machine.
+1. Open your terminal.
 2. Navigate to the backend directory:
    ```powershell
    cd "d:\GIANDEEP MAIN\NCL_ITSM_SOFTWARE_WEBSITE\java backend"
    ```
-3. Run the Spring Boot application using the project's bundled Maven wrapper:
+3. Run the boot module using the Maven wrapper:
    ```powershell
    .\.maven\apache-maven-3.9.6\bin\mvn.cmd spring-boot:run -pl ncl-itsm-config
    ```
 
-* **(Optional) Auto-Builder Watcher:** To enable automatic backend rebuilds on file save, open a second terminal in `java backend` and execute the watcher script:
-  ```powershell
-  .\dev-watch.ps1
-  ```
+> [!TIP]
+> To enable automatic compilation and hot reloading as you save files, open a separate terminal inside `java backend` and run:
+> ```powershell
+> . \dev-watch.ps1
+> ```
 
 ---
 
-### Step 2: Run the Frontend Client
+### Step 2: Launch the Frontend Client
 
 1. Open a new terminal.
-2. Navigate to the React frontend folder:
+2. Navigate to the React frontend directory:
    ```powershell
    cd "d:\GIANDEEP MAIN\NCL_ITSM_SOFTWARE_WEBSITE\react frontend\ncl-itsm-frontend"
    ```
-3. Launch the Vite development server:
+3. Run the development bundler:
    ```powershell
    npm run dev
    ```
 
 ---
 
-## 🌐 Application Ports
-
-Once both servers are successfully running, you can access them at:
+## 🌐 Application Endpoints
 * **Frontend Web Application:** [http://localhost:5173/](http://localhost:5173/)
-* **Backend REST APIs:** `http://localhost:8080/`
-* **Swagger/OpenAPI UI:** `http://localhost:8080/swagger-ui.html`
+* **Backend APIs:** `http://localhost:8080/`
+* **Interactive OpenAPI/Swagger Documentation:** `http://localhost:8080/swagger-ui.html`
 
 ---
 
-## ⚙️ Configuration & OTP Bypass Settings
+## ⚙️ Configuration Parameters & Feature Toggles
 
-To simplify development, QA, and testing, you can toggle OTP verification off or on:
+The application is highly configurable via properties and variables.
 
-* **When OTP Verification is ENABLED (Current Default):**
-  - **User Login:** Requires entering any dummy OTP code (or leaving it blank) and clicking **Verify OTP**.
-  - **Forgot Password:** Shows a simulation OTP banner containing a 6-digit code. Enter that code along with your new password to reset it.
-* **When OTP Verification is DISABLED (Bypass Mode):**
-  - **User Login:** Bypasses the OTP input screen entirely, logging you in instantly.
-  - **Forgot Password:** Hides the OTP input and banner entirely, letting you reset your password using only your new password.
+### Backend Configurations (`application.yml`)
+Path: [application.yml](file:///d:/GIANDEEP%20MAIN/NCL_ITSM_SOFTWARE_WEBSITE/java%20backend/ncl-itsm-config/src/main/resources/application.yml)
 
-### How to Toggle OTP Verification:
-1. **Backend:** In [application.yml](file:///d:/GIANDEEP%20MAIN/NCL_ITSM_SOFTWARE_WEBSITE/java%20backend/ncl-itsm-config/src/main/resources/application.yml), change `ncl.auth.bypass-otp` to `true` (to bypass) or `false` (to enforce).
-2. **Frontend:** In [Login.tsx](file:///d:/GIANDEEP%20MAIN/NCL_ITSM_SOFTWARE_WEBSITE/react%20frontend/ncl-itsm-frontend/src/features/auth/Login.tsx) and [ForgotPassword.tsx](file:///d:/GIANDEEP%20MAIN/NCL_ITSM_SOFTWARE_WEBSITE/react%20frontend/ncl-itsm-frontend/src/features/auth/ForgotPassword.tsx), set `const BYPASS_OTP` to `true` (to bypass) or `false` (to enforce).
+| Key | Default Value | Description |
+|---|---|---|
+| `ncl.auth.bypass-otp` | `false` | Set to `true` to skip dummy OTP screens during logins/resets. |
+| `ncl.auth.bypass-register-restriction` | `false` | Set to `true` to allow open public registration (used in integration testing). |
+| `ncl.mail.enabled` | `false` | Set to `true` to deliver real email notifications. Falls back to console output if false. |
 
----
+### Frontend Configurations (`.env` or variables)
+Path: [Login.tsx](file:///d:/GIANDEEP%20MAIN/NCL_ITSM_SOFTWARE_WEBSITE/react%20frontend/ncl-itsm-frontend/src/features/auth/Login.tsx)
 
-## 🔧 Testing & QA Login Credentials Console
-
-To help with testing, a toggleable credentials panel displays at the bottom of the Login page. Once you have registered all accounts and are ready to deploy to production, you can easily disable and hide this panel:
-
-* **Using Environment Variables (Recommended):** Add the following variable to your `.env` file in the react frontend directory:
-  ```env
-  VITE_SHOW_TESTING_CREDENTIALS=false
-  ```
-* **Directly in Code:** Inside [Login.tsx](file:///d:/GIANDEEP%20MAIN/NCL_ITSM_SOFTWARE_WEBSITE/react%20frontend/ncl-itsm-frontend/src/features/auth/Login.tsx), change:
-  ```typescript
-  const SHOW_TESTING_CREDENTIALS = false;
-  ```
-
----
-
-## 🧪 Running Tests & Code Quality Verifications
-
-To verify code changes and run quality audits:
-
-### Run Backend JUnit Suite
-```powershell
-cd "d:\GIANDEEP MAIN\NCL_ITSM_SOFTWARE_WEBSITE\java backend"
-.\.maven\apache-maven-3.9.6\bin\mvn.cmd test
-```
-
-### Run Frontend Lint & Build
-```powershell
-cd "d:\GIANDEEP MAIN\NCL_ITSM_SOFTWARE_WEBSITE\react frontend\ncl-itsm-frontend"
-npm run lint
-npm run build
-```
+| Variable | Default | Description |
+|---|---|---|
+| `VITE_SHOW_TESTING_CREDENTIALS` | `true` | Set to `false` in `.env` to hide the QA login credentials drawer. |
+| `BYPASS_OTP` | `false` | Inline boolean flag inside `Login.tsx` to align with the backend's OTP bypass configuration. |
 
 ---
 
 ## 👥 Sandbox Accounts & Database Seeding
 
-The application runs with an **in-memory H2 database** in development mode. To prevent database wipes on server restart from deleting all default sandbox users, we have implemented an automatic database seeder:
+The development environment runs with an **in-memory H2 database** to allow sandbox testing without manual database cleanup. 
 
-* **Automatic Seeding:** Every time the backend restarts, the default sandbox admin user below is automatically registered and seeded into the database.
-* **Administrator Login:** 
-  - **Username**: `admin`
-  - **Password**: `password`
-  - **Employee ID**: `90000001`
-  - **Designation**: `IT Administrator`
-* **Workflow Guide**: Log in using the `admin` credentials to access the full system. In the **User Management** console, you can register other user accounts (Employees, Support Engineers) and assign their designations and roles. Once registered by the Admin, those users can log in using their registered credentials.
+* **Automatic Seeder:** The database is automatically seeded on application start with a default administrator account:
+  - **Username:** `admin`
+  - **Password:** `password`
+  - **Employee ID:** `90000001`
+  - **Designation:** `IT Administrator`
+* **Testing Guidelines:** Use this admin account to log in. Navigate to **User Management** to create sample Employee or Support Engineer profiles, or to modify accounts.
 
 ---
 
-## 📊 Dashboard Data Management
+## 🧪 Testing and Verifications
 
-The dashboard is designed to be fully **dynamic and database-driven**. It does NOT use any mock, demo, or hardcoded sample data.
+### Run Backend JUnit Testing Suite
+```powershell
+cd "d:\GIANDEEP MAIN\NCL_ITSM_SOFTWARE_WEBSITE\java backend"
+.\.maven\apache-maven-3.9.6\bin\mvn.cmd test
+```
 
-### Development/Empty-State Behavior
-
-When the system has no tickets (e.g. on a fresh database or after a server restart with H2 in-memory), the dashboard displays a **clean, empty state**:
-
-| Dashboard Component | Empty-State Behavior |
-|---|---|
-| **KPI Cards** (Pending, Resolved, In Discussion) | Display `0` with no comparison badges |
-| **Recent Requests Table** | Shows "No requests available — No activity recorded yet" |
-| **Engineer Work Queue** | Shows "No requests assigned — No active tasks in your queue" |
-| **7-Day Intake vs Resolution Chart** | Renders flat lines at `0` with an overlay: "No data to display" |
-| **SLA Compliance Pie Chart** | Renders a grey placeholder segment with center text `N/A — No Data` |
-| **AI Maintenance Predictor** | Shows accuracy and scan as `N/A (No data)` |
-| **System Status Widget** | Dynamically shows `Operational` (green) or `Offline` (red) based on live API connectivity |
-| **Current Load Bar** | Starts at 5% baseline and scales with active ticket count |
-| **Active Site / Technicians** | Counts unique assigned engineers from tickets (0 if none) |
-
-### How Data Populates
-
-1. **On Dashboard Load:** The frontend calls `GET /tickets` to fetch all ticket records from the backend database.
-2. **Creating a New Ticket:** Uses `POST /tickets` to persist to the database, then automatically re-fetches the full ticket list to update all dashboard components.
-3. **Updating Ticket Status:** Uses `PATCH /tickets/{id}/status` to update the backend, then re-syncs.
-4. **Offline Fallback:** If the backend API is unreachable, the frontend gracefully falls back to local in-memory state so the UI doesn't crash.
-
-### To see the dashboard populated with data:
-1. Log in with any sandbox account.
-2. Navigate to **New Request** and submit a service request.
-3. Return to the **Dashboard** — all KPI cards, tables, charts, and widgets will reflect the new data in real time.
-
+### Run Frontend Linter & Build Bundle
+```powershell
+cd "d:\GIANDEEP MAIN\NCL_ITSM_SOFTWARE_WEBSITE\react frontend\ncl-itsm-frontend"
+npm run lint
+npm run build
+```
