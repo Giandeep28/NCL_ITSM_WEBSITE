@@ -1,31 +1,44 @@
 package in.gov.ncl.itsm.auth.api;
 
-import in.gov.ncl.itsm.auth.api.dto.*;
-import in.gov.ncl.itsm.auth.infrastructure.JwtTokenProvider;
-import in.gov.ncl.itsm.user.application.UserService;
-import in.gov.ncl.itsm.user.domain.Role;
-import in.gov.ncl.itsm.user.domain.User;
-import in.gov.ncl.itsm.user.domain.PasswordResetToken;
-import in.gov.ncl.itsm.user.infrastructure.PasswordResetTokenRepository;
-import in.gov.ncl.itsm.audit.application.AuditLogService;
+import java.time.LocalDateTime;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.LockedException;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.time.LocalDateTime;
-import java.util.*;
-
+import in.gov.ncl.itsm.audit.application.AuditLogService;
+import in.gov.ncl.itsm.auth.api.dto.AuthResponse;
+import in.gov.ncl.itsm.auth.api.dto.ForgotPasswordRequest;
+import in.gov.ncl.itsm.auth.api.dto.LoginOtpVerificationRequest;
+import in.gov.ncl.itsm.auth.api.dto.LoginRequest;
+import in.gov.ncl.itsm.auth.api.dto.RegisterRequest;
+import in.gov.ncl.itsm.auth.api.dto.ResetPasswordRequest;
 import in.gov.ncl.itsm.auth.infrastructure.EmailSenderService;
+import in.gov.ncl.itsm.auth.infrastructure.JwtTokenProvider;
+import in.gov.ncl.itsm.user.application.UserService;
+import in.gov.ncl.itsm.user.domain.PasswordResetToken;
+import in.gov.ncl.itsm.user.domain.Role;
+import in.gov.ncl.itsm.user.domain.User;
+import in.gov.ncl.itsm.user.infrastructure.PasswordResetTokenRepository;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/api/v1/auth")
@@ -39,10 +52,10 @@ public class AuthController {
     private final AuditLogService auditLogService;
     private final EmailSenderService emailSenderService;
 
-    @Value("${ncl.auth.bypass-otp:false}")
+    @Value("${ncl.auth.bypass-otp:true}")
     private boolean bypassOtp;
 
-    @Value("${ncl.auth.bypass-login-otp:false}")
+    @Value("${ncl.auth.bypass-login-otp:true}")
     private boolean bypassLoginOtp;
 
     @Value("${ncl.auth.expose-simulation-otp:true}")
@@ -146,7 +159,7 @@ public class AuthController {
         // 4. Success -> Reset failed logins
         userService.resetFailedLogin(user.getEisNumber());
 
-        if (!bypassLoginOtp) {
+        if (false) { // OTP login is turned off
             String otp = String.valueOf(100000 + new java.util.Random().nextInt(900000));
             user.setLoginOtp(otp);
             user.setLoginOtpExpiresAt(LocalDateTime.now().plusMinutes(5));
