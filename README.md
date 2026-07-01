@@ -48,12 +48,13 @@ graph TD
 * **Physical Hardware Registry:** Track corporate inventories (Desktops, Laptops, Printers, IP Phones) and allocation states (`Assigned`, `Available`, `Maintenance`).
 * **Software Registry & Expirations:** Dynamic visual progress bars tracking license allocations, automatic safety warnings, and Recharts graphs illustrating expiry timelines.
 * **Consumables Stock Tracker:** Real-time stock counts (Safety reserves) with triggers warning when stock falls below safety levels.
-* **Bulk Reconciliation Wizard (Excel Import):** A 3-step import wizard designed to upload large spreadsheets, map Excel columns to the active database catalog, resolve quantity conflicts, and bulk-sync inventory.
+* **Bulk Reconciliation Wizard (Excel Import):** A 3-step import wizard designed to easily add new assets or adjust existing stock counts. Upload any spreadsheet (`.xlsx` or `.xls`), map columns to `Material Code`, `Description`, and `Quantity`, resolve mismatch conflicts visually, and click *Approve Reconciliation* to update the inventory.
 
-### 4. Ticket Service Queue
+### 4. Ticket Service Queue & System Status
 * **Dynamic Help Desk:** Create tickets categorized by urgency (`Low`, `Medium`, `High`, `Critical`).
 * **Lifecycle Routing:** Support engineers can claim requests, track statuses (`Pending`, `In Discussion`, `Resolved`), and measure SLA compliance.
 * **Intake Charting:** Integrates Recharts graph charts displaying ticket counts over the past 7 days.
+* **Live Status & Network Capacity**: The dashboard monitors backend heartbeat status (`Production API`, `Registry DB`, `Asset Monitoring` set to Operational/Offline). It dynamically calculates the live system capacity load based on active unresolved ticket counts (`Math.max(5, activeTicketsCount * 15)%`).
 
 ---
 
