@@ -21,7 +21,7 @@ public class AuditLogController {
     private final AuditLogService auditLogService;
 
     @GetMapping
-    @PreAuthorize("hasAnyRole('ROLE_IT_ADMINISTRATOR', 'ROLE_SUPER_ADMINISTRATOR', 'ROLE_READ_ONLY_AUDITOR')")
+    @PreAuthorize("hasAnyRole('ROLE_IT_ADMINISTRATOR', 'ROLE_READ_ONLY_AUDITOR')")
     public ResponseEntity<?> getAuditLogs(@AuthenticationPrincipal UserDetails principal) {
         String tenantId = "NCL_HQ";
         List<AuditLog> logs = auditLogService.getAuditLogs(tenantId);

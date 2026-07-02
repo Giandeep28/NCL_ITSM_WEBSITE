@@ -54,8 +54,7 @@ public class SecurityConfig {
                 if (bypassRegisterRestriction) {
                     registry = registry.requestMatchers("/api/v1/auth/register").permitAll();
                 } else {
-                    registry = registry.requestMatchers("/api/v1/auth/register")
-                        .hasAnyRole("IT_ADMINISTRATOR", "SUPER_ADMINISTRATOR");
+                    registry = registry.requestMatchers("/api/v1/auth/register").hasRole("IT_ADMINISTRATOR");
                 }
                 
                 registry.anyRequest().authenticated();

@@ -2,15 +2,14 @@ package in.gov.ncl.itsm.auth.infrastructure;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
-import java.security.KeyPair;
-import java.security.KeyPairGenerator;
-import java.security.NoSuchAlgorithmException;
-import java.security.PrivateKey;
-import java.security.PublicKey;
+import javax.crypto.SecretKey;
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -21,18 +20,15 @@ import java.util.stream.Collectors;
 @Component
 public class JwtTokenProvider {
 
-    private final PrivateKey privateKey;
-    private final PublicKey publicKey;
+    private final SecretKey secretKey;
     private static final long ACCESS_TOKEN_VALIDITY = 15 * 60 * 1000; // 15 mins
     private static final long REFRESH_TOKEN_VALIDITY = 8 * 60 * 60 * 1000; // 8 hours
 
-    public JwtTokenProvider() throws NoSuchAlgorithmException {
-        // Generate RSA key pair dynamically at startup
-        KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA");
-        keyPairGenerator.initialize(2048);
-        KeyPair keyPair = keyPairGenerator.generateKeyPair();
-        this.privateKey = keyPair.getPrivate();
-        this.publicKey = keyPair.getPublic();
+    public JwtTokenProvider(
+            @Value("${ncl.auth.jwt-secret:NCL_HQ_ITSM_PLATFORM_SUPER_SECRET_COMPLEX_KEY_2026_JWT_TOKEN_SIGNING_FALLBACK_STRING_32_BYTES}") String jwtSecret
+    ) {
+        byte[] keyBytes = jwtSecret.getBytes(StandardCharsets.UTF_8);
+        this.secretKey = Keys.hmacShaKeyFor(keyBytes);
     }
 
     public String generateAccessToken(UserDetails userDetails) {
@@ -54,7 +50,7 @@ public class JwtTokenProvider {
                 .subject(subject)
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis() + validity))
-                .signWith(privateKey, Jwts.SIG.RS256)
+                .signWith(secretKey, Jwts.SIG.HS256)
                 .compact();
     }
 
@@ -83,7 +79,7 @@ public class JwtTokenProvider {
 
     private Claims getAllClaimsFromToken(String token) {
         return Jwts.parser()
-                .verifyWith(publicKey)
+                .verifyWith(secretKey)
                 .build()
                 .parseSignedClaims(token)
                 .getPayload();

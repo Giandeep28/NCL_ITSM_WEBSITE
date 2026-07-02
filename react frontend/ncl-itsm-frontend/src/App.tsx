@@ -58,7 +58,7 @@ function App() {
           <Route path="dashboard" element={<Dashboard />} />
           
           {/* Admin Registration */}
-          <Route path="register" element={<ProtectedRoute allowedRoles={['IT Administrator', 'Super Admin']}><Register /></ProtectedRoute>} />
+          <Route path="register" element={<ProtectedRoute allowedRoles={['IT Administrator']}><Register /></ProtectedRoute>} />
 
           {/* Tickets features */}
           <Route path="requests" element={<RequestsQueue />} />
@@ -67,11 +67,11 @@ function App() {
 
           {/* Placeholder menus */}
           <Route path="knowledge-base" element={<KnowledgeBase />} />
-          <Route path="assets" element={<AssetRegistry />} />
-          <Route path="engineer" element={<ProtectedRoute allowedRoles={['Support Engineer', 'IT Administrator', 'Super Admin']}><EngineerWorkspace /></ProtectedRoute>} />
-          <Route path="logs" element={<ProtectedRoute allowedRoles={['IT Administrator', 'Super Admin', 'Read Only Auditor']}><AuditLogViewer /></ProtectedRoute>} />
-          <Route path="users" element={<ProtectedRoute allowedRoles={['IT Administrator', 'Super Admin']}><UserManagement /></ProtectedRoute>} />
-          <Route path="settings" element={<ProtectedRoute allowedRoles={['IT Administrator', 'Super Admin']}><SystemSettings /></ProtectedRoute>} />
+          <Route path="assets" element={<ProtectedRoute allowedRoles={['Support Engineer', 'IT Administrator']}><AssetRegistry /></ProtectedRoute>} />
+          <Route path="engineer" element={<ProtectedRoute allowedRoles={['Support Engineer', 'IT Administrator']}><EngineerWorkspace /></ProtectedRoute>} />
+          <Route path="logs" element={<ProtectedRoute allowedRoles={['IT Administrator', 'Read Only Auditor']}><AuditLogViewer /></ProtectedRoute>} />
+          <Route path="users" element={<ProtectedRoute allowedRoles={['IT Administrator']}><UserManagement /></ProtectedRoute>} />
+          <Route path="settings" element={<ProtectedRoute allowedRoles={['IT Administrator']}><SystemSettings /></ProtectedRoute>} />
           <Route path="profile" element={<Profile />} />
           <Route path="support" element={<SupportPage />} />
         </Route>

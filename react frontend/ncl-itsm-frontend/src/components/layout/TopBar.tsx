@@ -34,7 +34,7 @@ const UserProfileChip: React.FC<UserProfileChipProps> = ({ onClick }) => {
     .slice(0, 2);
 
   const roleBadgeColor =
-    user.role === 'Super Admin' || user.role === 'IT Administrator'
+    user.role === 'IT Administrator'
       ? 'bg-red-100 text-red-700'
       : user.role === 'Support Engineer'
       ? 'bg-indigo-100 text-indigo-700'

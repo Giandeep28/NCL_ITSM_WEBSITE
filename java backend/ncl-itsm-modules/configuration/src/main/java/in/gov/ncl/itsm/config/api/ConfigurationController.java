@@ -24,7 +24,7 @@ public class ConfigurationController {
     private final UserService userService;
 
     @GetMapping
-    @PreAuthorize("hasAnyRole('ROLE_IT_ADMINISTRATOR', 'ROLE_SUPER_ADMINISTRATOR')")
+    @PreAuthorize("hasRole('ROLE_IT_ADMINISTRATOR')")
     public ResponseEntity<?> getConfigurations(@AuthenticationPrincipal UserDetails principal) {
         String tenantId = "NCL_HQ";
         List<Configuration> configs = configurationService.getConfigurations(tenantId);
@@ -32,7 +32,7 @@ public class ConfigurationController {
     }
 
     @PostMapping
-    @PreAuthorize("hasAnyRole('ROLE_IT_ADMINISTRATOR', 'ROLE_SUPER_ADMINISTRATOR')")
+    @PreAuthorize("hasRole('ROLE_IT_ADMINISTRATOR')")
     public ResponseEntity<?> setConfiguration(
             @RequestParam String key,
             @RequestParam String value,

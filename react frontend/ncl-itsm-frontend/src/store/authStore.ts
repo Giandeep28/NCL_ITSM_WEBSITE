@@ -5,7 +5,7 @@ export interface AuthUser {
   id?: string;
   eisNumber: string;
   fullName: string;
-  role: 'Employee' | 'Support Engineer' | 'Asset Manager' | 'IT Administrator' | 'Super Admin' | 'Read Only Auditor';
+  role: 'Employee' | 'Support Engineer' | 'Asset Manager' | 'IT Administrator' | 'Read Only Auditor';
   departmentId: string;
   profilePhoto?: string;
 }

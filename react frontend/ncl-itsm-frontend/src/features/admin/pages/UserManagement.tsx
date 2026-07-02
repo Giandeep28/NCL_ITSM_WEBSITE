@@ -210,7 +210,6 @@ export const UserManagement: React.FC = () => {
             <option value="Employee">Employee</option>
             <option value="Support Engineer">Support Engineer</option>
             <option value="IT Administrator">IT Administrator</option>
-            <option value="Super Admin">Super Admin</option>
           </select>
 
           {/* Status Filter */}
@@ -292,7 +291,7 @@ export const UserManagement: React.FC = () => {
                       </td>
                       <td className="py-4 px-5">
                         <span className={`px-2 py-0.5 rounded text-[9px] font-extrabold uppercase tracking-wider ${
-                          roleName === 'IT Administrator' || roleName === 'Super Admin'
+                          roleName === 'IT Administrator'
                             ? 'bg-purple-100 text-purple-700 border border-purple-200'
                             : roleName === 'Support Engineer'
                             ? 'bg-blue-100 text-blue-700 border border-blue-200'

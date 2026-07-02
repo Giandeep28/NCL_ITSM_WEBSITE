@@ -18,7 +18,7 @@ public class ReportController {
     private final ReportService reportService;
 
     @GetMapping("/tickets/excel")
-    @PreAuthorize("hasAnyRole('ROLE_IT_ADMINISTRATOR', 'ROLE_SUPER_ADMINISTRATOR')")
+    @PreAuthorize("hasRole('ROLE_IT_ADMINISTRATOR')")
     public ResponseEntity<byte[]> downloadTicketReport() {
         try {
             String tenantId = "NCL_HQ";
@@ -34,7 +34,7 @@ public class ReportController {
     }
 
     @GetMapping("/assets/excel")
-    @PreAuthorize("hasAnyRole('ROLE_IT_ADMINISTRATOR', 'ROLE_SUPER_ADMINISTRATOR')")
+    @PreAuthorize("hasRole('ROLE_IT_ADMINISTRATOR')")
     public ResponseEntity<byte[]> downloadAssetReport() {
         try {
             String tenantId = "NCL_HQ";

@@ -26,7 +26,7 @@ public class UserController {
     private final PasswordEncoder passwordEncoder;
 
     @GetMapping
-    @PreAuthorize("hasAnyRole('ROLE_IT_ADMINISTRATOR', 'ROLE_SUPER_ADMINISTRATOR')")
+    @PreAuthorize("hasRole('ROLE_IT_ADMINISTRATOR')")
     public ResponseEntity<List<User>> getAllUsers() {
         List<User> users = userService.findAllUsers();
         return ResponseEntity.ok(users);
@@ -39,7 +39,7 @@ public class UserController {
     }
 
     @PutMapping("/{eisNumber}/toggle-active")
-    @PreAuthorize("hasAnyRole('ROLE_IT_ADMINISTRATOR', 'ROLE_SUPER_ADMINISTRATOR')")
+    @PreAuthorize("hasRole('ROLE_IT_ADMINISTRATOR')")
     public ResponseEntity<?> toggleUserActive(@PathVariable String eisNumber) {
         Optional<User> userOpt = userService.findByEisNumber(eisNumber);
         if (userOpt.isEmpty()) {
@@ -105,7 +105,7 @@ public class UserController {
     }
 
     @PutMapping("/{eisNumber}")
-    @PreAuthorize("hasAnyRole('ROLE_IT_ADMINISTRATOR', 'ROLE_SUPER_ADMINISTRATOR')")
+    @PreAuthorize("hasRole('ROLE_IT_ADMINISTRATOR')")
     public ResponseEntity<?> adminUpdateUser(
             @PathVariable String eisNumber,
             @RequestBody UserAdminUpdateRequest request
@@ -157,7 +157,7 @@ public class UserController {
     }
 
     @DeleteMapping("/{eisNumber}")
-    @PreAuthorize("hasAnyRole('ROLE_IT_ADMINISTRATOR', 'ROLE_SUPER_ADMINISTRATOR')")
+    @PreAuthorize("hasRole('ROLE_IT_ADMINISTRATOR')")
     public ResponseEntity<?> deleteUser(@PathVariable String eisNumber) {
         Optional<User> userOpt = userService.findByEisNumber(eisNumber);
         if (userOpt.isEmpty()) {

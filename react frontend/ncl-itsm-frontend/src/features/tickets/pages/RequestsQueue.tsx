@@ -22,7 +22,7 @@ export const RequestsQueue: React.FC = () => {
     navigate(`/requests/${ticketId}`);
   };
 
-  const isEngineer = user?.role === 'Support Engineer' || user?.role === 'IT Administrator' || user?.role === 'Super Admin';
+  const isEngineer = user?.role === 'Support Engineer' || user?.role === 'IT Administrator';
 
   // 1. Filter tickets by User Context & Role
   let filteredTickets = tickets;

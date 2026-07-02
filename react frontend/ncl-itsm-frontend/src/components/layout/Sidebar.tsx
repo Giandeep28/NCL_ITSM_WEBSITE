@@ -11,7 +11,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ onNewRequestClick }) => {
   const location = useLocation();
   const { user } = useAuthStore();
 
-  const isAdmin = user?.role === 'IT Administrator' || user?.role === 'Super Admin';
+  const isAdmin = user?.role === 'IT Administrator';
   const isEngineerOrAdmin = isAdmin || user?.role === 'Support Engineer';
 
   const menuItems = [
@@ -54,7 +54,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ onNewRequestClick }) => {
         )
       }
     ] : []),
-    {
+    ...(isEngineerOrAdmin ? [{
       name: 'Asset Registry',
       path: '/assets',
       icon: (
@@ -62,7 +62,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ onNewRequestClick }) => {
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
         </svg>
       )
-    },
+    }] : []),
     ...(isEngineerOrAdmin ? [{
       name: 'Engineer Workspace',
       path: '/engineer',
@@ -153,7 +153,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ onNewRequestClick }) => {
       </nav>
 
       {/* Sidebar Bottom Footer Items - Image 2 Style */}
-      <div className="p-4 border-t border-[#1d253f] space-y-1">
+      <div className="p-4 border-t border-[#1d253f]">
         <button
           onClick={() => navigate('/support')}
           className="w-full flex items-center gap-3.5 px-4 py-2.5 rounded-lg text-sm font-semibold text-gray-400 hover:bg-[#1a2136] hover:text-gray-200 transition-all duration-200"
@@ -162,19 +162,6 @@ export const Sidebar: React.FC<SidebarProps> = ({ onNewRequestClick }) => {
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z" />
           </svg>
           Support
-        </button>
-        <button
-          onClick={() => {
-            const { logout } = useAuthStore.getState();
-            logout();
-            navigate('/login');
-          }}
-          className="w-full flex items-center gap-3.5 px-4 py-2.5 rounded-lg text-sm font-semibold text-gray-400 hover:bg-[#1a2136] hover:text-red-400 transition-all duration-200"
-        >
-          <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-          </svg>
-          Logout
         </button>
       </div>
     </div>

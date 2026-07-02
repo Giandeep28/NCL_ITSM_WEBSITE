@@ -25,7 +25,7 @@ public class HardwareAssetController {
     /* ------------------------------------------------------------------ */
 
     @GetMapping
-    @PreAuthorize("hasAnyRole('IT_ADMINISTRATOR', 'SUPER_ADMIN', 'ASSET_MANAGER', 'SUPPORT_ENGINEER')")
+    @PreAuthorize("hasAnyRole('IT_ADMINISTRATOR', 'ASSET_MANAGER', 'SUPPORT_ENGINEER')")
     public ResponseEntity<List<HardwareAsset>> listAll(
             @RequestParam(required = false) String tenantId,
             @RequestParam(required = false) String status,
@@ -35,7 +35,7 @@ public class HardwareAssetController {
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasAnyRole('IT_ADMINISTRATOR', 'SUPER_ADMIN', 'ASSET_MANAGER', 'SUPPORT_ENGINEER')")
+    @PreAuthorize("hasAnyRole('IT_ADMINISTRATOR', 'ASSET_MANAGER', 'SUPPORT_ENGINEER')")
     public ResponseEntity<HardwareAsset> getById(@PathVariable UUID id) {
         return hardwareAssetRepository.findById(id)
                 .map(ResponseEntity::ok)
@@ -43,14 +43,14 @@ public class HardwareAssetController {
     }
 
     @PostMapping
-    @PreAuthorize("hasAnyRole('IT_ADMINISTRATOR', 'SUPER_ADMIN', 'ASSET_MANAGER')")
+    @PreAuthorize("hasAnyRole('IT_ADMINISTRATOR', 'ASSET_MANAGER')")
     public ResponseEntity<HardwareAsset> create(@RequestBody HardwareAsset asset) {
         HardwareAsset saved = hardwareAssetRepository.save(asset);
         return ResponseEntity.status(201).body(saved);
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasAnyRole('IT_ADMINISTRATOR', 'SUPER_ADMIN', 'ASSET_MANAGER')")
+    @PreAuthorize("hasAnyRole('IT_ADMINISTRATOR', 'ASSET_MANAGER')")
     public ResponseEntity<HardwareAsset> update(@PathVariable UUID id,
                                                 @RequestBody HardwareAsset assetUpdate) {
         return hardwareAssetRepository.findById(id).map(existing -> {
@@ -69,19 +69,19 @@ public class HardwareAssetController {
     /* ------------------------------------------------------------------ */
 
     @GetMapping("/consumables")
-    @PreAuthorize("hasAnyRole('IT_ADMINISTRATOR', 'SUPER_ADMIN', 'ASSET_MANAGER', 'SUPPORT_ENGINEER')")
+    @PreAuthorize("hasAnyRole('IT_ADMINISTRATOR', 'ASSET_MANAGER', 'SUPPORT_ENGINEER')")
     public ResponseEntity<List<ConsumableStock>> listConsumables() {
         return ResponseEntity.ok(consumableStockRepository.findAll());
     }
 
     @GetMapping("/consumables/low-stock")
-    @PreAuthorize("hasAnyRole('IT_ADMINISTRATOR', 'SUPER_ADMIN', 'ASSET_MANAGER')")
+    @PreAuthorize("hasAnyRole('IT_ADMINISTRATOR', 'ASSET_MANAGER')")
     public ResponseEntity<List<ConsumableStock>> listLowStock() {
         return ResponseEntity.ok(consumableStockRepository.findLowStockItems());
     }
 
     @PutMapping("/consumables/{id}/adjust")
-    @PreAuthorize("hasAnyRole('IT_ADMINISTRATOR', 'SUPER_ADMIN', 'ASSET_MANAGER')")
+    @PreAuthorize("hasAnyRole('IT_ADMINISTRATOR', 'ASSET_MANAGER')")
     public ResponseEntity<ConsumableStock> adjustStock(@PathVariable UUID id,
                                                        @RequestParam int delta) {
         return consumableStockRepository.findById(id).map(stock -> {

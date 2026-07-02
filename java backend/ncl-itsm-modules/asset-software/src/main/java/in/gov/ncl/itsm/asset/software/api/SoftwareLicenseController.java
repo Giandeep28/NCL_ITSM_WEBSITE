@@ -26,13 +26,13 @@ public class SoftwareLicenseController {
     /* ------------------------------------------------------------------ */
 
     @GetMapping
-    @PreAuthorize("hasAnyRole('IT_ADMINISTRATOR', 'SUPER_ADMIN', 'ASSET_MANAGER')")
+    @PreAuthorize("hasAnyRole('IT_ADMINISTRATOR', 'ASSET_MANAGER')")
     public ResponseEntity<List<SoftwareLicense>> listAll() {
         return ResponseEntity.ok(licenseRepository.findAll());
     }
 
     @GetMapping("/expiring-soon")
-    @PreAuthorize("hasAnyRole('IT_ADMINISTRATOR', 'SUPER_ADMIN', 'ASSET_MANAGER')")
+    @PreAuthorize("hasAnyRole('IT_ADMINISTRATOR', 'ASSET_MANAGER')")
     public ResponseEntity<List<SoftwareLicense>> listExpiringSoon(
             @RequestParam(defaultValue = "90") int withinDays) {
         LocalDate threshold = LocalDate.now().plusDays(withinDays);
@@ -40,7 +40,7 @@ public class SoftwareLicenseController {
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasAnyRole('IT_ADMINISTRATOR', 'SUPER_ADMIN', 'ASSET_MANAGER')")
+    @PreAuthorize("hasAnyRole('IT_ADMINISTRATOR', 'ASSET_MANAGER')")
     public ResponseEntity<SoftwareLicense> getById(@PathVariable UUID id) {
         return licenseRepository.findById(id)
                 .map(ResponseEntity::ok)
@@ -48,7 +48,7 @@ public class SoftwareLicenseController {
     }
 
     @PostMapping
-    @PreAuthorize("hasAnyRole('IT_ADMINISTRATOR', 'SUPER_ADMIN', 'ASSET_MANAGER')")
+    @PreAuthorize("hasAnyRole('IT_ADMINISTRATOR', 'ASSET_MANAGER')")
     public ResponseEntity<SoftwareLicense> create(@RequestBody SoftwareLicense license) {
         SoftwareLicense saved = licenseRepository.save(license);
         return ResponseEntity.status(201).body(saved);
@@ -59,7 +59,7 @@ public class SoftwareLicenseController {
     /* ------------------------------------------------------------------ */
 
     @GetMapping("/deployments")
-    @PreAuthorize("hasAnyRole('IT_ADMINISTRATOR', 'SUPER_ADMIN', 'ASSET_MANAGER')")
+    @PreAuthorize("hasAnyRole('IT_ADMINISTRATOR', 'ASSET_MANAGER')")
     public ResponseEntity<List<SoftwareDeployment>> listDeployments(
             @RequestParam(required = false) UUID licenseId) {
         if (licenseId != null) {
@@ -69,7 +69,7 @@ public class SoftwareLicenseController {
     }
 
     @PostMapping("/deployments")
-    @PreAuthorize("hasAnyRole('IT_ADMINISTRATOR', 'SUPER_ADMIN', 'ASSET_MANAGER')")
+    @PreAuthorize("hasAnyRole('IT_ADMINISTRATOR', 'ASSET_MANAGER')")
     public ResponseEntity<SoftwareDeployment> deploy(@RequestBody SoftwareDeployment deployment) {
         // Validate seat availability
         SoftwareLicense license = deployment.getLicense();
@@ -86,7 +86,7 @@ public class SoftwareLicenseController {
     }
 
     @DeleteMapping("/deployments/{id}")
-    @PreAuthorize("hasAnyRole('IT_ADMINISTRATOR', 'SUPER_ADMIN', 'ASSET_MANAGER')")
+    @PreAuthorize("hasAnyRole('IT_ADMINISTRATOR', 'ASSET_MANAGER')")
     public ResponseEntity<Void> undeploy(@PathVariable UUID id) {
         return deploymentRepository.findById(id).map(dep -> {
             dep.setUndeployedAt(java.time.LocalDateTime.now());

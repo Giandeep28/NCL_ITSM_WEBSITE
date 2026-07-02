@@ -21,7 +21,7 @@ export const Dashboard: React.FC = () => {
   const { tickets, setSelectedTicketId, fetchTickets } = useTicketStore();
   const { user } = useAuthStore();
 
-  const isEngineer = user?.role === 'Support Engineer' || user?.role === 'IT Administrator' || user?.role === 'Super Admin';
+  const isEngineer = user?.role === 'Support Engineer' || user?.role === 'IT Administrator';
   const [isApiOnline, setIsApiOnline] = useState(true);
 
   const [timeframe, setTimeframe] = useState<'7' | '30' | '90' | 'all'>('30');
