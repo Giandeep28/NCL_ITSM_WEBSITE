@@ -11,3 +11,4 @@ D:\GIANDEEP MAIN\NCL_ITSM_SOFTWARE_WEBSITE\java backend\ncl-itsm-modules\user-ma
 D:\GIANDEEP MAIN\NCL_ITSM_SOFTWARE_WEBSITE\java backend\ncl-itsm-modules\user-management\src\main\java\in\gov\ncl\itsm\user\domain\User.java
 D:\GIANDEEP MAIN\NCL_ITSM_SOFTWARE_WEBSITE\java backend\ncl-itsm-modules\user-management\src\main\java\in\gov\ncl\itsm\user\api\dto\ProfileUpdateRequest.java
 D:\GIANDEEP MAIN\NCL_ITSM_SOFTWARE_WEBSITE\java backend\ncl-itsm-modules\user-management\src\main\java\in\gov\ncl\itsm\user\infrastructure\UserRepository.java
+D:\GIANDEEP MAIN\NCL_ITSM_SOFTWARE_WEBSITE\java backend\ncl-itsm-modules\user-management\src\main\java\in\gov\ncl\itsm\user\api\dto\UserResponse.java

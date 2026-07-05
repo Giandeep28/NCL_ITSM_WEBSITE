@@ -14,7 +14,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -43,12 +45,19 @@ public class TicketWorkflowServiceImpl implements TicketWorkflowService {
             return;
         }
 
-        // Find the least-loaded engineer
+        // Find the least-loaded engineer (using batch count query to prevent N+1 queries)
         List<String> openStatuses = List.of("Assigned", "In Progress", "Pending Employee", "Reopened");
+        List<UUID> engineerIds = engineers.stream().map(User::getId).collect(Collectors.toList());
+        List<Object[]> counts = ticketRepository.countTicketsByEngineers(engineerIds, openStatuses);
+        Map<UUID, Long> countMap = counts.stream()
+                .collect(Collectors.toMap(
+                        row -> (UUID) row[0],
+                        row -> (Long) row[1],
+                        (v1, v2) -> v1
+                ));
+
         User selectedEngineer = engineers.stream()
-                .min(Comparator.comparingLong(eng -> 
-                    ticketRepository.countByEngineerIdAndStatusIn(eng.getId(), openStatuses)
-                ))
+                .min(Comparator.comparingLong(eng -> countMap.getOrDefault(eng.getId(), 0L)))
                 .orElse(engineers.getFirst());
 
         String oldStatus = ticket.getStatus();

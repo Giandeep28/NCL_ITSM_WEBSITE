@@ -34,10 +34,8 @@ public class LicenseExpiryScheduler {
 
     private void checkThreshold(LocalDate targetDate, int daysRemaining) {
         // Find licenses expiring on exactly targetDate across all tenants
-        // In prototype mode, we check all expiring matching that date
-        List<SoftwareLicense> licenses = softwareLicenseRepository.findAll().stream()
-                .filter(l -> l.getExpiryDate().isEqual(targetDate))
-                .toList();
+        // Optimized to retrieve only matching records from database directly
+        List<SoftwareLicense> licenses = softwareLicenseRepository.findByExpiryDate(targetDate);
 
         for (SoftwareLicense license : licenses) {
             log.warn("ALERT: Software license for '{}' is expiring in {} days! Expiry Date: {}. Key Hash: {}. Tenant: {}",

@@ -21,4 +21,5 @@ public interface UserService {
     java.util.List<User> findUsersByRole(String roleName, String tenantId);
     java.util.List<User> findAllUsers();
     void deleteUserByEisNumber(String eisNumber);
+    java.util.Map<java.util.UUID, String> findNamesByIds(java.util.Collection<java.util.UUID> ids);
 }

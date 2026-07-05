@@ -15,6 +15,10 @@ public interface TicketRepository extends JpaRepository<Ticket, UUID> {
     List<Ticket> findByEngineerIdOrderByCreatedAtDesc(UUID engineerId);
     List<Ticket> findByTenantIdOrderByCreatedAtDesc(String tenantId);
     long countByEngineerIdAndStatusIn(UUID engineerId, List<String> statuses);
+
+    @org.springframework.data.jpa.repository.Query("SELECT t.engineerId, COUNT(t) FROM Ticket t WHERE t.engineerId IN :engineerIds AND t.status IN :statuses GROUP BY t.engineerId")
+    List<Object[]> countTicketsByEngineers(@org.springframework.data.repository.query.Param("engineerIds") List<UUID> engineerIds, @org.springframework.data.repository.query.Param("statuses") List<String> statuses);
+
     List<Ticket> findByStatusInAndSlaDueAtBefore(List<String> statuses, java.time.LocalDateTime now);
     List<Ticket> findByStatusAndResolvedAtBefore(String status, java.time.LocalDateTime limit);
 }

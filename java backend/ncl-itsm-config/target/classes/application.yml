@@ -2,7 +2,7 @@ spring:
   application:
     name: ncl-itsm-platform
   profiles:
-    active: dev
+    active: prod
   autoconfigure:
     exclude:
       - org.springframework.boot.autoconfigure.amqp.RabbitAutoConfiguration
@@ -86,6 +86,13 @@ spring:
     enabled: false
     baseline-on-migrate: true
     baseline-version: 0
+
+server:
+  port: ${PORT:8080}
+  compression:
+    enabled: true
+    mime-types: application/json,text/html,text/xml,text/plain,text/css,application/javascript
+    min-response-size: 1024
 
 ---
 spring:

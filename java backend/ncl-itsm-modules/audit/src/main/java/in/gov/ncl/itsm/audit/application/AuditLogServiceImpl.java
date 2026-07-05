@@ -4,6 +4,7 @@ import in.gov.ncl.itsm.audit.domain.AuditLog;
 import in.gov.ncl.itsm.audit.domain.AuditLogId;
 import in.gov.ncl.itsm.audit.infrastructure.AuditLogRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,6 +20,7 @@ public class AuditLogServiceImpl implements AuditLogService {
     private final AuditLogRepository auditLogRepository;
 
     @Override
+    @Async("taskExecutor")
     public void logEvent(UUID actorId, String eventType, String entityType, UUID entityId, 
                          String beforeJson, String afterJson, String ipAddress, String tenantId) {
         

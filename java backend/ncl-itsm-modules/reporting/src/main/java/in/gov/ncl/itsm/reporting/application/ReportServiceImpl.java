@@ -6,7 +6,7 @@ import in.gov.ncl.itsm.ticket.domain.Ticket;
 import in.gov.ncl.itsm.ticket.infrastructure.TicketRepository;
 import lombok.RequiredArgsConstructor;
 import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,7 +25,7 @@ public class ReportServiceImpl implements ReportService {
     public byte[] generateTicketReportExcel(String tenantId) throws Exception {
         List<Ticket> tickets = ticketRepository.findByTenantIdOrderByCreatedAtDesc(tenantId);
 
-        try (Workbook workbook = new XSSFWorkbook(); ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+        try (Workbook workbook = new SXSSFWorkbook(100); ByteArrayOutputStream out = new ByteArrayOutputStream()) {
             Sheet sheet = workbook.createSheet("Tickets Report");
 
             // Header Font & Style
@@ -60,13 +60,15 @@ public class ReportServiceImpl implements ReportService {
                 row.createCell(6).setCellValue(ticket.getCreatedAt() != null ? ticket.getCreatedAt().toString() : "N/A");
             }
 
-            // Auto-size columns
+            // Set standard column widths (fast fixed width avoids slow font evaluations in autoSizeColumn)
             for (int i = 0; i < columns.length; i++) {
-                sheet.autoSizeColumn(i);
+                sheet.setColumnWidth(i, 20 * 256);
             }
 
             workbook.write(out);
-            return out.toByteArray();
+            byte[] bytes = out.toByteArray();
+            ((SXSSFWorkbook) workbook).dispose();
+            return bytes;
         }
     }
 
@@ -74,7 +76,7 @@ public class ReportServiceImpl implements ReportService {
     public byte[] generateAssetReportExcel(String tenantId) throws Exception {
         List<HardwareAsset> assets = hardwareAssetRepository.findByTenantId(tenantId);
 
-        try (Workbook workbook = new XSSFWorkbook(); ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+        try (Workbook workbook = new SXSSFWorkbook(100); ByteArrayOutputStream out = new ByteArrayOutputStream()) {
             Sheet sheet = workbook.createSheet("Hardware Assets");
 
             // Header Font & Style
@@ -110,13 +112,15 @@ public class ReportServiceImpl implements ReportService {
                 row.createCell(7).setCellValue(asset.getProcuredAt() != null ? asset.getProcuredAt().toString() : "N/A");
             }
 
-            // Auto-size columns
+            // Set standard column widths (fast fixed width avoids slow font evaluations in autoSizeColumn)
             for (int i = 0; i < columns.length; i++) {
-                sheet.autoSizeColumn(i);
+                sheet.setColumnWidth(i, 20 * 256);
             }
 
             workbook.write(out);
-            return out.toByteArray();
+            byte[] bytes = out.toByteArray();
+            ((SXSSFWorkbook) workbook).dispose();
+            return bytes;
         }
     }
 }

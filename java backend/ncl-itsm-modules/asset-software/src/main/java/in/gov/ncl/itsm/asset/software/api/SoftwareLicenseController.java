@@ -70,32 +70,35 @@ public class SoftwareLicenseController {
 
     @PostMapping("/deployments")
     @PreAuthorize("hasAnyRole('IT_ADMINISTRATOR', 'ASSET_MANAGER')")
+    @org.springframework.transaction.annotation.Transactional
     public ResponseEntity<SoftwareDeployment> deploy(@RequestBody SoftwareDeployment deployment) {
-        // Validate seat availability
         SoftwareLicense license = deployment.getLicense();
-        if (license != null && license.getAllocatedCount() >= license.getSeatCount()) {
-            return ResponseEntity.badRequest().build(); // No seats available
+        if (license == null) {
+            return ResponseEntity.badRequest().build();
         }
+
+        // Atomically attempt to increment the allocated count (validates seat availability inside SQL WHERE clause)
+        int updatedRows = licenseRepository.incrementAllocatedCount(license.getId());
+        if (updatedRows == 0) {
+            return ResponseEntity.status(409).build(); // 409 Conflict: No seats available or license not found
+        }
+
         SoftwareDeployment saved = deploymentRepository.save(deployment);
-        // Increment allocated count
-        if (license != null) {
-            license.setAllocatedCount(license.getAllocatedCount() + 1);
-            licenseRepository.save(license);
-        }
         return ResponseEntity.status(201).body(saved);
     }
 
     @DeleteMapping("/deployments/{id}")
     @PreAuthorize("hasAnyRole('IT_ADMINISTRATOR', 'ASSET_MANAGER')")
+    @org.springframework.transaction.annotation.Transactional
     public ResponseEntity<Void> undeploy(@PathVariable UUID id) {
         return deploymentRepository.findById(id).map(dep -> {
             dep.setUndeployedAt(java.time.LocalDateTime.now());
             deploymentRepository.save(dep);
-            // Decrement allocated count on license
+            
+            // Atomically decrement allocated count on license
             SoftwareLicense license = dep.getLicense();
             if (license != null) {
-                license.setAllocatedCount(Math.max(0, license.getAllocatedCount() - 1));
-                licenseRepository.save(license);
+                licenseRepository.decrementAllocatedCount(license.getId());
             }
             return ResponseEntity.noContent().<Void>build();
         }).orElse(ResponseEntity.notFound().build());

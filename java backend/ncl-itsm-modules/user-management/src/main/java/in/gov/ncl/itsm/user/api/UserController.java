@@ -3,7 +3,9 @@ package in.gov.ncl.itsm.user.api;
 import in.gov.ncl.itsm.user.api.dto.ProfileUpdateRequest;
 import in.gov.ncl.itsm.user.api.dto.ProfileResponse;
 import in.gov.ncl.itsm.user.api.dto.UserAdminUpdateRequest;
+import in.gov.ncl.itsm.user.api.dto.UserResponse;
 import in.gov.ncl.itsm.user.application.UserService;
+import java.util.stream.Collectors;
 import in.gov.ncl.itsm.user.domain.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -27,14 +29,18 @@ public class UserController {
 
     @GetMapping
     @PreAuthorize("hasRole('ROLE_IT_ADMINISTRATOR')")
-    public ResponseEntity<List<User>> getAllUsers() {
-        List<User> users = userService.findAllUsers();
+    public ResponseEntity<List<UserResponse>> getAllUsers() {
+        List<UserResponse> users = userService.findAllUsers().stream()
+                .map(UserResponse::from)
+                .collect(Collectors.toList());
         return ResponseEntity.ok(users);
     }
 
     @GetMapping("/engineers")
-    public ResponseEntity<List<User>> getSupportEngineers() {
-        List<User> engineers = userService.findUsersByRole("Support Engineer", "NCL_HQ");
+    public ResponseEntity<List<UserResponse>> getSupportEngineers() {
+        List<UserResponse> engineers = userService.findUsersByRole("Support Engineer", "NCL_HQ").stream()
+                .map(UserResponse::from)
+                .collect(Collectors.toList());
         return ResponseEntity.ok(engineers);
     }
 
@@ -153,7 +159,7 @@ public class UserController {
             savedUser = userService.saveUser(user);
         }
 
-        return ResponseEntity.ok(savedUser);
+        return ResponseEntity.ok(UserResponse.from(savedUser));
     }
 
     @DeleteMapping("/{eisNumber}")

@@ -74,19 +74,19 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional(readOnly = true)
     public boolean existsByUsername(String username) {
-        return userRepository.findByUsername(username).isPresent();
+        return userRepository.existsByUsername(username);
     }
 
     @Override
     @Transactional(readOnly = true)
     public boolean existsByEmail(String email) {
-        return userRepository.findByEmail(email).isPresent();
+        return userRepository.existsByEmail(email);
     }
 
     @Override
     @Transactional(readOnly = true)
     public boolean existsByEisNumber(String eisNumber) {
-        return userRepository.findByEisNumber(eisNumber).isPresent();
+        return userRepository.existsByEisNumber(eisNumber);
     }
 
     @Override
@@ -178,5 +178,19 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public void deleteUserByEisNumber(String eisNumber) {
         userRepository.findByEisNumber(eisNumber).ifPresent(userRepository::delete);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public java.util.Map<java.util.UUID, String> findNamesByIds(java.util.Collection<java.util.UUID> ids) {
+        if (ids == null || ids.isEmpty()) {
+            return java.util.Collections.emptyMap();
+        }
+        java.util.List<Object[]> results = userRepository.findNamesByIds(ids);
+        return results.stream().collect(java.util.stream.Collectors.toMap(
+                row -> (java.util.UUID) row[0],
+                row -> (String) row[1],
+                (v1, v2) -> v1
+        ));
     }
 }

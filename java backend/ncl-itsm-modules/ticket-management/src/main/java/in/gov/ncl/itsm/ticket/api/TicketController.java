@@ -16,6 +16,10 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.HashSet;
+import java.util.Collections;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -76,8 +80,16 @@ public class TicketController {
             tickets = ticketService.getTicketsByReporter(user.getId());
         }
 
+        // Batch load reporter and engineer names in one query to prevent N+1 queries
+        Set<UUID> userIds = new HashSet<>();
+        for (Ticket t : tickets) {
+            if (t.getReporterId() != null) userIds.add(t.getReporterId());
+            if (t.getEngineerId() != null) userIds.add(t.getEngineerId());
+        }
+        Map<UUID, String> nameMap = userService.findNamesByIds(userIds);
+
         List<TicketResponse> responseList = tickets.stream()
-                .map(this::mapToResponse)
+                .map(t -> this.mapToResponse(t, nameMap))
                 .collect(Collectors.toList());
 
         return ResponseEntity.ok(responseList);
@@ -165,19 +177,31 @@ public class TicketController {
     }
 
     private TicketResponse mapToResponse(Ticket ticket) {
+        return mapToResponse(ticket, Collections.emptyMap());
+    }
+
+    private TicketResponse mapToResponse(Ticket ticket, Map<UUID, String> userNamesMap) {
         String reporterName = "Employee";
         if (ticket.getReporterId() != null) {
-            Optional<User> rOpt = userService.findById(ticket.getReporterId());
-            if (rOpt.isPresent()) {
-                reporterName = rOpt.get().getFullName();
+            if (userNamesMap.containsKey(ticket.getReporterId())) {
+                reporterName = userNamesMap.get(ticket.getReporterId());
+            } else {
+                Optional<User> rOpt = userService.findById(ticket.getReporterId());
+                if (rOpt.isPresent()) {
+                    reporterName = rOpt.get().getFullName();
+                }
             }
         }
 
         String engineerName = null;
         if (ticket.getEngineerId() != null) {
-            Optional<User> eOpt = userService.findById(ticket.getEngineerId());
-            if (eOpt.isPresent()) {
-                engineerName = eOpt.get().getFullName();
+            if (userNamesMap.containsKey(ticket.getEngineerId())) {
+                engineerName = userNamesMap.get(ticket.getEngineerId());
+            } else {
+                Optional<User> eOpt = userService.findById(ticket.getEngineerId());
+                if (eOpt.isPresent()) {
+                    engineerName = eOpt.get().getFullName();
+                }
             }
         }
 

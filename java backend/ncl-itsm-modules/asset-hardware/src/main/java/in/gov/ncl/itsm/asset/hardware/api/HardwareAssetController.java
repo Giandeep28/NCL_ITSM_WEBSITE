@@ -82,11 +82,15 @@ public class HardwareAssetController {
 
     @PutMapping("/consumables/{id}/adjust")
     @PreAuthorize("hasAnyRole('IT_ADMINISTRATOR', 'ASSET_MANAGER')")
+    @org.springframework.transaction.annotation.Transactional
     public ResponseEntity<ConsumableStock> adjustStock(@PathVariable UUID id,
                                                        @RequestParam int delta) {
-        return consumableStockRepository.findById(id).map(stock -> {
-            stock.setQtyAvailable(Math.max(0, stock.getQtyAvailable() + delta));
-            return ResponseEntity.ok(consumableStockRepository.save(stock));
-        }).orElse(ResponseEntity.notFound().build());
+        int updated = consumableStockRepository.adjustStockQty(id, delta);
+        if (updated == 0) {
+            return ResponseEntity.notFound().build();
+        }
+        return consumableStockRepository.findById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 }

@@ -14,6 +14,13 @@ public interface UserRepository extends JpaRepository<User, UUID> {
     Optional<User> findByUsername(String username);
     Optional<User> findByUsernameOrEisNumber(String username, String eisNumber);
 
+    boolean existsByUsername(String username);
+    boolean existsByEmail(String email);
+    boolean existsByEisNumber(String eisNumber);
+
+    @org.springframework.data.jpa.repository.Query("SELECT u.id, u.fullName FROM User u WHERE u.id IN :ids")
+    java.util.List<Object[]> findNamesByIds(@org.springframework.data.repository.query.Param("ids") java.util.Collection<java.util.UUID> ids);
+
     @org.springframework.data.jpa.repository.Query("SELECT u FROM User u JOIN u.roles r WHERE r.name = :roleName AND u.tenantId = :tenantId AND u.isActive = true")
     java.util.List<User> findByRoleNameAndTenantId(@org.springframework.data.repository.query.Param("roleName") String roleName, @org.springframework.data.repository.query.Param("tenantId") String tenantId);
 }

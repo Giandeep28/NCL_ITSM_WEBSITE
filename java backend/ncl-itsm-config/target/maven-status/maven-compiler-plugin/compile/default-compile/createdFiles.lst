@@ -1,2 +1,5 @@
 in\gov\ncl\itsm\DatabaseSeeder.class
+in\gov\ncl\itsm\config\AsyncConfig.class
+in\gov\ncl\itsm\config\CacheConfig.class
+in\gov\ncl\itsm\config\WebFilterConfig.class
 in\gov\ncl\itsm\NCLItsmApplication.class

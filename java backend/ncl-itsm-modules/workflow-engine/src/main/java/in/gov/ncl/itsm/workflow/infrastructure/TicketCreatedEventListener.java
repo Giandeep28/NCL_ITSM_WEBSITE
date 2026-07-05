@@ -5,6 +5,7 @@ import in.gov.ncl.itsm.workflow.application.TicketWorkflowService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.EventListener;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 @Slf4j
@@ -15,6 +16,7 @@ public class TicketCreatedEventListener {
     private final TicketWorkflowService ticketWorkflowService;
 
     @EventListener
+    @Async("taskExecutor")
     public void onTicketCreated(TicketCreatedEvent event) {
         log.info("Received TicketCreatedEvent for ticket ID: {}", event.getTicketId());
         try {

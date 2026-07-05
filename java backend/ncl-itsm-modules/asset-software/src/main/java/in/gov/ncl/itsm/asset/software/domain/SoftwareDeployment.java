@@ -6,7 +6,9 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
-@Table(name = "software_deployments")
+@Table(name = "software_deployments", indexes = {
+    @Index(name = "idx_software_deploy_license", columnList = "license_id")
+})
 @Getter
 @Setter
 @NoArgsConstructor
