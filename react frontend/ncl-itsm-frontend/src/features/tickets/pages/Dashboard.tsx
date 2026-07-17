@@ -2,6 +2,7 @@ import React, { useEffect, useState, useMemo, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTicketStore, type Ticket } from '../../../store/ticketStore';
 import { useAuthStore } from '../../../store/authStore';
+import { apiClient } from '../../../services/apiClient';
 import {
   ResponsiveContainer,
   LineChart,
@@ -23,6 +24,7 @@ export const Dashboard: React.FC = () => {
 
   const isEngineer = user?.role === 'Support Engineer' || user?.role === 'IT Administrator';
   const [isApiOnline, setIsApiOnline] = useState(true);
+  const [monitoredAssetsCount, setMonitoredAssetsCount] = useState(0);
 
   const [timeframe, setTimeframe] = useState<'7' | '30' | '90' | 'all'>('30');
   const [timeframeOpen, setTimeframeOpen] = useState(false);
@@ -67,7 +69,12 @@ export const Dashboard: React.FC = () => {
   useEffect(() => {
     const initData = async () => {
       try {
-        await fetchTickets();
+        const [_, hwRes, swRes] = await Promise.all([
+          fetchTickets(),
+          apiClient.get('/assets/hardware'),
+          apiClient.get('/assets/software')
+        ]);
+        setMonitoredAssetsCount(hwRes.data.length + swRes.data.length);
         setIsApiOnline(true);
       } catch {
         setIsApiOnline(false);
@@ -680,13 +687,13 @@ export const Dashboard: React.FC = () => {
               AI Maintenance Predictor
             </h3>
             <p className="text-xs text-slate-300 leading-relaxed font-medium">
-              Our neural network predicts asset failures before they occur. Currently monitoring {filteredTickets.length > 0 ? (4100 + filteredTickets.length).toLocaleString() : 0} critical components across all regions.
+              Our neural network predicts asset failures before they occur. Currently monitoring {monitoredAssetsCount} critical components across all regions.
             </p>
           </div>
           <div className="relative z-10 pt-2 flex items-center gap-4 text-xs font-bold text-cyan-400">
-            <span>Accuracy: {filteredTickets.length > 0 ? '94.2%' : 'N/A (No data)'}</span>
+            <span>Accuracy: {monitoredAssetsCount > 0 ? '94.2%' : 'N/A (No data)'}</span>
             <span>·</span>
-            <span>Next Scan: {filteredTickets.length > 0 ? 'In 4 mins' : 'N/A'}</span>
+            <span>Next Scan: {monitoredAssetsCount > 0 ? 'In 4 mins' : 'N/A'}</span>
           </div>
         </div>
 

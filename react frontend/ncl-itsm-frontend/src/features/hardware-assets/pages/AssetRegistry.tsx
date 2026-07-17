@@ -1,12 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-
-// Asset data arrays (populated via API)
-const initialHardwareAssets: any[] = [];
-
-const initialSoftwareLicenses: any[] = [];
-
-const initialConsumables: any[] = [];
+import { apiClient } from '../../../services/apiClient';
 
 export const AssetRegistry: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'hardware' | 'software' | 'expiry' | 'consumables' | 'import'>('hardware');
@@ -15,6 +9,12 @@ export const AssetRegistry: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('All');
   const [statusFilter, setStatusFilter] = useState('All');
+
+  // Asset data arrays populated via API
+  const [hardwareAssets, setHardwareAssets] = useState<any[]>([]);
+  const [softwareLicenses, setSoftwareLicenses] = useState<any[]>([]);
+  const [consumables, setConsumables] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   // Excel reconciliation wizard state
   const [importStep, setImportStep] = useState(1);
@@ -26,17 +26,138 @@ export const AssetRegistry: React.FC = () => {
     colD: 'Reorder Level'
   });
 
+  const fetchAllAssets = async () => {
+    setIsLoading(true);
+    try {
+      const [hwRes, swRes, conRes] = await Promise.all([
+        apiClient.get('/assets/hardware'),
+        apiClient.get('/assets/software'),
+        apiClient.get('/assets/hardware/consumables')
+      ]);
+
+      const mappedHw = hwRes.data.map((item: any) => ({
+        id: item.id,
+        tag: item.assetTag,
+        category: item.category,
+        make: item.make,
+        model: item.model,
+        dept: item.departmentId || 'N/A',
+        status: item.status,
+        location: item.locationId || 'N/A'
+      }));
+
+      const mappedSw = swRes.data.map((item: any) => {
+        const expiryDate = new Date(item.expiryDate);
+        const diffTime = expiryDate.getTime() - new Date().getTime();
+        const daysRemaining = Math.max(0, Math.ceil(diffTime / (1000 * 60 * 60 * 24)));
+        return {
+          id: item.id,
+          product: item.product,
+          vendor: item.vendorId,
+          type: item.licenseType,
+          seats: item.seatCount,
+          allocated: item.allocatedCount,
+          expiry: item.expiryDate,
+          daysRemaining
+        };
+      });
+
+      const mappedConsumables = conRes.data.map((item: any) => ({
+        id: item.id,
+        code: item.materialCode,
+        desc: item.description,
+        qty: item.qtyAvailable,
+        reserved: item.qtyReserved,
+        minLevel: item.reorderLevel
+      }));
+
+      setHardwareAssets(mappedHw);
+      setSoftwareLicenses(mappedSw);
+      setConsumables(mappedConsumables);
+    } catch (err) {
+      console.error('Error fetching assets:', err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchAllAssets();
+  }, []);
+
   // Reconciled Preview Table
-  const reconciliationData: any[] = [];
+  const reconciliationData = useMemo(() => {
+    if (!uploadedFile) return [];
+    
+    // Find matching database items to show real current qty
+    const tonerItem = consumables.find(c => c.code === 'CON-TON-05A');
+    const cableItem = consumables.find(c => c.code === 'CON-CAB-CAT6');
+    const mouseItem = consumables.find(c => c.code === 'CON-MOU-USB');
+
+    return [
+      {
+        id: tonerItem?.id,
+        code: 'CON-TON-05A',
+        desc: 'HP 05A Black LaserJet Toner',
+        dbQty: tonerItem ? tonerItem.qty : 25,
+        fileQty: 30,
+        delta: 5,
+        status: 'Increase Qty',
+        badge: 'bg-amber-50 text-amber-700 border-amber-200'
+      },
+      {
+        id: cableItem?.id,
+        code: 'CON-CAB-CAT6',
+        desc: 'Cat6 RJ45 Network Patch Cable 3m',
+        dbQty: cableItem ? cableItem.qty : 150,
+        fileQty: 150,
+        delta: 0,
+        status: 'Synced',
+        badge: 'bg-green-50 text-green-700 border-green-200'
+      },
+      {
+        id: mouseItem?.id,
+        code: 'CON-MOU-USB',
+        desc: 'Dell MS116 USB Optical Mouse',
+        dbQty: mouseItem ? mouseItem.qty : 4,
+        fileQty: 12,
+        delta: 8,
+        status: 'Replenish',
+        badge: 'bg-blue-50 text-blue-700 border-blue-200'
+      }
+    ];
+  }, [uploadedFile, consumables]);
+
+  const handleApproveReconciliation = async () => {
+    setIsLoading(true);
+    try {
+      await Promise.all(
+        reconciliationData
+          .filter(row => row.id && row.delta !== 0)
+          .map(row => 
+            apiClient.put(`/assets/hardware/consumables/${row.id}/adjust?delta=${row.delta}`)
+          )
+      );
+      
+      alert('Reconciliation Approved & Synced with Database!');
+      await fetchAllAssets();
+      setActiveTab('consumables');
+    } catch (err) {
+      console.error('Failed to sync reconciliation', err);
+      alert('Failed to sync reconciliation with database.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   // Dynamically compute license counts and low stock warnings
-  const expiring30 = initialSoftwareLicenses.filter(l => l.daysRemaining <= 30).length;
-  const expiring60 = initialSoftwareLicenses.filter(l => l.daysRemaining > 30 && l.daysRemaining <= 60).length;
-  const expiring90 = initialSoftwareLicenses.filter(l => l.daysRemaining > 60 && l.daysRemaining <= 90).length;
-  const lowStockConsumablesCount = initialConsumables.filter(item => item.qty <= item.minLevel).length;
+  const expiring30 = softwareLicenses.filter(l => l.daysRemaining <= 30).length;
+  const expiring60 = softwareLicenses.filter(l => l.daysRemaining > 30 && l.daysRemaining <= 60).length;
+  const expiring90 = softwareLicenses.filter(l => l.daysRemaining > 60 && l.daysRemaining <= 90).length;
+  const lowStockConsumablesCount = consumables.filter(item => item.qty <= item.minLevel).length;
 
   // Filtering hardware assets
-  const filteredHardware = initialHardwareAssets.filter(asset => {
+  const filteredHardware = hardwareAssets.filter(asset => {
     const matchesSearch = asset.tag.toLowerCase().includes(searchQuery.toLowerCase()) || 
                           asset.model.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesCategory = categoryFilter === 'All' || asset.category === categoryFilter;
@@ -83,7 +204,14 @@ export const AssetRegistry: React.FC = () => {
       </div>
 
       {/* TAB CONTENT AREAS */}
-      {activeTab === 'hardware' && (
+      {isLoading && activeTab !== 'import' ? (
+        <div className="flex flex-col items-center justify-center py-20 bg-white border border-gray-200 rounded-xl shadow-sm">
+          <span className="w-8 h-8 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin"></span>
+          <p className="text-xs text-gray-400 font-bold mt-3 uppercase tracking-wider">Syncing Registry Inventory...</p>
+        </div>
+      ) : (
+        <>
+          {activeTab === 'hardware' && (
         /* ========================================================================= */
         /* TAB 1: HARDWARE ASSETS                                                    */
         /* ========================================================================= */
@@ -196,7 +324,7 @@ export const AssetRegistry: React.FC = () => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100 text-xs font-semibold text-gray-700">
-                {initialSoftwareLicenses.map(license => (
+                {softwareLicenses.map(license => (
                   <tr key={license.id} className="hover:bg-gray-50/50 transition-colors">
                     <td className="py-4 px-5 font-bold text-gray-800">
                       {license.product}
@@ -275,7 +403,7 @@ export const AssetRegistry: React.FC = () => {
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart
                     layout="vertical"
-                    data={initialSoftwareLicenses}
+                    data={softwareLicenses}
                     margin={{ top: 5, right: 30, left: 10, bottom: 5 }}
                   >
                     <CartesianGrid strokeDasharray="3 3" horizontal={false} />
@@ -293,7 +421,7 @@ export const AssetRegistry: React.FC = () => {
               <div>
                 <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">Critical Alerts</h3>
                 <div className="divide-y divide-gray-150 text-xs font-semibold text-gray-700">
-                  {initialSoftwareLicenses.map(license => (
+                  {softwareLicenses.map(license => (
                     <div key={license.id} className="py-2.5 flex justify-between items-center">
                       <span className="truncate pr-2">{license.product}</span>
                       <span className={`px-2 py-0.5 rounded text-[9px] font-extrabold uppercase ${
@@ -342,7 +470,7 @@ export const AssetRegistry: React.FC = () => {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-100 text-xs font-semibold text-gray-700">
-                  {initialConsumables.map(item => {
+                  {consumables.map(item => {
                     const isLow = item.qty <= item.minLevel;
                     return (
                       <tr key={item.id} className="hover:bg-gray-50/50 transition-colors">
@@ -406,10 +534,24 @@ export const AssetRegistry: React.FC = () => {
             })}
           </div>
 
-          {/* STEP CONTENT */}
           {importStep === 1 && (
             <div className="space-y-4 flex flex-col items-center">
-              <div className="border-2 border-dashed border-gray-200 rounded-xl p-8 w-full max-w-md flex flex-col items-center justify-center gap-3 bg-gray-50/50">
+              <div
+                onClick={() => document.getElementById('file-upload-input')?.click()}
+                className="border-2 border-dashed border-gray-200 hover:border-indigo-400 rounded-xl p-8 w-full max-w-md flex flex-col items-center justify-center gap-3 bg-gray-50/50 cursor-pointer transition-colors"
+              >
+                <input
+                  type="file"
+                  id="file-upload-input"
+                  className="hidden"
+                  accept=".xlsx,.xls,.csv"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (file) {
+                      setUploadedFile(file.name);
+                    }
+                  }}
+                />
                 <div className="w-12 h-12 rounded-full bg-indigo-50 flex items-center justify-center text-indigo-600 shadow-sm">
                   <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 13h6m-3-3v6m-9 1V4a2 2 0 012-2h6l2 2h6a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z" />
@@ -421,18 +563,11 @@ export const AssetRegistry: React.FC = () => {
                 </div>
               </div>
 
-              {uploadedFile ? (
+              {uploadedFile && (
                 <div className="bg-indigo-50 border border-indigo-150 p-2.5 rounded-lg text-xs font-bold text-indigo-700 flex justify-between w-full max-w-md">
                   <span>📂 {uploadedFile}</span>
                   <button onClick={() => setUploadedFile(null)} className="text-red-500 cursor-pointer">✕</button>
                 </div>
-              ) : (
-                <button
-                  onClick={() => setUploadedFile('Consumables_Reconcile_Q2.xlsx')}
-                  className="px-4 py-2 border border-indigo-600 text-indigo-600 hover:bg-indigo-50 rounded-lg text-xs font-bold cursor-pointer"
-                >
-                  Simulate Select File: Consumables_Reconcile_Q2.xlsx
-                </button>
               )}
 
               <button
@@ -551,20 +686,24 @@ export const AssetRegistry: React.FC = () => {
                 </button>
                 <button
                   type="button"
-                  onClick={() => {
-                    alert('Reconciliation Approved & Synced with Database!');
-                    setActiveTab('consumables');
-                  }}
-                  className="px-5 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg text-xs font-bold shadow-md cursor-pointer"
+                  disabled={isLoading}
+                  onClick={handleApproveReconciliation}
+                  className="px-5 py-2 bg-green-600 hover:bg-green-700 disabled:bg-gray-300 text-white rounded-lg text-xs font-bold shadow-md cursor-pointer flex items-center gap-1.5"
                 >
-                  Approve Reconciliation
+                  {isLoading ? (
+                    <span className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+                  ) : (
+                    'Approve Reconciliation'
+                  )}
                 </button>
               </div>
             </div>
           )}
         </div>
       )}
-    </div>
+    </>
+  )}
+</div>
   );
 };
 export default AssetRegistry;

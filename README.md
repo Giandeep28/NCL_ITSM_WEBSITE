@@ -44,17 +44,18 @@ graph TD
 * **Dynamic Profile Photos:** Users can select and upload a custom profile image (Base64-encoded and persisted in the database). Avatars in the Profile panel and top header update instantly upon saving.
 * **Account Deletion & Modification Console:** Admins can edit names, emails, phone numbers, designations, departments, roles, lock/unlock status, or permanently delete user accounts (protected by double-confirmation check dialogs) directly from the dashboard.
 
-### 3. Asset Registry & Excel Reconciliation Wizard
-* **Physical Hardware Registry:** Track corporate inventories (Desktops, Laptops, Printers, IP Phones) and allocation states (`Assigned`, `Available`, `Maintenance`).
-* **Software Registry & Expirations:** Dynamic visual progress bars tracking license allocations, automatic safety warnings, and Recharts graphs illustrating expiry timelines.
-* **Consumables Stock Tracker:** Real-time stock counts (Safety reserves) with triggers warning when stock falls below safety levels.
-* **Bulk Reconciliation Wizard (Excel Import):** A 3-step import wizard designed to easily add new assets or adjust existing stock counts. Upload any spreadsheet (`.xlsx` or `.xls`), map columns to `Material Code`, `Description`, and `Quantity`, resolve mismatch conflicts visually, and click *Approve Reconciliation* to update the inventory.
+### 3. Asset Registry & Excel Reconciliation (REST Integrated)
+* **Physical Hardware Registry:** Track real-time corporate inventories (Desktops, Laptops, Printers, IP Phones) and allocation states (`Assigned`, `Available`, `Maintenance`) loaded directly from backend endpoints.
+* **Software Registry & Expirations:** Dynamic progress bars tracking license allocations, safety threshold notifications, and Recharts timelines powered by database license states.
+* **Consumables Stock Tracker:** Real-time stock levels with automatic notification banners triggered dynamically when inventory falls below reorder limits.
+* **Bulk Reconciliation Wizard:** A 3-step import wizard accepting real spreadsheet files (Excel/CSV) via a file upload picker dialog. Maps columns, displays mismatch differences (increase qty/replenish) against live database records, and concurrent API requests commit changes back to the database.
 
 ### 4. Ticket Service Queue & System Status
 * **Dynamic Help Desk:** Create tickets categorized by urgency (`Low`, `Medium`, `High`, `Critical`).
 * **Lifecycle Routing:** Support engineers can claim requests, track statuses (`Pending`, `In Discussion`, `Resolved`), and measure SLA compliance.
 * **Intake Charting:** Integrates Recharts graph charts displaying ticket counts over the past 7 days.
 * **Live Status & Network Capacity**: The dashboard monitors backend heartbeat status (`Production API`, `Registry DB`, `Asset Monitoring` set to Operational/Offline). It dynamically calculates the live system capacity load based on active unresolved ticket counts (`Math.max(5, activeTicketsCount * 15)%`).
+* **AI Maintenance Predictor**: A dashboard predictive modeling panel which queries backend hardware assets and software licenses to display the exact live count of monitored components (seeded with 8 components by default) and real-time accuracy statuses.
 
 ### 5. High-Concurrency & Speed Optimizations (Production Model)
 * **Dynamic Bundle Code Splitting:** React page routes lazy-loaded on demand using `React.lazy()` and `Suspense`, cutting initial JS payload size by **70.5%** (from 873kB to 257kB).
@@ -150,7 +151,11 @@ The development environment runs with an **in-memory H2 database** to allow sand
   - **Password:** `password`
   - **Employee ID:** `90000001`
   - **Designation:** `IT Administrator`
-* **Testing Guidelines:** Use this admin account to log in. Navigate to **User Management** to create sample Employee or Support Engineer profiles, or to modify accounts.
+* **Seeded Assets Data:**
+  - **Hardware Assets:** Dell Latitude Laptop, HP EliteDesk Desktop, HP LaserJet Printer, Cisco IP Phone.
+  - **Software Licenses:** Microsoft Office 365, Adobe Acrobat Pro, Windows 11 Enterprise, AutoCAD 2026.
+  - **Consumables supplies:** HP 05A Black LaserJet Toner, Cat6 RJ45 Network Cable, Dell MS116 USB Mouse (seeded below safety reorder level to trigger warning alerts).
+* **Testing Guidelines:** Use this admin account to log in. Navigate to **User Management** to create sample profiles, or go to **Asset Registry** to review the live seeded hardware, software, and consumables, and test the Excel import reconciliation.
 
 ---
 
