@@ -12,61 +12,7 @@ interface Article {
   lastUpdated: string;
 }
 
-const ARTICLES: Article[] = [
-  {
-    id: 'service-request-flow',
-    title: 'Service Request Lifecycle & Process Flow',
-    category: 'IT Operations',
-    tags: ['service request', 'ticketing', 'process flow', 'SOP'],
-    summary: 'A visual interactive flowchart illustrating the complete lifecycle of a service request from submission to closure.',
-    content: `## How to Raise a Service Request
-To request IT support, hardware maintenance, or software assistance, employees initiate a service request through the portal.
-
-## Step-by-Step Process Flow
-1. **Initiate Request (Employee):** Navigate to the 'Create New Service Request' form. Enter your name, ID, and select the appropriate Department, Sub-department, Category, and Sub-category. Add a clear description of the issue and optional file attachments.
-2. **Triaging & Assignment (IT Coordinator):** Once submitted, the ticket is registered in the database under the 'Requested' status. An IT Coordinator or Admin reviews the request details and assigns it to a qualified Support Engineer.
-3. **Execution & Troubleshooting (Support Engineer):** The assigned Support Engineer claims the ticket, updates the status to 'In Progress', and starts troubleshooting. They can post public updates or internal comments to communicate progress.
-4. **Resolution (Support Engineer):** Once the fix is verified (e.g., hardware repaired, software installed), the engineer enters resolution notes and marks the ticket as 'Resolved'.
-5. **Closure (Employee):** The employee is notified of the resolution. After confirming the issue is fixed, the ticket is transitioned to 'Closed'.`,
-    readTime: '3 min',
-    lastUpdated: 'June 22, 2026'
-  },
-  {
-    id: 'password-reset-guide',
-    title: 'Portal Password Reset Guide',
-    category: 'IT Operations',
-    tags: ['password', 'authentication', 'self-service'],
-    summary: 'Instructions on securely resetting your workstation/portal password using mobile OTP verification.',
-    content: `## Workstation Password Recovery
-For security compliance, passwords should be kept secure. If you forget your portal credentials, follow this guide to perform a self-service reset.
-
-## Recovery Procedure
-1. Click the **Forgot Password** link on the login window.
-2. Enter your registered **Employee ID** and primary mobile number.
-3. Check your mobile device for a one-time passcode (OTP).
-4. Enter the received OTP in the verification screen.
-5. Create a new compliant password (minimum 8 characters, containing uppercase, lowercase, numeric, and special characters).`,
-    readTime: '2 min',
-    lastUpdated: 'June 18, 2026'
-  },
-  {
-    id: 'workstation-troubleshoot-sop',
-    title: 'Basic Workstation Troubleshooting SOP',
-    category: 'Hardware Maintenance',
-    tags: ['workstation', 'troubleshoot', 'peripherals', 'sop'],
-    summary: 'Initial steps to perform before reporting local hardware peripheral issues to the helpdesk.',
-    content: `## Standard Workstation Checkup
-Standard Operating Procedure for handling local peripheral failures (e.g., Monitor blank, keyboard/mouse unresponsive, printer offline).
-
-## Basic Checks
-1. **Physical Connections:** Confirm all USB, display, and power cables are firmly plugged into both the workstation and the UPS.
-2. **Power Cycle:** Shut down the computer completely, toggle the power switch at the outlet, wait 10 seconds, and reboot.
-3. **Driver/State Reset:** Unplug and replug the peripheral device to prompt the OS to reload drivers.
-4. **Log Request:** If the device still does not work, record the asset barcode/serial number and open a ticket under Category: Hardware.`,
-    readTime: '4 min',
-    lastUpdated: 'June 20, 2026'
-  }
-];
+const ARTICLES: Article[] = [];
 
 const CATEGORIES = ['All', ...Array.from(new Set(ARTICLES.map((a) => a.category)))];
 
