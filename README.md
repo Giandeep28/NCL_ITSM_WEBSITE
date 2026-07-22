@@ -174,7 +174,7 @@ cd "d:\GIANDEEP MAIN\NCL_ITSM_SOFTWARE_WEBSITE\java backend"
 ```powershell
 cd "d:\GIANDEEP MAIN\NCL_ITSM_SOFTWARE_WEBSITE\react frontend\ncl-itsm-frontend"
 npm run lint
-npm run build
+npm run buildn
 ```
 * **Audit Results:** **ESLint check passes completely with 0 warnings/errors**. React 19 render-purity rules and TypeScript unused parameter checks inside `Dashboard.tsx` are fully verified and resolved.
 * **Build output:** The static bundle compiles cleanly for deployment.

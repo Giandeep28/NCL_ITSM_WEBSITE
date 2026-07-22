@@ -1,36 +1,19 @@
 package in.gov.ncl.itsm;
 import in.gov.ncl.itsm.user.application.UserService;
 import in.gov.ncl.itsm.user.domain.User;
-import in.gov.ncl.itsm.asset.hardware.domain.HardwareAsset;
-import in.gov.ncl.itsm.asset.hardware.infrastructure.HardwareAssetRepository;
-import in.gov.ncl.itsm.asset.hardware.domain.ConsumableStock;
-import in.gov.ncl.itsm.asset.hardware.infrastructure.ConsumableStockRepository;
-import in.gov.ncl.itsm.asset.software.domain.SoftwareLicense;
-import in.gov.ncl.itsm.asset.software.infrastructure.SoftwareLicenseRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 @Component
 public class DatabaseSeeder implements CommandLineRunner {
 
     private final UserService userService;
     private final PasswordEncoder passwordEncoder;
-    private final HardwareAssetRepository hardwareAssetRepository;
-    private final ConsumableStockRepository consumableStockRepository;
-    private final SoftwareLicenseRepository softwareLicenseRepository;
 
-    public DatabaseSeeder(UserService userService, PasswordEncoder passwordEncoder,
-                          HardwareAssetRepository hardwareAssetRepository,
-                          ConsumableStockRepository consumableStockRepository,
-                          SoftwareLicenseRepository softwareLicenseRepository) {
+    public DatabaseSeeder(UserService userService, PasswordEncoder passwordEncoder) {
         this.userService = userService;
         this.passwordEncoder = passwordEncoder;
-        this.hardwareAssetRepository = hardwareAssetRepository;
-        this.consumableStockRepository = consumableStockRepository;
-        this.softwareLicenseRepository = softwareLicenseRepository;
     }
 
     @Override
@@ -59,8 +42,6 @@ public class DatabaseSeeder implements CommandLineRunner {
             System.out.println("   Employee ID: 90000001");
             System.out.println("=================================================");
         }
-
-        // Hardware Assets, Software Licenses, and Consumables seeding removed to keep database clean of mock data.
     }
 }
 

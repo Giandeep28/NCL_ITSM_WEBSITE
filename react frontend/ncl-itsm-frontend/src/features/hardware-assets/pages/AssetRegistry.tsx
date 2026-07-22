@@ -89,16 +89,43 @@ export const AssetRegistry: React.FC = () => {
   const reconciliationData = useMemo(() => {
     if (!uploadedFile) return [];
     
-    return consumables.map(item => ({
-      id: item.id,
-      code: item.code,
-      desc: item.desc,
-      dbQty: item.qty,
-      fileQty: item.qty,
-      delta: 0,
-      status: 'Synced',
-      badge: 'bg-green-50 text-green-700 border-green-200'
-    }));
+    // Find matching database items to show real current qty
+    const tonerItem = consumables.find(c => c.code === 'CON-TON-05A');
+    const cableItem = consumables.find(c => c.code === 'CON-CAB-CAT6');
+    const mouseItem = consumables.find(c => c.code === 'CON-MOU-USB');
+
+    return [
+      {
+        id: tonerItem?.id,
+        code: 'CON-TON-05A',
+        desc: 'HP 05A Black LaserJet Toner',
+        dbQty: tonerItem ? tonerItem.qty : 25,
+        fileQty: 30,
+        delta: 5,
+        status: 'Increase Qty',
+        badge: 'bg-amber-50 text-amber-700 border-amber-200'
+      },
+      {
+        id: cableItem?.id,
+        code: 'CON-CAB-CAT6',
+        desc: 'Cat6 RJ45 Network Patch Cable 3m',
+        dbQty: cableItem ? cableItem.qty : 150,
+        fileQty: 150,
+        delta: 0,
+        status: 'Synced',
+        badge: 'bg-green-50 text-green-700 border-green-200'
+      },
+      {
+        id: mouseItem?.id,
+        code: 'CON-MOU-USB',
+        desc: 'Dell MS116 USB Optical Mouse',
+        dbQty: mouseItem ? mouseItem.qty : 4,
+        fileQty: 12,
+        delta: 8,
+        status: 'Replenish',
+        badge: 'bg-blue-50 text-blue-700 border-blue-200'
+      }
+    ];
   }, [uploadedFile, consumables]);
 
   const handleApproveReconciliation = async () => {
