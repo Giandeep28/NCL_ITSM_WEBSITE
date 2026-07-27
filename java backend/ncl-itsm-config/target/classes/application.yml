@@ -46,12 +46,21 @@ logging:
   pattern:
     console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%X{correlationId}] %-5level [%t] %logger{36} - %msg%n"
 
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  endpoint:
+    health:
+      show-details: always
+
 ncl:
   auth:
-    bypass-otp: true
-    bypass-login-otp: true
-    expose-simulation-otp: true
-    bypass-register-restriction: false
+    bypass-otp: ${NCL_BYPASS_OTP:false}
+    bypass-login-otp: ${NCL_BYPASS_OTP:false}
+    expose-simulation-otp: ${NCL_EXPOSE_SIMULATION_OTP:false}
+    bypass-register-restriction: ${NCL_BYPASS_REGISTER_RESTRICTION:false}
 
 ---
 spring:
@@ -123,5 +132,8 @@ spring:
         order_inserts: true
         order_updates: true
   flyway:
-    enabled: false
+    enabled: true
+    baseline-on-migrate: true
+    baseline-version: 0
+    locations: classpath:db/migration
 

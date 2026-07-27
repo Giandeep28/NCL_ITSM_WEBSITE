@@ -1,7 +1,8 @@
-import React, { Suspense, lazy } from 'react';
+import { Suspense, lazy } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AppShell } from './components/layout/AppShell';
 import { ProtectedRoute } from './features/auth/ProtectedRoute';
+import { ErrorBoundary } from './components/common/ErrorBoundary';
 
 // Lazy-loaded page components for bundle code splitting
 const Dashboard = lazy(() => import('./features/tickets/pages/Dashboard').then(m => ({ default: m.Dashboard })));
@@ -18,29 +19,12 @@ const SystemSettings = lazy(() => import('./features/admin/pages/SystemSettings'
 const EngineerWorkspace = lazy(() => import('./features/engineer/pages/EngineerWorkspace').then(m => ({ default: m.EngineerWorkspace })));
 const KnowledgeBase = lazy(() => import('./features/knowledge-base/KnowledgeBase').then(m => ({ default: m.KnowledgeBase })));
 const Profile = lazy(() => import('./features/profile/Profile').then(m => ({ default: m.Profile })));
-
-// SupportPage inline component
-
-
-const SupportPage: React.FC = () => {
-  return (
-    <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm space-y-4">
-      <div className="border-b border-gray-150 pb-3">
-        <h2 className="text-xl font-bold text-gray-800 m-0">Technical Support</h2>
-        <p className="text-xs text-gray-400 font-semibold mt-1">Reach out to NCL HQ IT Administration desk.</p>
-      </div>
-      <div className="space-y-2 text-xs font-semibold text-gray-600">
-        <p>📧 Email Support: <span className="text-indigo-600">support.itsm@ncl.gov.in</span></p>
-        <p>📞 Phone Intercom: <span className="text-indigo-600">4029 / 1029 (HQ Ext)</span></p>
-        <p>🏢 Location: <span className="text-indigo-600">IT Center, 2nd Floor, NCL HQ, Singrauli</span></p>
-      </div>
-    </div>
-  );
-};
+const SupportPage = lazy(() => import('./features/support/SupportPage').then(m => ({ default: m.SupportPage })));
 
 function App() {
   return (
-    <BrowserRouter>
+    <ErrorBoundary>
+      <BrowserRouter>
       <Suspense
         fallback={
           <div className="min-h-screen w-screen flex items-center justify-center bg-[#0F172A] text-slate-400 font-bold text-xs uppercase tracking-widest font-sans">
@@ -92,7 +76,8 @@ function App() {
           <Route path="*" element={<Navigate to="/dashboard" replace />} />
         </Routes>
       </Suspense>
-    </BrowserRouter>
+      </BrowserRouter>
+    </ErrorBoundary>
   );
 }
 

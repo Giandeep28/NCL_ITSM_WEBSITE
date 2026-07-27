@@ -1,0 +1,7 @@
+-------------------------------------------------------------------------------
+Test set: in.gov.ncl.itsm.ticket.api.dto.TicketCreateRequestUnitTest
+-------------------------------------------------------------------------------
+Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.043 s -- in in.gov.ncl.itsm.ticket.api.dto.TicketCreateRequestUnitTest
+in.gov.ncl.itsm.ticket.api.dto.TicketCreateRequestUnitTest.shouldSetAndRetrieveValuesThroughGeneratedAccessors -- Time elapsed: 0.003 s
+in.gov.ncl.itsm.ticket.api.dto.TicketCreateRequestUnitTest.shouldReportViolationsForBlankRequiredFields -- Time elapsed: 0.020 s
+in.gov.ncl.itsm.ticket.api.dto.TicketCreateRequestUnitTest.shouldInitializeAllFieldsAsNullByDefault -- Time elapsed: 0.002 s

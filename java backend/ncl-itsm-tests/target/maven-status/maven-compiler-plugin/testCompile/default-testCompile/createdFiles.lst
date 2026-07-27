@@ -1,6 +1,7 @@
 in\gov\ncl\itsm\auth\api\AuthControllerIntegrationTest.class
 in\gov\ncl\itsm\auth\AuthDecisionTableTest.class
 in\gov\ncl\itsm\ticket\decision\SlaDecisionTableTest.class
+in\gov\ncl\itsm\ticket\api\dto\TicketCreateRequestUnitTest.class
 in\gov\ncl\itsm\ticket\bva\TicketCreateRequestBvaTest.class
 in\gov\ncl\itsm\asset\hardware\unit\HardwareAssetUnitTest.class
 in\gov\ncl\itsm\e2e\SeleniumE2eTest.class
@@ -12,6 +13,7 @@ in\gov\ncl\itsm\auth\RegisterRequestBvaTest.class
 in\gov\ncl\itsm\TestApplication.class
 in\gov\ncl\itsm\user\api\UserControllerIntegrationTest.class
 in\gov\ncl\itsm\metrics\SoftwareMetricsTest.class
+in\gov\ncl\itsm\auth\api\dto\RegisterRequestUnitTest.class
 in\gov\ncl\itsm\defect\DefectRcaProcessTest$DefectIssue.class
 in\gov\ncl\itsm\defect\DefectRcaProcessTest.class
 in\gov\ncl\itsm\ticket\mutation\TicketMutationKillTest.class

@@ -26,6 +26,7 @@ import org.springframework.beans.factory.annotation.Value;
 public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final RateLimitingFilter rateLimitingFilter;
 
     @Value("${ncl.auth.bypass-register-restriction:false}")
     private boolean bypassRegisterRestriction;
@@ -48,6 +49,7 @@ public class SecurityConfig {
                     "/v3/api-docs/**",
                     "/swagger-ui/**",
                     "/swagger-ui.html",
+                    "/actuator/**",
                     "/error"
                 ).permitAll();
                 
@@ -66,6 +68,7 @@ public class SecurityConfig {
                     response.getWriter().write("{\"message\": \"Unauthorized access\"}");
                 })
             )
+            .addFilterBefore(rateLimitingFilter, UsernamePasswordAuthenticationFilter.class)
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
@@ -73,7 +76,7 @@ public class SecurityConfig {
 
     @Bean
     public org.springframework.security.crypto.password.PasswordEncoder passwordEncoder() {
-        return new org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder(4);
+        return new org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder(12);
     }
 
     @Bean

@@ -69,7 +69,7 @@ export const Dashboard: React.FC = () => {
   useEffect(() => {
     const initData = async () => {
       try {
-        const [_, hwRes, swRes] = await Promise.all([
+        const [, hwRes, swRes] = await Promise.all([
           fetchTickets(),
           apiClient.get('/assets/hardware'),
           apiClient.get('/assets/software')

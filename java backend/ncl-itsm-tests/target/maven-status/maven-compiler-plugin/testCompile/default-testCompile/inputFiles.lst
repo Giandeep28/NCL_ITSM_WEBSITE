@@ -6,6 +6,7 @@ D:\GIANDEEP MAIN\NCL_ITSM_SOFTWARE_WEBSITE\java backend\ncl-itsm-tests\src\test\
 D:\GIANDEEP MAIN\NCL_ITSM_SOFTWARE_WEBSITE\java backend\ncl-itsm-tests\src\test\java\in\gov\ncl\itsm\ticket\mutation\TicketMutationKillTest.java
 D:\GIANDEEP MAIN\NCL_ITSM_SOFTWARE_WEBSITE\java backend\ncl-itsm-tests\src\test\java\in\gov\ncl\itsm\performance\PerformanceLoadTest.java
 D:\GIANDEEP MAIN\NCL_ITSM_SOFTWARE_WEBSITE\java backend\ncl-itsm-tests\src\test\java\in\gov\ncl\itsm\asset\hardware\unit\HardwareAssetUnitTest.java
+D:\GIANDEEP MAIN\NCL_ITSM_SOFTWARE_WEBSITE\java backend\ncl-itsm-tests\src\test\java\in\gov\ncl\itsm\auth\api\dto\RegisterRequestUnitTest.java
 D:\GIANDEEP MAIN\NCL_ITSM_SOFTWARE_WEBSITE\java backend\ncl-itsm-tests\src\test\java\in\gov\ncl\itsm\auth\RegisterRequestBvaTest.java
 D:\GIANDEEP MAIN\NCL_ITSM_SOFTWARE_WEBSITE\java backend\ncl-itsm-tests\src\test\java\in\gov\ncl\itsm\metrics\SoftwareMetricsTest.java
 D:\GIANDEEP MAIN\NCL_ITSM_SOFTWARE_WEBSITE\java backend\ncl-itsm-tests\src\test\java\in\gov\ncl\itsm\ticket\decision\SlaDecisionTableTest.java
@@ -13,4 +14,5 @@ D:\GIANDEEP MAIN\NCL_ITSM_SOFTWARE_WEBSITE\java backend\ncl-itsm-tests\src\test\
 D:\GIANDEEP MAIN\NCL_ITSM_SOFTWARE_WEBSITE\java backend\ncl-itsm-tests\src\test\java\in\gov\ncl\itsm\auth\api\AuthControllerIntegrationTest.java
 D:\GIANDEEP MAIN\NCL_ITSM_SOFTWARE_WEBSITE\java backend\ncl-itsm-tests\src\test\java\in\gov\ncl\itsm\auth\AuthDecisionTableTest.java
 D:\GIANDEEP MAIN\NCL_ITSM_SOFTWARE_WEBSITE\java backend\ncl-itsm-tests\src\test\java\in\gov\ncl\itsm\TestApplication.java
+D:\GIANDEEP MAIN\NCL_ITSM_SOFTWARE_WEBSITE\java backend\ncl-itsm-tests\src\test\java\in\gov\ncl\itsm\ticket\api\dto\TicketCreateRequestUnitTest.java
 D:\GIANDEEP MAIN\NCL_ITSM_SOFTWARE_WEBSITE\java backend\ncl-itsm-tests\src\test\java\in\gov\ncl\itsm\user\api\UserControllerTest.java

@@ -8,6 +8,8 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
+import lombok.extern.slf4j.Slf4j;
+
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
@@ -17,6 +19,7 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Component
 public class JwtTokenProvider {
 
@@ -28,6 +31,12 @@ public class JwtTokenProvider {
             @Value("${ncl.auth.jwt-secret:NCL_HQ_ITSM_PLATFORM_SUPER_SECRET_COMPLEX_KEY_2026_JWT_TOKEN_SIGNING_FALLBACK_STRING_32_BYTES}") String jwtSecret
     ) {
         byte[] keyBytes = jwtSecret.getBytes(StandardCharsets.UTF_8);
+        if (keyBytes.length < 32) {
+            throw new IllegalArgumentException("JWT Secret Key must be at least 32 bytes (256 bits) long for HS256 security compliance.");
+        }
+        if (jwtSecret.contains("FALLBACK_STRING")) {
+            log.warn("SECURITY WARNING: Using default hardcoded fallback JWT secret. Set 'NCL_AUTH_JWT_SECRET' environment variable in production!");
+        }
         this.secretKey = Keys.hmacShaKeyFor(keyBytes);
     }
 

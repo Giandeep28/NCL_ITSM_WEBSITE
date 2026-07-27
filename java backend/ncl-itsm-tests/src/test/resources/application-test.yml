@@ -23,6 +23,8 @@ spring:
       - org.springframework.boot.autoconfigure.data.redis.RedisReactiveAutoConfiguration
 
 ncl:
+  rate-limiting:
+    enabled: false
   auth:
     bypass-otp: false
     bypass-login-otp: true
